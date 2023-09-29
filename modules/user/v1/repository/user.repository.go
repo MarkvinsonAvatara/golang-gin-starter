@@ -80,14 +80,14 @@ func (ur *UserRepository) GetUserByID(ctx context.Context, id uuid.UUID) (*entit
 
 	if err := ur.db.
 		WithContext(ctx).
-		Preload("UserRole").
-		Preload("UserRole.Role").
-		Preload("Employee").
-		Preload("Employee.CustomerBranch").
-		Preload("Employee.CustomerBranch.Province").
-		Preload("Employee.CustomerBranch.Regency").
-		Preload("Employee.CustomerBranch.District").
-		Preload("Employee.CustomerBranch.Village").
+		// Preload("UserRole").
+		// Preload("UserRole.Role").
+		// Preload("Employee").
+		// Preload("Employee.CustomerBranch").
+		// Preload("Employee.CustomerBranch.Province").
+		// Preload("Employee.CustomerBranch.Regency").
+		// Preload("Employee.CustomerBranch.District").
+		// Preload("Employee.CustomerBranch.Village").
 		Where("id = ?", id).
 		First(result).
 		Error; err != nil {

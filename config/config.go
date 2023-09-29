@@ -28,7 +28,7 @@ type Config struct {
 
 // Port holds configuration for project's port.
 type Port struct {
-	APP string `env:"PORT,default=8080"`
+	APP string `env:"PORT,default=3000"`
 }
 
 // Google holds configuration for the Google.
@@ -67,9 +67,9 @@ type HashID struct {
 type Postgres struct {
 	Host            string `env:"POSTGRES_HOST,default=localhost"`
 	Port            string `env:"POSTGRES_PORT,default=5432"`
-	User            string `env:"POSTGRES_USER,required"`
-	Password        string `env:"POSTGRES_PASSWORD,required"`
-	Name            string `env:"POSTGRES_NAME,required"`
+	User            string `env:"POSTGRES_USER,default=postgres"`
+	Password        string `env:"POSTGRES_PASSWORD,defaut=Mark1333"`
+	Name            string `env:"POSTGRES_NAME,test_perpustakaan"`
 	MaxOpenConns    string `env:"POSTGRES_MAX_OPEN_CONNS,default=5"`
 	MaxConnLifetime string `env:"POSTGRES_MAX_CONN_LIFETIME,default=10m"`
 	MaxIdleLifetime string `env:"POSTGRES_MAX_IDLE_LIFETIME,default=5m"`
@@ -83,18 +83,18 @@ type Redis struct {
 
 // SMTP holds configuration for smtp email.
 type SMTP struct {
-	Host string `env:"SMTP_HOST,required"`
+	Host string `env:"SMTP_HOST,smtp.mailgun.org"`
 	Port int    `env:"SMTP_PORT,default=587"`
-	User string `env:"SMTP_USER,required"`
-	Pass string `env:"SMTP_PASS,required"`
+	User string `env:"SMTP_USER,no-reply@starter.id"`
+	Pass string `env:"SMTP_PASS,"`
 }
 
 // JWTConfig holds configuration for jwt.
 type JWTConfig struct {
-	Public    string `env:"JWT_PUBLIC,required"`
-	Private   string `env:"JWT_PRIVATE,required"`
-	Issuer    string `env:"JWT_ISSUER,required"`
-	IssuerCMS string `env:"JWT_ISSUER_CMS,required"`
+	Public    string `env:"JWT_PUBLIC,./config/rsa-key/oauth-public.key"`
+	Private   string `env:"JWT_PRIVATE,./config/rsa-key/oauth-private.key"`
+	Issuer    string `env:"JWT_ISSUER,starter.app"`
+	IssuerCMS string `env:"JWT_ISSUER_CMS,starter.cms"`
 }
 
 // OneSignal holds configuration for the OneSignal.

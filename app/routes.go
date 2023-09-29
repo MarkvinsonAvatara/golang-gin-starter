@@ -126,7 +126,9 @@ func UserFinderHTTPHandler(cfg config.Config, router *gin.Engine, cf userservice
 func UserCreatorHTTPHandler(cfg config.Config, router *gin.Engine, uc userservicev1.UserCreatorUseCase, uf userservicev1.UserFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
 	hnd := userhandlerv1.NewUserCreatorHandler(uc, cloudStorage)
 	v1 := router.Group("/v1")
-
+	{
+	v1.POST("/cms/register", hnd.RegisterUser)
+	}
 	v1.Use(middleware.Auth(cfg))
 	v1.Use(middleware.Admin(cfg))
 	{

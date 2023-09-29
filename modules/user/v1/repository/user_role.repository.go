@@ -44,7 +44,7 @@ func (nc *UserRoleRepository) CreateOrUpdate(ctx context.Context, userRole *enti
 	var find *entity.UserRole
 
 	findUser := nc.db.
-		Where("user_id = ?", userRole.UserID).
+		Where("user_id = ?", userRole.ID).
 		First(&find)
 
 	if err := findUser.Error; err != nil {
@@ -53,18 +53,18 @@ func (nc *UserRoleRepository) CreateOrUpdate(ctx context.Context, userRole *enti
 		}
 	}
 
-	if findUser.RowsAffected > 0 {
-		if err := nc.db.Model(&entity.UserRole{}).
-			Where("user_id = ?", userRole.UserID).
-			UpdateColumns(map[string]interface{}{
-				"role_id": userRole.RoleID,
-			}).
-			Error; err != nil {
-			return err
-		}
+	// if findUser.RowsAffected > 0 {
+	// 	if err := nc.db.Model(&entity.UserRole{}).
+	// 		Where("user_id = ?", userRole.ID).
+	// 		UpdateColumns(map[string]interface{}{
+	// 			"role_id": userRole.RoleID,
+	// 		}).
+	// 		Error; err != nil {
+	// 		return err
+	// 	}
 
-		return nil
-	}
+	// 	return nil
+	// }
 
 	if err := nc.db.
 		WithContext(ctx).
@@ -126,13 +126,13 @@ func (nc *UserRoleRepository) Update(ctx context.Context, userRole *entity.UserR
 		Transaction(func(tx *gorm.DB) error {
 			sourceModel := new(entity.UserRole)
 			if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-				Where("user_id = ?", userRole.UserID).
+				Where("user_id = ?", userRole.ID).
 				Find(&sourceModel).Error; err != nil {
 				log.Println("[GamPTKRepository - Update]", err)
 				return err
 			}
 			if err := tx.Model(&entity.UserRole{}).
-				Where(`user_id`, userRole.UserID).
+				Where(`user_id`, userRole.ID).
 				UpdateColumns(sourceModel.MapUpdateFrom(userRole)).Error; err != nil {
 				log.Println("[GamPTKRepository - Update]", err)
 				return err

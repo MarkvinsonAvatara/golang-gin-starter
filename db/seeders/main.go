@@ -41,8 +41,6 @@ func createSampleUser(db *gorm.DB) {
 			"bayunoviantoo9@gmail.com",
 			"test123",
 			utils.TimeToNullTime(dob),
-			"",
-			"0895346419497",
 			"system",
 		)).
 		Error; err != nil {
@@ -61,8 +59,6 @@ func createSampleUser(db *gorm.DB) {
 			"user-test@gmail.com",
 			"testingApp23!",
 			utils.TimeToNullTime(dob2),
-			"",
-			"",
 			"system",
 		)).
 		Error; err != nil {
@@ -96,8 +92,6 @@ func createAdminUser(db *gorm.DB) {
 			"rifqiakram57@gmail.com",
 			"testing1234",
 			utils.TimeToNullTime(dobUser),
-			"",
-			"0895346419497",
 			"system",
 		)).
 		Error; err != nil {
@@ -108,8 +102,7 @@ func createAdminUser(db *gorm.DB) {
 		Model(&entity.UserRole{}).
 		Create(entity.NewUserRole(
 			uuid.New(),
-			userID,
-			roleID,
+			"Admin",
 			"system",
 		)).
 		Error; err != nil {

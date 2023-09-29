@@ -7,6 +7,7 @@ import (
 	"gin-starter/common/constant"
 	"gin-starter/config"
 	"io/ioutil"
+	"log"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -31,6 +32,7 @@ type TokenClaims struct {
 
 // JWTDecode decodes JWT to token claims
 func JWTDecode(cfg config.Config, t string) (*TokenClaims, error) {
+	log.Println("verify token")
 	if cfg.JWTConfig.Public == "" {
 		return nil, fmt.Errorf("please specify your public key path")
 	}

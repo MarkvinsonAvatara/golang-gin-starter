@@ -7,9 +7,11 @@ import (
 	"gin-starter/resource"
 	"gin-starter/response"
 	"gin-starter/utils"
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"net/http"
 )
 
 // UserCreatorHandler is a handler for user finder
@@ -32,21 +34,20 @@ func NewUserCreatorHandler(
 // CreateUser is a handler for creating user
 func (uc *UserCreatorHandler) CreateUser(c *gin.Context) {
 	var request resource.CreateUserRequest
-
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 		c.Abort()
 		return
 	}
 
-	imagePath, err := uc.cloudStorage.Upload(request.Photo, "users/user/profile")
+	// imagePath, err := uc.cloudStorage.Upload(request.Photo, "users/user/profile")
 
-	if err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
+	// if err != nil {
+	// 	parseError := errors.ParseError(err)
+	// 	c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+	// 	c.Abort()
+	// 	return
+	// }
 
 	dob, err := utils.DateStringToTime(request.DOB)
 
@@ -56,14 +57,13 @@ func (uc *UserCreatorHandler) CreateUser(c *gin.Context) {
 		c.Abort()
 		return
 	}
+	log.Println("dob", dob)
 
 	user, err := uc.userCreator.CreateUser(
-		c,
+		c.Request.Context(),
 		request.Name,
 		request.Email,
 		request.Password,
-		request.PhoneNumber,
-		imagePath,
 		dob,
 	)
 
@@ -80,7 +80,6 @@ func (uc *UserCreatorHandler) CreateUser(c *gin.Context) {
 // CreateAdmin is a handler for creating admin
 func (uc *UserCreatorHandler) CreateAdmin(c *gin.Context) {
 	var request resource.CreateAdminRequest
-
 	if err := c.ShouldBind(&request); err != nil {
 		parseError := errors.ParseError(err)
 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
@@ -88,40 +87,39 @@ func (uc *UserCreatorHandler) CreateAdmin(c *gin.Context) {
 		return
 	}
 
-	imagePath, err := uc.cloudStorage.Upload(request.Photo, "users/admin/profile")
+	// imagePath, err := uc.cloudStorage.Upload(request.Photo, "users/admin/profile")
 
-	if err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
+	// if err != nil {
+	// 	parseError := errors.ParseError(err)
+	// 	c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+	// 	c.Abort()
+	// 	return
+	// }
 
 	dob, err := utils.DateStringToTime(request.DOB)
 
-	if err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
+	// if err != nil {
+	// 	parseError := errors.ParseError(err)
+	// 	c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+	// 	c.Abort()
+	// 	return
+	// }
 
 	roleID, err := uuid.Parse(request.RoleID)
+	log.Println("masuk")
 
-	if err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
+	// if err != nil {
+	// 	parseError := errors.ParseError(err)
+	// 	c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+	// 	c.Abort()
+	// 	return
+	// }
 
 	user, err := uc.userCreator.CreateAdmin(
 		c,
 		request.Name,
 		request.Email,
 		request.Password,
-		request.PhoneNumber,
-		imagePath,
 		dob,
 		roleID,
 	)
@@ -193,4 +191,40 @@ func (uc *UserCreatorHandler) CreateRole(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewRoleResponse(role)))
+}
+
+func (uc *UserCreatorHandler) RegisterUser(c *gin.Context) {
+	var request resource.CreateUserRequest
+	if err := c.ShouldBind(&request); err != nil {
+		parseError := errors.ParseError(err)
+		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+		c.Abort()
+		return
+	}
+	dob, err := utils.DateStringToTime(request.DOB)
+
+	if err != nil {
+		parseError := errors.ParseError(err)
+		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+		c.Abort()
+		return
+	}
+	log.Println("dob", dob)
+
+	user, err := uc.userCreator.CreateUser(
+		c,
+		request.Name,
+		request.Email,
+		request.Password,
+		dob,
+	)
+
+	if err != nil {
+		parseError := errors.ParseError(err)
+		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+		c.Abort()
+		return
+	}
+
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserProfile(user)))
 }

@@ -194,7 +194,7 @@ func (uu *UserUpdaterHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	imagePath, err := uu.cloudStorage.Upload(request.Photo, "users/user/profile")
+	// imagePath, err := uu.cloudStorage.Upload(request.Photo, "users/user/profile")
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
@@ -216,8 +216,6 @@ func (uu *UserUpdaterHandler) UpdateUser(c *gin.Context) {
 		request.Email,
 		request.Name,
 		utils.TimeToNullTime(dob),
-		imagePath,
-		request.PhoneNumber,
 		"system",
 	)
 
@@ -286,7 +284,7 @@ func (uu *UserUpdaterHandler) UpdateAdmin(c *gin.Context) {
 		return
 	}
 
-	imagePath, err := uu.cloudStorage.Upload(request.Photo, "users/admin/profile")
+	// imagePath, err := uu.cloudStorage.Upload(request.Photo, "users/admin/profile")
 
 	if err != nil {
 		c.JSON(errors.ErrInternalServerError.Code, response.ErrorAPIResponse(errors.ErrInternalServerError.Code, errors.ErrInternalServerError.Message))
@@ -309,8 +307,6 @@ func (uu *UserUpdaterHandler) UpdateAdmin(c *gin.Context) {
 		request.Email,
 		request.Name,
 		utils.TimeToNullTime(dob),
-		imagePath,
-		request.PhoneNumber,
 		"system",
 	)
 

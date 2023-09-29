@@ -168,7 +168,7 @@ func (uf *UserFinder) GetUserPermissions(ctx context.Context, userID uuid.UUID) 
 		return nil, errors.ErrRecordNotFound.Error()
 	}
 
-	role, err := uf.roleRepo.FindByID(ctx, userRole.RoleID)
+	role, err := uf.roleRepo.FindByID(ctx, userRole.ID)
 	if err != nil {
 		return nil, errors.ErrInternalServerError.Error()
 	}

@@ -54,9 +54,9 @@ func (ah *AuthHandler) Login(c *gin.Context) {
 
 	otpIsNull := false
 
-	if res.OTP.String != "" {
-		otpIsNull = true
-	}
+	// if res.OTP.String != "" {
+	// 	otpIsNull = true
+	// }
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewLoginResponse(token.Token, otpIsNull)))
 }

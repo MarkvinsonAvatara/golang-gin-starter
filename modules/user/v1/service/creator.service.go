@@ -28,9 +28,9 @@ type UserCreator struct {
 // UserCreatorUseCase is a use case for the User creator
 type UserCreatorUseCase interface {
 	// CreateUser creates a new user
-	CreateUser(ctx context.Context, name, email, password, phoneNumber, photo string, dob time.Time) (*entity.User, error)
+	CreateUser(ctx context.Context, name string, email string, password string, dob time.Time) (*entity.User, error)
 	// CreateAdmin creates a new admin
-	CreateAdmin(ctx context.Context, name, email, password, phoneNumber, photo string, dob time.Time, roleID uuid.UUID) (*entity.User, error)
+	CreateAdmin(ctx context.Context, name string, email string, password string, dob time.Time, roleID uuid.UUID) (*entity.User, error)
 	// CreatePermission creates a permission
 	CreatePermission(ctx context.Context, name, label string) (*entity.Permission, error)
 	// CreateRole creates a role
@@ -59,15 +59,13 @@ func NewUserCreator(
 }
 
 // CreateUser creates a new user
-func (uc *UserCreator) CreateUser(ctx context.Context, name, email, password, phoneNumber, photo string, dob time.Time) (*entity.User, error) {
+func (uc *UserCreator) CreateUser(ctx context.Context, name string, email string, password string, dob time.Time) (*entity.User, error) {
 	user := entity.NewUser(
 		uuid.New(),
 		name,
 		email,
 		password,
 		utils.TimeToNullTime(dob),
-		photo,
-		phoneNumber,
 		"system",
 	)
 
@@ -79,7 +77,7 @@ func (uc *UserCreator) CreateUser(ctx context.Context, name, email, password, ph
 }
 
 // CreateAdmin creates a new admin
-func (uc *UserCreator) CreateAdmin(ctx context.Context, name, email, password, phoneNumber, photo string, dob time.Time, roleID uuid.UUID) (*entity.User, error) {
+func (uc *UserCreator) CreateAdmin(ctx context.Context, name string, email string, password string, dob time.Time, roleID uuid.UUID) (*entity.User, error) {
 	userID := uuid.New()
 	user := entity.NewUser(
 		userID,
@@ -87,8 +85,6 @@ func (uc *UserCreator) CreateAdmin(ctx context.Context, name, email, password, p
 		email,
 		password,
 		utils.TimeToNullTime(dob),
-		photo,
-		phoneNumber,
 		"system",
 	)
 
@@ -96,11 +92,11 @@ func (uc *UserCreator) CreateAdmin(ctx context.Context, name, email, password, p
 		return nil, errors.ErrInternalServerError.Error()
 	}
 
-	userRole := entity.NewUserRole(uuid.New(), userID, roleID, "system")
+	// userRole := entity.NewUserRole(uuid.New(), userID, roleID, "system")
 
-	if err := uc.userRoleRepo.CreateOrUpdate(ctx, userRole); err != nil {
-		return nil, errors.ErrInternalServerError.Error()
-	}
+// 	if err := uc.userRoleRepo.CreateOrUpdate(ctx, userRole); err != nil {
+// 		return nil, errors.ErrInternalServerError.Error()
+// 	}
 
 	return user, nil
 }

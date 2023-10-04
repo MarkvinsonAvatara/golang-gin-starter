@@ -10,7 +10,7 @@ const (
 	userRoleTableName = "public.role"
 )
 
-// UserRole define for table user_roles
+// UserRole define for table role
 type UserRole struct {
 	ID   uuid.UUID `json:"id"`
 	Name string    `json:"name"`
@@ -39,7 +39,7 @@ func NewUserRole(
 func (model *UserRole) MapUpdateFrom(from *UserRole) *map[string]interface{} {
 	if from == nil {
 		return &map[string]interface{}{
-			"name":    model.Name,
+			"name":       model.Name,
 			"updated_at": model.UpdatedAt,
 		}
 	}

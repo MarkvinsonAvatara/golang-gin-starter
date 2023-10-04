@@ -19,7 +19,7 @@ type User struct {
 	Email    string       `json:"email"`
 	Password string       `json:"password"`
 	DOB      sql.NullTime `json:"dob"`
-	RoleId     UserRole     `gorm:"foreignKey:id" json:"role"`
+	Roleid   uuid.UUID    `json:"roleid"`
 	Auditable
 }
 

@@ -1,7 +1,7 @@
 package resource
 
 import (
-	"mime/multipart"
+	// "mime/multipart"
 	// "os"
 
 	"gin-starter/entity"
@@ -17,8 +17,6 @@ type UpdateUserRequest struct {
 	Name        string                `form:"name" json:"name"`
 	Email       string                `form:"email" json:"email"`
 	DOB         string                `form:"dob" json:"dob"`
-	PhoneNumber string                `form:"phone_number" json:"phone_number"`
-	Photo       *multipart.FileHeader `form:"photo" json:"photo"`
 }
 
 type UserProfile struct {

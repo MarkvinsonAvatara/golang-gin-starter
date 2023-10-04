@@ -23,55 +23,55 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	createSampleUser(db)
+	// createSampleUser(db)
 	createAdminUser(db)
 
 }
 
-func createSampleUser(db *gorm.DB) {
-	userID := uuid.New()
+// func createSampleUser(db *gorm.DB) {
+// 	userID := uuid.New()
 
-	dob, _ := utils.DateStringToTime("1996-11-04")
+// 	dob, _ := utils.DateStringToTime("1996-11-04")
 
-	if err := db.WithContext(context.Background()).
-		Model(&entity.User{}).
-		Create(entity.NewUser(
-			userID,
-			"Bayu Novianto",
-			"bayunoviantoo9@gmail.com",
-			"test123",
-			utils.TimeToNullTime(dob),
-			"system",
-		)).
-		Error; err != nil {
-		panic(err)
-	}
+// 	if err := db.WithContext(context.Background()).
+// 		Model(&entity.User{}).
+// 		Create(entity.NewUser(
+// 			userID,
+// 			"Bayu Novianto",
+// 			"bayunoviantoo9@gmail.com",
+// 			"test123",
+// 			utils.TimeToNullTime(dob),
+// 			"system",
+// 		)).
+// 		Error; err != nil {
+// 		panic(err)
+// 	}
 
-	userID2 := uuid.New()
+// 	userID2 := uuid.New()
 
-	dob2, _ := utils.DateStringToTime("1996-11-04")
+// 	dob2, _ := utils.DateStringToTime("1996-11-04")
 
-	if err := db.WithContext(context.Background()).
-		Model(&entity.User{}).
-		Create(entity.NewUser(
-			userID2,
-			"User Test",
-			"user-test@gmail.com",
-			"testingApp23!",
-			utils.TimeToNullTime(dob2),
-			"system",
-		)).
-		Error; err != nil {
-		panic(err)
-	}
-}
+// 	if err := db.WithContext(context.Background()).
+// 		Model(&entity.User{}).
+// 		Create(entity.NewUser(
+// 			userID2,
+// 			"User Test",
+// 			"user-test@gmail.com",
+// 			"testingApp23!",
+// 			utils.TimeToNullTime(dob2),
+// 			"system",
+// 		)).
+// 		Error; err != nil {
+// 		panic(err)
+// 	}
+// }
 
 func createAdminUser(db *gorm.DB) {
 	roleID := uuid.New()
 
 	if err := db.WithContext(context.Background()).
-		Model(&entity.Role{}).
-		Create(entity.NewRole(
+		Model(&entity.UserRole{}).
+		Create(entity.NewUserRole(
 			roleID,
 			"Super Admin",
 			"system",
@@ -98,16 +98,16 @@ func createAdminUser(db *gorm.DB) {
 		panic(err)
 	}
 
-	if err := db.WithContext(context.Background()).
-		Model(&entity.UserRole{}).
-		Create(entity.NewUserRole(
-			uuid.New(),
-			"Admin",
-			"system",
-		)).
-		Error; err != nil {
-		panic(err)
-	}
+	// if err := db.WithContext(context.Background()).
+	// 	Model(&entity.UserRole{}).
+	// 	Create(entity.NewRole(
+	// 		uuid.New(),
+	// 		"Admin",
+	// 		"system",
+	// 	)).
+	// 	Error; err != nil {
+	// 	panic(err)
+	// }
 }
 
 func checkError(err error) {

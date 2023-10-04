@@ -16,8 +16,15 @@ type UserDeleter struct {
 	roleRepo repository.RoleRepositoryUseCase
 }
 
+// DeleteUser implements UserDeleterUseCase.
+func (*UserDeleter) DeleteUser(ctx context.Context, id uuid.UUID) error {
+	panic("unimplemented")
+}
+
 // UserDeleterUseCase is a use case for user
 type UserDeleterUseCase interface {
+	// DeleteUser deletes user
+	DeleteUsers(ctx context.Context, id uuid.UUID) error
 	// DeleteAdmin deletes admin
 	DeleteAdmin(ctx context.Context, id uuid.UUID) error
 	// DeleteRole deletes role
@@ -40,6 +47,14 @@ func NewUserDeleter(
 // DeleteAdmin deletes admin
 func (ud *UserDeleter) DeleteAdmin(ctx context.Context, id uuid.UUID) error {
 	if err := ud.userRepo.DeleteAdmin(ctx, id); err != nil {
+		return errors.ErrInternalServerError.Error()
+	}
+
+	return nil
+}
+
+func (ud *UserDeleter) DeleteUsers(ctx context.Context, id uuid.UUID) error {
+	if err := ud.userRepo.DeleteUsers(ctx, id); err != nil {
 		return errors.ErrInternalServerError.Error()
 	}
 

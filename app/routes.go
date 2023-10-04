@@ -127,7 +127,7 @@ func UserCreatorHTTPHandler(cfg config.Config, router *gin.Engine, uc userservic
 	hnd := userhandlerv1.NewUserCreatorHandler(uc, cloudStorage)
 	v1 := router.Group("/v1")
 	{
-	v1.POST("/cms/register", hnd.RegisterUser)
+	v1.POST("/user/register", hnd.RegisterUser)
 	}
 	v1.Use(middleware.Auth(cfg))
 	v1.Use(middleware.Admin(cfg))
@@ -152,8 +152,6 @@ func UserUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, uu userservic
 	{
 		v1.PUT("/user/profile", hnd.UpdateUser)
 		v1.PUT("/user/password", hnd.ChangePassword)
-		v1.PUT("/verify/otp", hnd.VerifyOTP)
-		v1.PUT("/resend/otp", hnd.ResendOTP)
 	}
 
 	v1.Use(middleware.Admin(cfg))
@@ -173,6 +171,7 @@ func UserDeleterHTTPHandler(cfg config.Config, router *gin.Engine, ud userservic
 	v1.Use(middleware.Auth(cfg))
 	v1.Use(middleware.Admin(cfg))
 	{
+		v1.DELETE("/cms/user/:id", hnd.DeleteUsers)
 		v1.DELETE("/cms/admin/:id", hnd.DeleteAdmin)
 		v1.DELETE("/cms/role/:id", hnd.DeleteRole)
 	}

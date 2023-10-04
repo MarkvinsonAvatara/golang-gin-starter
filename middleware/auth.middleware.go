@@ -7,10 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	// "github.com/rs/zerolog/log"
-	"log"
 	"gin-starter/config"
 	"gin-starter/response"
 	"gin-starter/utils"
+	"log"
+
 )
 
 var UserID uuid.UUID
@@ -20,7 +21,10 @@ func Auth(cfg config.Config) gin.HandlerFunc {
 		tokenString := strings.Split(c.Request.Header.Get("Authorization"), "Bearer ")
 		log.Print("masuk user")
 		log.Print(tokenString)
-		if len(tokenString) < 2  {
+
+		
+
+		if len(tokenString) < 2 {
 			c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "unauthorized"))
 			c.Abort()
 			return
@@ -44,6 +48,9 @@ func Admin(cfg config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		log.Println("masuk admin")
 		tokenString := strings.Split(c.Request.Header.Get("Authorization"), "Bearer ")
+
+		//validasi format email
+
 		if len(tokenString) < 2 {
 			c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "unauthorized"))
 			c.Abort()

@@ -310,7 +310,7 @@ func (uu *UserUpdaterHandler) UpdateAdmin(c *gin.Context) {
 		"system",
 	)
 
-	roleID, err := uuid.Parse(request.RoleID)
+	roleID, err := uuid.Parse(request.RoleId)
 
 	if err != nil {
 		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))

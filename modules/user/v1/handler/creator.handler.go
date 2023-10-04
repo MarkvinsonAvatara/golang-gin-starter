@@ -40,6 +40,11 @@ func (uc *UserCreatorHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
+	if !utils.IsValidEmail(request.Email) {
+		c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "Format Email salah"))
+		c.Abort()
+		return
+	}
 	// imagePath, err := uc.cloudStorage.Upload(request.Photo, "users/user/profile")
 
 	// if err != nil {
@@ -96,7 +101,7 @@ func (uc *UserCreatorHandler) CreateAdmin(c *gin.Context) {
 	// 	return
 	// }
 
-	dob, err := utils.DateStringToTime(request.DOB)
+	dob, _ := utils.DateStringToTime(request.DOB)
 
 	// if err != nil {
 	// 	parseError := errors.ParseError(err)
@@ -105,7 +110,7 @@ func (uc *UserCreatorHandler) CreateAdmin(c *gin.Context) {
 	// 	return
 	// }
 
-	roleID, err := uuid.Parse(request.RoleID)
+	// roleID, _ := uuid.Parse(request.RoleId)
 	log.Println("masuk")
 
 	// if err != nil {
@@ -114,14 +119,14 @@ func (uc *UserCreatorHandler) CreateAdmin(c *gin.Context) {
 	// 	c.Abort()
 	// 	return
 	// }
-
+	log.Println("RoleID: ", request.RoleId)
 	user, err := uc.userCreator.CreateAdmin(
 		c,
 		request.Name,
 		request.Email,
 		request.Password,
 		dob,
-		roleID,
+		request.RoleId,
 	)
 
 	if err != nil {
@@ -201,6 +206,19 @@ func (uc *UserCreatorHandler) RegisterUser(c *gin.Context) {
 		c.Abort()
 		return
 	}
+
+	if !utils.IsValidEmail(request.Email) {
+		c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "Format Email salah"))
+		c.Abort()
+		return
+	}
+
+	if !utils.IsValidPassword(request.Password) {
+		c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "Format Password salah"))
+		c.Abort()
+		return
+	}
+
 	dob, err := utils.DateStringToTime(request.DOB)
 
 	if err != nil {

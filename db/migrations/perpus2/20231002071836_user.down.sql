@@ -1,0 +1,5 @@
+BEGIN;
+
+DROP TABLE IF EXISTS perpus2.user;
+
+COMMIT;

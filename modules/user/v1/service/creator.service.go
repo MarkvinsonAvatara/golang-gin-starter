@@ -30,7 +30,7 @@ type UserCreatorUseCase interface {
 	// CreateUser creates a new user
 	CreateUser(ctx context.Context, name string, email string, password string, dob time.Time) (*entity.User, error)
 	// CreateAdmin creates a new admin
-	CreateAdmin(ctx context.Context, name string, email string, password string, dob time.Time, roleID uuid.UUID) (*entity.User, error)
+	CreateAdmin(ctx context.Context, name string, email string, password string, dob time.Time, roleID string) (*entity.User, error)
 	// CreatePermission creates a permission
 	CreatePermission(ctx context.Context, name, label string) (*entity.Permission, error)
 	// CreateRole creates a role
@@ -77,7 +77,7 @@ func (uc *UserCreator) CreateUser(ctx context.Context, name string, email string
 }
 
 // CreateAdmin creates a new admin
-func (uc *UserCreator) CreateAdmin(ctx context.Context, name string, email string, password string, dob time.Time, roleID uuid.UUID) (*entity.User, error) {
+func (uc *UserCreator) CreateAdmin(ctx context.Context, name string, email string, password string, dob time.Time, roleID string) (*entity.User, error) {
 	userID := uuid.New()
 	user := entity.NewUser(
 		userID,

@@ -1,7 +1,7 @@
 package resource
 
 import (
-	"mime/multipart"
+	// "mime/multipart"
 	//"os"
 
 	"gin-starter/entity"
@@ -20,9 +20,7 @@ type CreateAdminRequest struct {
 	Email       string `form:"email" json:"email" binding:"required"`
 	Password    string `form:"password" json:"password" binding:"required"`
 	DOB         string `form:"dob" json:"dob" binding:"required"`
-	PhoneNumber string `form:"phone_number" json:"phone_number" binding:"required"`
-	Photo       string `form:"photo" json:"photo" binding:"required"`
-	RoleID      string `form:"role_id" json:"role_id" `
+	RoleId      string `form:"roleid" json:"roleid" `
 }
 
 type UpdateAdminRequest struct {
@@ -30,9 +28,7 @@ type UpdateAdminRequest struct {
 	Name        string                `form:"name" json:"name"`
 	Email       string                `form:"email" json:"email"`
 	DOB         string                `form:"dob" json:"dob"`
-	PhoneNumber string                `form:"phone_number" json:"phone_number"`
-	Photo       *multipart.FileHeader `form:"photo" json:"photo"`
-	RoleID      string                `form:"role_id" json:"role_id" `
+	RoleId      string                `form:"roleid" json:"roleid" `
 }
 
 type UserAdmin struct {
@@ -40,11 +36,8 @@ type UserAdmin struct {
 	Name        string `json:"name"`
 	Email       string `json:"email"`
 	OTPIsNull   bool   `json:"otp_is_null"`
-	PhoneNumber string `json:"phone_number"`
 	DOB         string `json:"dob"`
-	Status      string `json:"status"`
-	Photo       string `json:"photo"`
-	Role        *Role  `json:"role"`
+	RoleId        *Role  `json:"role"`
 	CreatedAt   string `json:"created_at"`
 	UpdatedAt   string `json:"updated_at"`
 }
@@ -64,6 +57,10 @@ type DeactivateUserRequest struct {
 }
 
 type DeleteAdminRequest struct {
+	ID string `uri:"id" binding:"required"`
+}
+
+type DeleteUserRequest struct {
 	ID string `uri:"id" binding:"required"`
 }
 

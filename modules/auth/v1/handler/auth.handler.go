@@ -5,7 +5,11 @@ import (
 	"gin-starter/modules/auth/v1/service"
 	"gin-starter/resource"
 	"gin-starter/response"
+	"gin-starter/utils"
+
+	// "gin-starter/utils"
 	"net/http"
+	// "regexp"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,6 +39,26 @@ func (ah *AuthHandler) Login(c *gin.Context) {
 	}
 
 	res, err := ah.authUseCase.AuthValidate(c, request.Email, request.Password)
+
+	// //validasi format email
+
+	// // Ekspresi reguler untuk memeriksa format email yang umum
+	// // Perhatikan bahwa ekspresi ini hanya memeriksa format umum, bukan validitas email sebenarnya.
+	// emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+
+	// match, _ := regexp.MatchString(emailRegex, request.Email)
+
+	if !utils.IsValidEmail(request.Email) {
+		c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "Format Email salah"))
+		c.Abort()
+		return
+	}
+
+	if !utils.IsValidPassword(request.Password) {
+		c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "Format Email salah"))
+		c.Abort()
+		return
+	}
 
 	if err != nil {
 		parseError := errors.ParseError(err)
@@ -67,6 +91,18 @@ func (ah *AuthHandler) LoginCMS(c *gin.Context) {
 
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+
+	if !utils.IsValidEmail(request.Email) {
+		c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "Format Email salah"))
+		c.Abort()
+		return
+	}
+
+	if !utils.IsValidPassword(request.Password) {
+		c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "Format Email salah"))
 		c.Abort()
 		return
 	}

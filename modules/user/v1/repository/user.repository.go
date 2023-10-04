@@ -45,6 +45,9 @@ type UserRepositoryUseCase interface {
 	UpdateUserStatus(ctx context.Context, id uuid.UUID, status string) error
 	// DeleteAdmin is a function to delete admin user
 	DeleteAdmin(ctx context.Context, id uuid.UUID) error
+	// DeleteUsers is a function to delete user
+	DeleteUsers(ctx context.Context, id uuid.UUID) error
+
 }
 
 // NewUserRepository creates a new UserRepository
@@ -58,10 +61,10 @@ func (ur *UserRepository) GetUserByEmail(ctx context.Context, email string) (*en
 
 	if err := ur.db.
 		WithContext(ctx).
-		Preload("UserRole").
-		Preload("UserRole.Role").
-		Preload("Employee").
-		Preload("Employee.CustomerBranch").
+		// Preload("UserRole").
+		// Preload("UserRole.Role").
+		// Preload("Employee").
+		// Preload("Employee.CustomerBranch").
 		Where("email = ?", email).
 		Find(result).
 		Error; err != nil {
@@ -197,8 +200,7 @@ func (ur *UserRepository) GetUsers(ctx context.Context, query, sort, order strin
 	var gormDB = ur.db.
 		WithContext(ctx).
 		Model(&entity.User{}).
-		Joins("left join main.user_roles on users.id=user_roles.user_id").
-		Where("main.user_roles.user_id is null")
+		Where("public.user.roleid is null OR public.user.roleid = '00000000-0000-0000-0000-000000000000' AND public.user.deleted_at is NULL")
 
 	gormDB.Count(&total)
 
@@ -239,10 +241,7 @@ func (ur *UserRepository) GetAdminUsers(ctx context.Context, query, sort, order 
 	var gormDB = ur.db.
 		WithContext(ctx).
 		Model(&entity.User{}).
-		Preload("UserRole").
-		Preload("UserRole.Role.RolePermissions").
-		Preload("UserRole.Role.RolePermissions.Permission").
-		Joins("inner join main.user_roles on main.users.id=main.user_roles.user_id")
+		Joins("inner join public.role on public.user.roleid=public.role.id")
 
 	gormDB.Count(&total)
 
@@ -324,6 +323,18 @@ func (ur *UserRepository) DeleteAdmin(ctx context.Context, id uuid.UUID) error {
 		Where(`id = ?`, id).
 		Delete(&entity.User{}, "id = ?", id).Error; err != nil {
 		return errors.Wrap(err, "[UserRepository-DeleteAdmin] error when updating user data")
+	}
+
+	return nil
+}
+
+// DeleteUsers is a function to delete user
+func (ur *UserRepository) DeleteUsers(ctx context.Context, id uuid.UUID) error {
+	if err := ur.db.WithContext(ctx).
+		Model(&entity.User{}).
+		Where(`id = ?`, id).
+		Delete(&entity.User{}, "id = ?", id).Error; err != nil {
+		return errors.Wrap(err, "[UserRepository-DeleteUsers] error when updating user data")
 	}
 
 	return nil

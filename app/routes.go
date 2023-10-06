@@ -143,6 +143,9 @@ func UserCreatorHTTPHandler(cfg config.Config, router *gin.Engine, uc userservic
 func UserUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, uu userservicev1.UserUpdaterUseCase, uf userservicev1.UserFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
 	hnd := userhandlerv1.NewUserUpdaterHandler(uu, uf, cloudStorage)
 	v1 := router.Group("/v1")
+
+	v1.Use(middleware.Auth(cfg))
+
 	{
 		v1.PUT("/user/forgot-password/request", hnd.ForgotPasswordRequest)
 		v1.PUT("/user/forgot-password", hnd.ForgotPassword)
@@ -156,6 +159,7 @@ func UserUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, uu userservic
 
 	v1.Use(middleware.Admin(cfg))
 	{
+		v1.PUT("/user/profile/:id", hnd.UpdateUser)
 		v1.PUT("/cms/admin/:id", hnd.UpdateAdmin)
 		v1.PUT("/cms/user/activate/:id", hnd.ActivateDeactivateUser)
 		v1.PUT("/cms/role/:id", hnd.UpdateRole)

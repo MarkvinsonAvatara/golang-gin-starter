@@ -45,6 +45,12 @@ func (uc *UserCreatorHandler) CreateUser(c *gin.Context) {
 		c.Abort()
 		return
 	}
+
+	if !utils.IsValidPassword(request.Password) {
+		c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "Format Email salah"))
+		c.Abort()
+		return
+	}
 	// imagePath, err := uc.cloudStorage.Upload(request.Photo, "users/user/profile")
 
 	// if err != nil {

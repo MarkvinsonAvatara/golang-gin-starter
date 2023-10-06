@@ -40,13 +40,6 @@ func (ah *AuthHandler) Login(c *gin.Context) {
 
 	res, err := ah.authUseCase.AuthValidate(c, request.Email, request.Password)
 
-	// //validasi format email
-
-	// // Ekspresi reguler untuk memeriksa format email yang umum
-	// // Perhatikan bahwa ekspresi ini hanya memeriksa format umum, bukan validitas email sebenarnya.
-	// emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
-
-	// match, _ := regexp.MatchString(emailRegex, request.Email)
 
 	if !utils.IsValidEmail(request.Email) {
 		c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "Format Email salah"))
@@ -55,7 +48,7 @@ func (ah *AuthHandler) Login(c *gin.Context) {
 	}
 
 	if !utils.IsValidPassword(request.Password) {
-		c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "Format Email salah"))
+		c.JSON(http.StatusUnauthorized, response.ErrorAPIResponse(http.StatusUnauthorized, "Format Password salah"))
 		c.Abort()
 		return
 	}

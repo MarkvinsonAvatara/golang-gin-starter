@@ -200,7 +200,7 @@ func (ur *UserRepository) GetUsers(ctx context.Context, query, sort, order strin
 	var gormDB = ur.db.
 		WithContext(ctx).
 		Model(&entity.User{}).
-		Where("public.user.roleid is null OR public.user.roleid = '00000000-0000-0000-0000-000000000000' AND public.user.deleted_at is NULL")
+		Where("public.user.roleid is null AND public.user.deleted_at is NULL")
 
 	gormDB.Count(&total)
 

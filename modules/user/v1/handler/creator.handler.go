@@ -252,3 +252,4 @@ func (uc *UserCreatorHandler) RegisterUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserProfile(user)))
 }
+

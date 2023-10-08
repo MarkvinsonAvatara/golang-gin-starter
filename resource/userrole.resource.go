@@ -33,6 +33,10 @@ type UpdateUserRoleRequest struct {
 	Name string `form:"name" json:"name"`
 }
 
+type DeleteUserRoleRequest struct {
+	ID string `uri:"id" binding:"required"`
+}
+
 type UserRole struct {
 	ID        string `json:"id"`
 	Name      string `json:"name"`

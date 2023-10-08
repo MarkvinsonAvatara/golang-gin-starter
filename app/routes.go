@@ -117,6 +117,7 @@ func UserFinderHTTPHandler(cfg config.Config, router *gin.Engine, cf userservice
 		v1.GET("/cms/user/list", hnd.GetUsers)
 		v1.GET("/cms/user/detail/:id", hnd.GetUserByID)
 		v1.GET("/cms/roles", hnd.GetUserRoles)
+		v1.GET("/cms/role/:id", hnd.GetUserRoles)
 		v1.GET("/cms/permission", hnd.GetPermissions)
 		v1.GET("/cms/user/permission", hnd.GetUserPermissions)
 	}
@@ -135,7 +136,7 @@ func UserCreatorHTTPHandler(cfg config.Config, router *gin.Engine, uc userservic
 		v1.POST("/cms/user", hnd.CreateUser)
 		v1.POST("/cms/admin/user", hnd.CreateAdmin)
 		// v1.POST("/cms/permission", hnd.CreatePermission)
-		v1.POST("/cms/role", hnd.CreateRole)
+		v1.POST("/cms/role", hnd.CreateUserRole)
 	}
 }
 
@@ -177,6 +178,6 @@ func UserDeleterHTTPHandler(cfg config.Config, router *gin.Engine, ud userservic
 	{
 		v1.DELETE("/cms/user/:id", hnd.DeleteUsers)
 		v1.DELETE("/cms/admin/:id", hnd.DeleteAdmin)
-		v1.DELETE("/cms/role/:id", hnd.DeleteRole)
+		v1.DELETE("/cms/role/:id", hnd.DeleteUserRole)
 	}
 }

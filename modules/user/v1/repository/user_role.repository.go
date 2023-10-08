@@ -34,7 +34,9 @@ type UserRoleRepositoryUseCase interface {
 	// Update is a method for updating user role
 	Update(ctx context.Context, userRole *entity.UserRole) error
 	// Delete is a method for deleting user role
-	Delete(ctx context.Context, id uuid.UUID) error
+	DeleteUserRole(ctx context.Context, id uuid.UUID) error
+	// CreateUserRole is a method for creating user role
+	CreateUserRole(ctx context.Context, role *entity.UserRole) error
 }
 
 // NewUserRoleRepository is a constructor for UserRoleRepository
@@ -79,6 +81,18 @@ func (nc *UserRoleRepository) CreateOrUpdate(ctx context.Context, userRole *enti
 
 	if err := nc.cache.BulkRemove(fmt.Sprintf(commonCache.UserRoleByUserID, "*")); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (nc *UserRoleRepository) CreateUserRole(ctx context.Context, role *entity.UserRole) error {
+	if err := nc.db.
+		WithContext(ctx).
+		Model(&entity.UserRole{}).
+		Create(role).
+		Error; err != nil {
+		return errors.Wrap(err, "[UserRepository-CreateUser] error while creating user")
 	}
 
 	return nil
@@ -141,9 +155,9 @@ func (nc *UserRoleRepository) FindByUserID(ctx context.Context, id uuid.UUID) (*
 	if err := nc.db.
 		WithContext(ctx).
 		Model(&entity.UserRole{}).
-		Preload("Role").
-		Preload("User").
-		Where("user_id = ?", id).
+		// Preload("Role").
+		// Preload("User").
+		Where("id = ?", id).
 		First(&category).
 		Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -193,10 +207,10 @@ func (nc *UserRoleRepository) Update(ctx context.Context, userRole *entity.UserR
 }
 
 // Delete is a method for deleting user role
-func (nc *UserRoleRepository) Delete(ctx context.Context, id uuid.UUID) error {
+func (nc *UserRoleRepository) DeleteUserRole(ctx context.Context, id uuid.UUID) error {
 	if err := nc.db.WithContext(ctx).
 		Model(&entity.UserRole{}).
-		Where(`user_id = ?`, id).
+		Where(`id = ?`, id).
 		Updates(
 			map[string]interface{}{
 				"updated_at": time.Now(),

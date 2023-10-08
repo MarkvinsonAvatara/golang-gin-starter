@@ -38,7 +38,7 @@ func BuildUserHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redisP
 	uc := service.NewUserCreator(cfg, ur, urr, rr, pr, nc, cloudStorage)
 	uf := service.NewUserFinder(cfg, ur, urr, rr, pr)
 	uu := service.NewUserUpdater(cfg, ur, urr, rr, pr)
-	ud := service.NewUserDeleter(cfg, ur, rr)
+	ud := service.NewUserDeleter(cfg, ur, rr, urr)
 
 	// Handler
 	app.UserFinderHTTPHandler(cfg, router, uf)

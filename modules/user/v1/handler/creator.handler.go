@@ -11,7 +11,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	// "github.com/google/uuid"
 )
 
 // UserCreatorHandler is a handler for user finder
@@ -166,33 +166,32 @@ func (uc *UserCreatorHandler) CreatePermission(c *gin.Context) {
 }
 
 // CreateRole is a handler for creating role data
-func (uc *UserCreatorHandler) CreateRole(c *gin.Context) {
-	var request resource.CreateRoleRequest
+func (uc *UserCreatorHandler) CreateUserRole(c *gin.Context) {
+	var request resource.CreateUserRoleRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 		c.Abort()
 		return
 	}
 
-	var permissionIDs []uuid.UUID
-	if len(request.PermissionIDs) > 0 {
-		for _, permissionID := range request.PermissionIDs {
-			valid, err := uuid.Parse(permissionID)
-			if err != nil {
-				parseError := errors.ParseError(err)
-				c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-				c.Abort()
-				return
-			}
-			permissionIDs = append(permissionIDs, valid)
-		}
-	}
+	// var permissionIDs []uuid.UUID
+	// if len(request.PermissionIDs) > 0 {
+	// 	for _, permissionID := range request.PermissionIDs {
+	// 		valid, err := uuid.Parse(permissionID)
+	// 		if err != nil {
+	// 			parseError := errors.ParseError(err)
+	// 			c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+	// 			c.Abort()
+	// 			return
+	// 		}
+	// 		permissionIDs = append(permissionIDs, valid)
+	// 	}
+	// }
 
-	role, err := uc.userCreator.CreateRole(
+	role, err := uc.userCreator.CreateUserRole(
 		c,
 		request.Name,
-		permissionIDs,
-		"system",
+		"Super Admin",
 	)
 	if err != nil {
 		parseError := errors.ParseError(err)
@@ -201,7 +200,7 @@ func (uc *UserCreatorHandler) CreateRole(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewRoleResponse(role)))
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserRole(role)))
 }
 
 func (uc *UserCreatorHandler) RegisterUser(c *gin.Context) {

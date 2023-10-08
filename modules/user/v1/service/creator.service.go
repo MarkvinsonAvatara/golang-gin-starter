@@ -34,7 +34,7 @@ type UserCreatorUseCase interface {
 	// CreatePermission creates a permission
 	CreatePermission(ctx context.Context, name, label string) (*entity.Permission, error)
 	// CreateRole creates a role
-	CreateRole(ctx context.Context, name string, permissionIDs []uuid.UUID, createdBy string) (*entity.Role, error)
+	CreateUserRole(ctx context.Context, name string, createdBy string) (*entity.UserRole, error)
 }
 
 // NewUserCreator is a constructor for the User creator
@@ -118,9 +118,9 @@ func (uc *UserCreator) CreatePermission(ctx context.Context, name, label string)
 }
 
 // CreateRole creates a role
-func (uc *UserCreator) CreateRole(ctx context.Context, name string, permissionIDs []uuid.UUID, createdBy string) (*entity.Role, error) {
-	role := entity.NewRole(uuid.New(), name, createdBy)
-	if err := uc.roleRepo.Create(ctx, role, permissionIDs); err != nil {
+func (uc *UserCreator) CreateUserRole(ctx context.Context, name string,  createdBy string) (*entity.UserRole, error) {
+	role := entity.NewUserRole(uuid.New(), name, createdBy)
+	if err := uc.userRoleRepo.CreateUserRole(ctx, role,); err != nil {
 		return nil, err
 	}
 

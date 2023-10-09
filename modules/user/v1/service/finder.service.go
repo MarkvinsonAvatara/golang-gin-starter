@@ -41,7 +41,8 @@ type UserFinderUseCase interface {
 	GetUserPermissions(ctx context.Context, userID uuid.UUID) ([]*entity.Permission, error)
 	// GetUserRoles gets all user roles
 	GetUserRoles(ctx context.Context, query, order, sort string, limit, offset int) ([]*entity.UserRole, int64, error)
-
+	// GetUserRolesByIDs gets all user roles by ids
+	GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error)
 }
 
 // NewUserFinder creates a new UserFinder
@@ -162,7 +163,7 @@ func (uf *UserFinder) GetPermissions(ctx context.Context) ([]*entity.Permission,
 
 // GetUserPermissions get list permission of user
 func (uf *UserFinder) GetUserPermissions(ctx context.Context, userID uuid.UUID) ([]*entity.Permission, error) {
-	userRole, err := uf.userRoleRepo.FindByUserID(ctx, userID)
+	userRole, err := uf.userRoleRepo.GetUserRoleByID(ctx, userID)
 	if err != nil {
 		return nil, errors.ErrInternalServerError.Error()
 	}
@@ -197,4 +198,18 @@ func (uf *UserFinder) GetUserRoles(ctx context.Context, query, sort, order strin
 	}
 
 	return userroles, total, nil
+}
+
+func (uf *UserFinder) GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error) {
+	userRole, err := uf.userRoleRepo.GetUserRoleByID(ctx, id)
+
+	if err != nil {
+		return userRole, errors.ErrInternalServerError.Error()
+	}
+
+	if userRole == nil {
+		return nil, errors.ErrRecordNotFound.Error()
+	}
+
+	return userRole, nil
 }

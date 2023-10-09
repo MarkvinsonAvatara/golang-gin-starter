@@ -30,7 +30,7 @@ type UserRoleRepositoryUseCase interface {
 	// GetUser Role gets all user role
 	GetUserRoles(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.UserRole, int64, error)
 	// FindByUserID is a method for finding user role by user id
-	FindByUserID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error)
+	GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error)
 	// Update is a method for updating user role
 	Update(ctx context.Context, userRole *entity.UserRole) error
 	// Delete is a method for deleting user role
@@ -87,6 +87,7 @@ func (nc *UserRoleRepository) CreateOrUpdate(ctx context.Context, userRole *enti
 }
 
 func (nc *UserRoleRepository) CreateUserRole(ctx context.Context, role *entity.UserRole) error {
+	
 	if err := nc.db.
 		WithContext(ctx).
 		Model(&entity.UserRole{}).
@@ -139,7 +140,7 @@ func (nc *UserRoleRepository) GetUserRoles(ctx context.Context, query, sort, ord
 }
 
 // FindByUserID is a method for finding user role by user id
-func (nc *UserRoleRepository) FindByUserID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error) {
+func (nc *UserRoleRepository) GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error) {
 	category := &entity.UserRole{}
 
 	bytes, _ := nc.cache.Get(fmt.Sprintf(
@@ -155,8 +156,6 @@ func (nc *UserRoleRepository) FindByUserID(ctx context.Context, id uuid.UUID) (*
 	if err := nc.db.
 		WithContext(ctx).
 		Model(&entity.UserRole{}).
-		// Preload("Role").
-		// Preload("User").
 		Where("id = ?", id).
 		First(&category).
 		Error; err != nil {

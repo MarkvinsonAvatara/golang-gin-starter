@@ -25,12 +25,14 @@ type GetUserRoleByID struct {
 }
 
 type CreateUserRoleRequest struct {
-	Name string `form:"name" json:"name" binding:"required"`
+	Name        string `form:"name" json:"name" binding:"required"`
+	Description string `form:"description" json:"description" binding:"required"`
 }
 
 type UpdateUserRoleRequest struct {
-	ID   string `form:"id" json:"id"`
-	Name string `form:"name" json:"name"`
+	ID          string `form:"id" json:"id"`
+	Name        string `form:"name" json:"name"`
+	Description string `form:"description" json:"description"`
 }
 
 type DeleteUserRoleRequest struct {
@@ -38,10 +40,11 @@ type DeleteUserRoleRequest struct {
 }
 
 type UserRole struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
+	Description string `json:"description"`
 }
 
 func NewUserRole(user *entity.UserRole) *UserRole {
@@ -56,10 +59,11 @@ func NewUserRole(user *entity.UserRole) *UserRole {
 	// }
 
 	return &UserRole{
-		ID:        user.ID.String(),
-		Name:      user.Name,
-		CreatedAt: user.CreatedAt.Format(timeFormat),
-		UpdatedAt: user.UpdatedAt.Format(timeFormat),
+		ID:          user.ID.String(),
+		Name:        user.Name,
+		Description: user.Description,
+		CreatedAt:   user.CreatedAt.Format(timeFormat),
+		UpdatedAt:   user.UpdatedAt.Format(timeFormat),
 	}
 }
 

@@ -117,7 +117,7 @@ func UserFinderHTTPHandler(cfg config.Config, router *gin.Engine, cf userservice
 		v1.GET("/cms/user/list", hnd.GetUsers)
 		v1.GET("/cms/user/detail/:id", hnd.GetUserByID)
 		v1.GET("/cms/roles", hnd.GetUserRoles)
-		v1.GET("/cms/role/:id", hnd.GetUserRoles)
+		v1.GET("/cms/role/:id", hnd.GetUserRoleByID)
 		v1.GET("/cms/permission", hnd.GetPermissions)
 		v1.GET("/cms/user/permission", hnd.GetUserPermissions)
 	}
@@ -160,7 +160,7 @@ func UserUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, uu userservic
 
 	v1.Use(middleware.Admin(cfg))
 	{
-		v1.PUT("/user/profile/:id", hnd.UpdateUser)
+		v1.PUT("/cms/profile/:id", hnd.UpdateUser)
 		v1.PUT("/cms/admin/:id", hnd.UpdateAdmin)
 		v1.PUT("/cms/user/activate/:id", hnd.ActivateDeactivateUser)
 		v1.PUT("/cms/role/:id", hnd.UpdateRole)

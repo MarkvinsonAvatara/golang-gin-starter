@@ -5,6 +5,8 @@ import (
 	"unicode"
 )
 
+
+
 func IsValidEmail(email string) bool {
 	// Ekspresi reguler untuk memeriksa format email yang umum
 	// Perhatikan bahwa ekspresi ini hanya memeriksa format umum, bukan validitas email sebenarnya.

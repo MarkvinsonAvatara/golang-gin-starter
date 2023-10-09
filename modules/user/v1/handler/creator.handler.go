@@ -9,6 +9,7 @@ import (
 	"gin-starter/utils"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	// "github.com/google/uuid"
@@ -174,6 +175,12 @@ func (uc *UserCreatorHandler) CreateUserRole(c *gin.Context) {
 		return
 	}
 
+	if strings.ToLower(request.Name) == "super admin" {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, "super admin hanya boleh satu!"))
+		c.Abort()
+		return
+	}
+
 	// var permissionIDs []uuid.UUID
 	// if len(request.PermissionIDs) > 0 {
 	// 	for _, permissionID := range request.PermissionIDs {
@@ -191,6 +198,7 @@ func (uc *UserCreatorHandler) CreateUserRole(c *gin.Context) {
 	role, err := uc.userCreator.CreateUserRole(
 		c,
 		request.Name,
+		request.Description,
 		"Super Admin",
 	)
 	if err != nil {

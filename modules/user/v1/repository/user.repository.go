@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"gin-starter/common/constant"
 	"gin-starter/entity"
-	"log"
+	// "log"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
+	// "gorm.io/gorm/clause"
 )
 
 // UserRepository is a repository for user
@@ -27,8 +27,8 @@ type UserRepositoryUseCase interface {
 	GetUserByID(ctx context.Context, id uuid.UUID) (*entity.User, error)
 	// GetUserByForgotPasswordToken is a function to get user by forgot password token
 	GetUserByForgotPasswordToken(ctx context.Context, token string) (*entity.User, error)
-	// Update is a function to update user
-	Update(ctx context.Context, user *entity.User) error
+	// // Update is a function to update user
+	// Update(ctx context.Context, user *entity.User) error
 	// ChangePassword is a function to change password
 	ChangePassword(ctx context.Context, user *entity.User, newPassword string) error
 	// UpdateOTP is a function to update otp
@@ -47,7 +47,6 @@ type UserRepositoryUseCase interface {
 	DeleteAdmin(ctx context.Context, id uuid.UUID) error
 	// DeleteUsers is a function to delete user
 	DeleteUsers(ctx context.Context, id uuid.UUID) error
-
 }
 
 // NewUserRepository creates a new UserRepository
@@ -140,29 +139,29 @@ func (ur *UserRepository) UpdateOTP(ctx context.Context, user *entity.User, otp 
 }
 
 // Update is a function to update user
-func (ur *UserRepository) Update(ctx context.Context, user *entity.User) error {
-	oldTime := user.UpdatedAt
-	user.UpdatedAt = time.Now()
-	if err := ur.db.
-		WithContext(ctx).
-		Transaction(func(tx *gorm.DB) error {
-			sourceModel := new(entity.User)
-			if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Find(&sourceModel, user.ID).Error; err != nil {
-				log.Println("[GamPTKRepository - Update]", err)
-				return err
-			}
-			if err := tx.Model(&entity.User{}).
-				Where(`id`, user.ID).
-				UpdateColumns(sourceModel.MapUpdateFrom(user)).Error; err != nil {
-				log.Println("[GamPTKRepository - Update]", err)
-				return err
-			}
-			return nil
-		}); err != nil {
-		user.UpdatedAt = oldTime
-	}
-	return nil
-}
+// func (ur *UserRepository) Update(ctx context.Context, user *entity.User) error {
+// 	oldTime := user.UpdatedAt
+// 	user.UpdatedAt = time.Now()
+// 	if err := ur.db.
+// 		WithContext(ctx).
+// 		Transaction(func(tx *gorm.DB) error {
+// 			sourceModel := new(entity.User)
+// 			if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Find(&sourceModel, user.ID).Error; err != nil {
+// 				log.Println("[GamPTKRepository - Update]", err)
+// 				return err
+// 			}
+// 			if err := tx.Model(&entity.User{}).
+// 				Where(`id`, user.ID).
+// 				UpdateColumns(sourceModel.MapUpdateFrom(user)).Error; err != nil {
+// 				log.Println("[GamPTKRepository - Update]", err)
+// 				return err
+// 			}
+// 			return nil
+// 		}); err != nil {
+// 		user.UpdatedAt = oldTime
+// 	}
+// 	return nil
+// }
 
 // ChangePassword is a function to change password
 func (ur *UserRepository) ChangePassword(ctx context.Context, user *entity.User, newPassword string) error {
@@ -277,26 +276,13 @@ func (ur *UserRepository) GetAdminUsers(ctx context.Context, query, sort, order 
 
 // UpdateUser is a function to update user
 func (ur *UserRepository) UpdateUser(ctx context.Context, user *entity.User) error {
-	oldTime := user.UpdatedAt
-	user.UpdatedAt = time.Now()
-	if err := ur.db.
-		WithContext(ctx).
-		Transaction(func(tx *gorm.DB) error {
-			sourceModel := new(entity.User)
-			if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Find(&sourceModel, user.ID).Error; err != nil {
-				log.Println("[UserRepository-UpdateUser]", err)
-				return err
-			}
-			if err := tx.Model(&entity.User{}).
-				Where(`id`, user.ID).
-				UpdateColumns(sourceModel.MapUpdateFrom(user)).Error; err != nil {
-				log.Println("[UserRepository-UpdateUser]", err)
-				return err
-			}
-			return nil
-		}); err != nil {
-		user.UpdatedAt = oldTime
+	if err := ur.db.WithContext(ctx).
+		Model(&entity.User{}).
+		Where(`id = ?`, user.ID).
+		Updates(user).Error; err != nil {
+		return errors.Wrap(err, "[UserRepository-Update] error when updating user data")
 	}
+
 	return nil
 }
 

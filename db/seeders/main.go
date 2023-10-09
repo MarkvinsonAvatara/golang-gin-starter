@@ -74,6 +74,7 @@ func createAdminUser(db *gorm.DB) {
 		Create(entity.NewUserRole(
 			roleID,
 			"Super Admin",
+			"Have All Access",
 			"system",
 		)).
 		Error; err != nil {

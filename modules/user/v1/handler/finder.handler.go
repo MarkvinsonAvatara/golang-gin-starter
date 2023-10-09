@@ -317,3 +317,33 @@ func (uf *UserFinderHandler)GetUserRoles(c *gin.Context){
 		Total: total,
 	}))
 }
+
+
+func (uf *UserFinderHandler) GetUserRoleByID(c *gin.Context) {
+	var request resource.GetUserRoleByID
+
+	if err := c.ShouldBindUri(&request); err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+
+	roleID, err := uuid.Parse(request.ID)
+
+	if err != nil {
+		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
+		c.Abort()
+		return
+	}
+
+	userRole, err := uf.userFinder.GetUserRoleByID(c, roleID)
+
+	if err != nil {
+		parseError := errors.ParseError(err)
+		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+		c.Abort()
+		return
+	}
+
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserRole(userRole)))
+}

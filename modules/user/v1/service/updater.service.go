@@ -38,7 +38,7 @@ type UserUpdaterUseCase interface {
 	// ForgotPassword is a function that resets the password
 	ForgotPassword(ctx context.Context, userID uuid.UUID, newPassword string) error
 	// Update is a function that updates the user
-	Update(ctx context.Context, user *entity.User) error
+	UpdateUser(ctx context.Context, user *entity.User) error
 	// ActivateDeactivateUser activates or deactivates a user.
 	ActivateDeactivateUser(ctx context.Context, id uuid.UUID) error
 	// UpdateAdmin updates an admin.
@@ -167,7 +167,7 @@ func (uu *UserUpdater) ForgotPasswordRequest(ctx context.Context, email string) 
 
 	// user.ForgotPasswordToken = utils.StringToNullString(utils.RandStringBytes(constant.Thirty))
 
-	if err := uu.userRepo.Update(ctx, user); err != nil {
+	if err := uu.userRepo.UpdateUser(ctx, user); err != nil {
 		return errors.ErrInternalServerError.Error()
 	}
 
@@ -230,8 +230,8 @@ func (uu *UserUpdater) ForgotPassword(ctx context.Context, userID uuid.UUID, new
 }
 
 // Update is a function that updates the user
-func (uu *UserUpdater) Update(ctx context.Context, user *entity.User) error {
-	if err := uu.userRepo.Update(ctx, user); err != nil {
+func (uu *UserUpdater) UpdateUser(ctx context.Context, user *entity.User) error {
+	if err := uu.userRepo.UpdateUser(ctx, user); err != nil {
 		return errors.ErrInternalServerError.Error()
 	}
 
@@ -269,7 +269,7 @@ func (uu *UserUpdater) UpdateAdmin(ctx context.Context, user *entity.User, roleI
 		return errors.ErrInternalServerError.Error()
 	}
 
-	userRole, err := uu.userRoleRepo.FindByUserID(ctx, user.ID)
+	userRole, err := uu.userRoleRepo.GetUserRoleByID(ctx, user.ID)
 
 	if err != nil {
 		return errors.ErrInternalServerError.Error()

@@ -34,7 +34,7 @@ type UserCreatorUseCase interface {
 	// CreatePermission creates a permission
 	CreatePermission(ctx context.Context, name, label string) (*entity.Permission, error)
 	// CreateRole creates a role
-	CreateUserRole(ctx context.Context, name string, createdBy string) (*entity.UserRole, error)
+	CreateUserRole(ctx context.Context, name string, description string,createdBy string) (*entity.UserRole, error)
 }
 
 // NewUserCreator is a constructor for the User creator
@@ -66,7 +66,7 @@ func (uc *UserCreator) CreateUser(ctx context.Context, name string, email string
 		email,
 		password,
 		utils.TimeToNullTime(dob),
-		"system",
+		"",
 	)
 
 	if err := uc.userRepo.CreateUser(ctx, user); err != nil {
@@ -85,7 +85,7 @@ func (uc *UserCreator) CreateAdmin(ctx context.Context, name string, email strin
 		email,
 		password,
 		utils.TimeToNullTime(dob),
-		"system",
+		"Super Admin",
 	)
 
 	if err := uc.userRepo.CreateUser(ctx, user); err != nil {
@@ -118,8 +118,8 @@ func (uc *UserCreator) CreatePermission(ctx context.Context, name, label string)
 }
 
 // CreateRole creates a role
-func (uc *UserCreator) CreateUserRole(ctx context.Context, name string,  createdBy string) (*entity.UserRole, error) {
-	role := entity.NewUserRole(uuid.New(), name, createdBy)
+func (uc *UserCreator) CreateUserRole(ctx context.Context, name string,description string,  createdBy string) (*entity.UserRole, error) {
+	role := entity.NewUserRole(uuid.New(), name, description, createdBy)
 	if err := uc.userRoleRepo.CreateUserRole(ctx, role,); err != nil {
 		return nil, err
 	}

@@ -187,7 +187,7 @@ func (uu *UserUpdaterHandler) ForgotPassword(c *gin.Context) {
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", nil))
 }
 
-// UpdateUser is a handler for updating user
+/// UpdateUser is a handler for updating user
 func (uu *UserUpdaterHandler) UpdateUser(c *gin.Context) {
 	var request resource.UpdateUserRequest
 
@@ -197,16 +197,23 @@ func (uu *UserUpdaterHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	// _, err := uu.userFinder.GetUserByID(c, middleware.UserID)
+	userIDstr:= c.Param("id")
+	userID, err := uuid.Parse(userIDstr)
+	if err != nil {
+		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
+		c.Abort()
+		return
+	}
 
-	
+	_, err = uu.userFinder.GetUserByID(c, userID)
 
-	// if err != nil {
-	// 	parseError := errors.ParseError(err)
-	// 	c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-	// 	c.Abort()
-	// 	return
-	// }
+
+	if err != nil {
+		parseError := errors.ParseError(err)
+		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+		c.Abort()
+		return
+	}
 
 	// imagePath, err := uu.cloudStorage.Upload(request.Photo, "users/user/profile")
 
@@ -231,23 +238,22 @@ func (uu *UserUpdaterHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	user := entity.NewUser(
-		middleware.UserID,
+	user := entity.UpdateUser(
+		userID,
 		request.Name,
 		request.Email,
-		request.Name,
 		utils.TimeToNullTime(dob),
-		"system",
+		"System",
 	)
 
-	if err := uu.userUpdater.Update(c, user); err != nil {
+	if err := uu.userUpdater.UpdateUser(c, user); err != nil {
 		parseError := errors.ParseError(err)
 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
 		c.Abort()
 		return
 	}
 
-	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", "Update data berhasil"))
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", nil))
 }
 
 // ActivateDeactivateUser is a handler for activating and deactivating user
@@ -414,3 +420,22 @@ func (uu *UserUpdaterHandler) UpdatePermission(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", nil))
 }
+
+func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context){
+	var request resource.UpdateUserRoleRequest
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+	// roleID, err := uuid.Parse(c.Param("id"))
+	// if err != nil {
+	// 	c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
+	// 	c.Abort()
+	// 	return
+	// }
+	
+
+}
+
+

@@ -14,6 +14,7 @@ const (
 type UserRole struct {
 	ID   uuid.UUID `json:"id"`
 	Name string    `json:"name"`
+	Description string    `json:"description"`
 	Auditable
 }
 
@@ -26,11 +27,13 @@ func (model *UserRole) TableName() string {
 func NewUserRole(
 	id uuid.UUID,
 	name string,
+	description string,
 	createdBy string,
 ) *UserRole {
 	return &UserRole{
 		ID:        id,
 		Name:      name,
+		Description: description,
 		Auditable: NewAuditable(createdBy),
 	}
 }

@@ -163,7 +163,7 @@ func UserUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, uu userservic
 		v1.PUT("/cms/profile/:id", hnd.UpdateUser)
 		v1.PUT("/cms/admin/:id", hnd.UpdateAdmin)
 		v1.PUT("/cms/user/activate/:id", hnd.ActivateDeactivateUser)
-		v1.PUT("/cms/role/:id", hnd.UpdateRole)
+		v1.PUT("/cms/role/:id", hnd.UpdateUserRole)
 		v1.PUT("/cms/permission/:id", hnd.UpdatePermission)
 	}
 }

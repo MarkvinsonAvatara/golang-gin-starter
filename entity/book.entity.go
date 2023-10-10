@@ -2,13 +2,14 @@ package entity
 
 import (
 	"github.com/google/uuid"
+	"time"
 )
 
 const (
-	bukuTableName = "public.buku"
+	bookTableName = "public.buku"
 )
 
-type Buku struct {
+type Book struct {
 	ID          uuid.UUID `json:"id"`
 	ISBN        int64     `json:"isbn"`
 	Title       string    `json:"title"`
@@ -18,8 +19,82 @@ type Buku struct {
 	Edition     int64     `json:"edition"`
 	Year        int64     `json:"year"`
 	Description string    `json:"description"`
+	Auditable
 }
 
-func (u *Buku) TableName() string {
-	return bukuTableName
+func (u *Book) TableName() string {
+	return bookTableName
+}
+
+func NewBook(
+	id uuid.UUID,
+	isbn int64,
+	title string,
+	author string,
+	genre string,
+	publisher string,
+	edition int64,
+	description string,
+	createdBy string,
+) *Book {
+	return &Book{
+		ID:          id,
+		ISBN:        isbn,
+		Title:       title,
+		Author:      author,
+		Genre:       genre,
+		Publisher:   publisher,
+		Edition:     edition,
+		Description: description,
+		Auditable:   NewAuditable(createdBy),
+	}
+}
+
+// MapUpdateFrom mapping from model
+func (model *Book) MapUpdateFrom(from *Book) *map[string]interface{} {
+	if from == nil {
+		return &map[string]interface{}{
+			"title":      model.Title,
+			"isbn":       model.ISBN,
+			"author":     model.Author,
+			"genre":      model.Genre,
+			"publisher":  model.Publisher,
+			"edition":    model.Edition,
+			"description":       model.Description,
+			"updated_at": model.UpdatedAt,
+		}
+	}
+
+	mapped := make(map[string]interface{})
+
+	if model.ISBN != from.ISBN {
+		mapped["isbn"] = from.ISBN
+	}
+
+	if model.Title != from.Title {
+		mapped["title"] = from.Title
+	}
+
+	if model.Author != from.Author {
+		mapped["author"] = from.Author
+	}
+
+	if model.Genre != from.Genre {
+		mapped["genre"] = from.Genre
+	}
+
+	if model.Publisher != from.Publisher {
+		mapped["publisher"] = from.Publisher
+	}
+
+	if model.Edition != from.Edition {
+		mapped["edition"] = from.Edition
+	}
+
+	if model.Description != from.Description {
+		mapped["description"] = from.Description
+	}
+
+	mapped["updated_at"] = time.Now()
+	return &mapped
 }

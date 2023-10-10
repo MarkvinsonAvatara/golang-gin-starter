@@ -47,6 +47,9 @@ type UserUpdaterUseCase interface {
 	UpdateRole(ctx context.Context, id uuid.UUID, name string, permissionIDs []uuid.UUID) error
 	// UpdatePermission updates a permission
 	UpdatePermission(ctx context.Context, id uuid.UUID, name, label string) error
+	// UpdateUserRoles updates user roles
+	UpdateUserRoles(ctx context.Context, userRole *entity.UserRole) error
+
 }
 
 // NewUserUpdater is a function that creates a new UserUpdater
@@ -262,6 +265,15 @@ func (uu *UserUpdater) ActivateDeactivateUser(ctx context.Context, id uuid.UUID)
 
 	return nil
 }
+
+//UpdateUserRoles updates user roles
+func (uu *UserUpdater) UpdateUserRoles(ctx context.Context, userRole *entity.UserRole) error {
+	if err := uu.userRoleRepo.UpdateUserRole(ctx, userRole); err != nil {
+		return errors.ErrInternalServerError.Error()
+	}
+	return nil
+}
+
 
 // UpdateAdmin updates an admin.
 func (uu *UserUpdater) UpdateAdmin(ctx context.Context, user *entity.User, roleID uuid.UUID) error {

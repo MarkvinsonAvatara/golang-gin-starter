@@ -428,13 +428,35 @@ func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context){
 		c.Abort()
 		return
 	}
-	// roleID, err := uuid.Parse(c.Param("id"))
-	// if err != nil {
-	// 	c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
-	// 	c.Abort()
-	// 	return
-	// }
+	userRoleIDstr:= c.Param("id")
+	userRoleID, err := uuid.Parse(userRoleIDstr)
+	if err != nil {
+		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
+		c.Abort()
+		return
+	}
+
+	_, err = uu.userFinder.GetUserRoleByID(c, userRoleID)
 	
+	if err != nil {
+		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
+		c.Abort()
+		return
+	}
+	userRole := entity.NewUserRole(
+		userRoleID,
+		request.Name,
+		request.Description,
+		"Super Admin",
+	)
+
+	if err := uu.userUpdater.UpdateUserRoles(c, userRole); err != nil {
+		parseError := errors.ParseError(err)
+		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))	
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "Update Success", nil))
 
 }
 

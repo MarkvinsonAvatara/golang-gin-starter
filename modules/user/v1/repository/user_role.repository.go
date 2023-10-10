@@ -31,6 +31,8 @@ type UserRoleRepositoryUseCase interface {
 	GetUserRoles(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.UserRole, int64, error)
 	// FindByUserID is a method for finding user role by user id
 	GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error)
+	// UpdateUseRole is a method for updating user role
+	UpdateUserRole(ctx context.Context, UserRole *entity.UserRole) error
 	// Update is a method for updating user role
 	Update(ctx context.Context, userRole *entity.UserRole) error
 	// Delete is a method for deleting user role
@@ -87,7 +89,7 @@ func (nc *UserRoleRepository) CreateOrUpdate(ctx context.Context, userRole *enti
 }
 
 func (nc *UserRoleRepository) CreateUserRole(ctx context.Context, role *entity.UserRole) error {
-	
+
 	if err := nc.db.
 		WithContext(ctx).
 		Model(&entity.UserRole{}).
@@ -171,6 +173,16 @@ func (nc *UserRoleRepository) GetUserRoleByID(ctx context.Context, id uuid.UUID)
 	}
 
 	return category, nil
+}
+
+func (nc *UserRoleRepository) UpdateUserRole(ctx context.Context, UserRole *entity.UserRole) error {
+	if err := nc.db.WithContext(ctx).
+		Model(&entity.UserRole{}).
+		Where(`id = ?`, UserRole.ID).
+		Updates(UserRole).Error; err != nil {
+		return errors.Wrap(err, "[UserRepository-DeactivateUser] error when updating user data")
+	}
+	return nil
 }
 
 // Update is a method for updating user role

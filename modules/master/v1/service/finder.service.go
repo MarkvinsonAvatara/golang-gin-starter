@@ -6,15 +6,17 @@ import (
 	"gin-starter/config"
 	"gin-starter/entity"
 	"gin-starter/modules/master/v1/repository"
+	"github.com/google/uuid"
 )
 
 // MasterFinder is a service for master
 type MasterFinder struct {
-	cfg          config.Config
-	provinceRepo repository.ProvinceRepositoryUseCase
-	regencyRepo  repository.RegencyRepositoryUseCase
-	districtRepo repository.DistrictRepositoryUseCase
-	villageRepo  repository.VillageRepositoryUseCase
+	cfg            config.Config
+	provinceRepo   repository.ProvinceRepositoryUseCase
+	regencyRepo    repository.RegencyRepositoryUseCase
+	districtRepo   repository.DistrictRepositoryUseCase
+	villageRepo    repository.VillageRepositoryUseCase
+	bookRepository repository.BookRepositoryUseCase
 }
 
 // MasterFinderUseCase is a usecase for master
@@ -27,6 +29,10 @@ type MasterFinderUseCase interface {
 	GetDistricts(ctx context.Context, id int64) ([]*entity.District, error)
 	// GetVillages returns all villages
 	GetVillages(ctx context.Context, id int64) ([]*entity.Village, error)
+	// GetBooks returns all books
+	GetBooks(ctx context.Context) ([]*entity.Book, error)
+	// GetBookByID returns a book by its ID
+	GetBookByID(ctx context.Context, id uuid.UUID) (*entity.Book, error)
 }
 
 // NewMasterFinder creates a new MasterFinder
@@ -36,19 +42,22 @@ func NewMasterFinder(
 	regencyRepo repository.RegencyRepositoryUseCase,
 	districtRepo repository.DistrictRepositoryUseCase,
 	villageRepo repository.VillageRepositoryUseCase,
+	bookRepository repository.BookRepositoryUseCase,
+
 ) *MasterFinder {
 	return &MasterFinder{
-		cfg:          cfg,
-		provinceRepo: provinceRepo,
-		regencyRepo:  regencyRepo,
-		districtRepo: districtRepo,
-		villageRepo:  villageRepo,
+		cfg:            cfg,
+		provinceRepo:   provinceRepo,
+		regencyRepo:    regencyRepo,
+		districtRepo:   districtRepo,
+		villageRepo:    villageRepo,
+		bookRepository: bookRepository,
 	}
 }
 
 // GetProvinces returns all provinces
-func (s *MasterFinder) GetProvinces(ctx context.Context) ([]*entity.Province, error) {
-	provinces, err := s.provinceRepo.FindAll(ctx)
+func (masterFinder *MasterFinder) GetProvinces(ctx context.Context) ([]*entity.Province, error) {
+	provinces, err := masterFinder.provinceRepo.FindAll(ctx)
 
 	if err != nil {
 		return nil, errors.ErrInternalServerError.Error()
@@ -58,8 +67,8 @@ func (s *MasterFinder) GetProvinces(ctx context.Context) ([]*entity.Province, er
 }
 
 // GetRegencies returns all regencies
-func (s *MasterFinder) GetRegencies(ctx context.Context, id int64) ([]*entity.Regency, error) {
-	regencies, err := s.regencyRepo.FindByProvinceID(ctx, id)
+func (masterFinder *MasterFinder) GetRegencies(ctx context.Context, id int64) ([]*entity.Regency, error) {
+	regencies, err := masterFinder.regencyRepo.FindByProvinceID(ctx, id)
 
 	if err != nil {
 		return nil, errors.ErrInternalServerError.Error()
@@ -69,8 +78,8 @@ func (s *MasterFinder) GetRegencies(ctx context.Context, id int64) ([]*entity.Re
 }
 
 // GetDistricts returns all districts
-func (s *MasterFinder) GetDistricts(ctx context.Context, id int64) ([]*entity.District, error) {
-	districts, err := s.districtRepo.FindByRegencyID(ctx, id)
+func (masterFinder *MasterFinder) GetDistricts(ctx context.Context, id int64) ([]*entity.District, error) {
+	districts, err := masterFinder.districtRepo.FindByRegencyID(ctx, id)
 
 	if err != nil {
 		return nil, errors.ErrInternalServerError.Error()
@@ -80,8 +89,8 @@ func (s *MasterFinder) GetDistricts(ctx context.Context, id int64) ([]*entity.Di
 }
 
 // GetVillages returns all villages
-func (s *MasterFinder) GetVillages(ctx context.Context, id int64) ([]*entity.Village, error) {
-	villages, err := s.villageRepo.FindByDistrictID(ctx, id)
+func (masterFinder *MasterFinder) GetVillages(ctx context.Context, id int64) ([]*entity.Village, error) {
+	villages, err := masterFinder.villageRepo.FindByDistrictID(ctx, id)
 
 	if err != nil {
 		return nil, errors.ErrInternalServerError.Error()
@@ -89,3 +98,25 @@ func (s *MasterFinder) GetVillages(ctx context.Context, id int64) ([]*entity.Vil
 
 	return villages, nil
 }
+
+// GetBooks returns all books
+func (masterFinder *MasterFinder) GetBooks(ctx context.Context) ([]*entity.Book, error) {
+	books, err := masterFinder.bookRepository.FindAll(ctx)
+
+	if err != nil {
+		return nil, errors.ErrInternalServerError.Error()
+	}
+
+	return books, nil
+}
+
+func (masterFinder *MasterFinder) GetBookByID(ctx context.Context, id uuid.UUID) (*entity.Book, error) {
+	book, err := masterFinder.bookRepository.GetBookByID(ctx, id)
+
+	if err != nil {
+		return nil, errors.ErrInternalServerError.Error()
+	}
+
+	return book, nil
+}
+

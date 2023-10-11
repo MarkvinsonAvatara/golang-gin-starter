@@ -22,7 +22,9 @@ var (
 	// ErrWrongPasswordConfirmation define error if password confirmation is wrong
 	ErrWrongPasswordConfirmation = NewError(http.StatusBadRequest, "Konfirmasi password kamu tidak sesuai.")
 	// ErrOTPMismatch represents error when otp is mismatched.
-	ErrOTPMismatch = NewError(http.StatusBadRequest, "Kode OTP Salah")
+	ErrOTPMismatch    = NewError(http.StatusBadRequest, "Kode OTP Salah")
+	ErrDuplicateEntry = NewError(http.StatusBadRequest, "Data sudah ada")
+	ErrEmptyData      = NewError(http.StatusBadRequest, "Data mandatory kosong")
 )
 
 // Error represents a data structure for error.

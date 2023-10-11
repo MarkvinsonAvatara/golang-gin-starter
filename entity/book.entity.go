@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	bookTableName = "public.buku"
+	bookTableName = "public.book"
 )
 
 type Book struct {
@@ -17,7 +17,6 @@ type Book struct {
 	Author      string    `json:"author"`
 	Publisher   string    `json:"publisher"`
 	Edition     int64     `json:"edition"`
-	Year        int64     `json:"year"`
 	Description string    `json:"description"`
 	Auditable
 }
@@ -54,14 +53,14 @@ func NewBook(
 func (model *Book) MapUpdateFrom(from *Book) *map[string]interface{} {
 	if from == nil {
 		return &map[string]interface{}{
-			"title":      model.Title,
-			"isbn":       model.ISBN,
-			"author":     model.Author,
-			"genre":      model.Genre,
-			"publisher":  model.Publisher,
-			"edition":    model.Edition,
-			"description":       model.Description,
-			"updated_at": model.UpdatedAt,
+			"title":       model.Title,
+			"isbn":        model.ISBN,
+			"author":      model.Author,
+			"genre":       model.Genre,
+			"publisher":   model.Publisher,
+			"edition":     model.Edition,
+			"description": model.Description,
+			"updated_at":  model.UpdatedAt,
 		}
 	}
 

@@ -5,8 +5,10 @@ import (
 	"gin-starter/modules/master/v1/service"
 	"gin-starter/resource"
 	"gin-starter/response"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // MasterFinderHandler is a handler for master finder
@@ -126,4 +128,51 @@ func (mf *MasterFinderHandler) GetVillagesByDistrictID(c *gin.Context) {
 		List:  res,
 		Total: int64(len(res)),
 	}))
+}
+
+// GetBooks is a handler for getting all books
+func (mf *MasterFinderHandler) GetBooks(c *gin.Context) {
+	books, err := mf.masterFinder.GetBooks(c.Request.Context())
+	if err != nil {
+		c.JSON(errors.ErrInternalServerError.Code, response.ErrorAPIResponse(errors.ErrInternalServerError.Code, err.Error()))
+		c.Abort()
+		return
+	}
+
+	res := make([]*resource.BookDetail, 0)
+
+	for _, book := range books {
+		res = append(res, resource.NewBookResponse(book))
+	}
+
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", &resource.GetBookListResponse{
+		List:  res,
+		Total: int64(len(res)),
+	}))
+}
+
+// GetBookByID is a handler for getting book by id
+func (mf *MasterFinderHandler) GetBookByID(c *gin.Context) {
+	var request resource.GetBookByIDRequest
+	if err := c.ShouldBindUri(&request); err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+
+	reqID, err := uuid.Parse(request.ID)
+	if err != nil {
+		c.JSON(errors.ErrInternalServerError.Code, response.ErrorAPIResponse(errors.ErrInternalServerError.Code, err.Error()))
+		c.Abort()
+		return
+	}
+
+	book, err := mf.masterFinder.GetBookByID(c, reqID)
+	if err != nil {
+		c.JSON(errors.ErrInternalServerError.Code, response.ErrorAPIResponse(errors.ErrInternalServerError.Code, err.Error()))
+		c.Abort()
+		return
+	}
+
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewBookResponse(book)))
 }

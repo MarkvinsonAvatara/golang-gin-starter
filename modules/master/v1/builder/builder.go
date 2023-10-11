@@ -21,14 +21,19 @@ func BuildMasterHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redi
 	dr := repository.NewDistrictRepository(db)
 	vr := repository.NewVillageRepository(db)
 	rr := repository.NewRegencyRepository(db)
+	bookRepository:=repository.NewBookRepository(db)
 	cloudStorage := gcs.NewGoogleCloudStorage(cfg)
 	// cloudStorage := aws.NewS3Bucket(cfg, awsSession)
 
 	// Service
-	mc := service.NewMasterCreator(cfg, cloudStorage)
-	mf := service.NewMasterFinder(cfg, pr, rr, dr, vr)
+	mc := service.NewMasterCreator(cfg, bookRepository, cloudStorage)
+	masterDeleter := service.NewMasterDeleter(cfg, bookRepository, cloudStorage)
+	mf := service.NewMasterFinder(cfg, pr, rr, dr, vr, bookRepository)
+	masterUpdater := service.NewMasterUpdater(cfg, bookRepository, cloudStorage)
 
 	// Handler
 	app.MasterFinderHTTPHandler(cfg, router, mf)
 	app.MasterCreatorHTTPHandler(cfg, router, mc, cloudStorage)
+	app.MasterUpdaterHTTPHandler(cfg, router, masterUpdater, mf, cloudStorage)
+	app.MasterDeleterHTTPHandler(cfg, router, masterDeleter, cloudStorage)
 }

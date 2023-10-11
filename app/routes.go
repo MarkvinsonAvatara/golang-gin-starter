@@ -84,16 +84,42 @@ func MasterFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterser
 		v1.GET("/regencies/:province_id", hnd.GetRegenciesByProvinceID)
 		v1.GET("/districts/:regency_id", hnd.GetDistrictsByRegencyID)
 		v1.GET("/villages/:district_id", hnd.GetVillagesByDistrictID)
+		v1.GET("/books", hnd.GetBooks)
+		v1.GET("/book/:id", hnd.GetBookByID)
 	}
 }
 
 // MasterCreatorHTTPHandler is a handler for master APIs
 func MasterCreatorHTTPHandler(cfg config.Config, router *gin.Engine, mc masterservicev1.MasterCreatorUseCase, cloudStorage interfaces.CloudStorageUseCase) {
-	_ = masterhandlerv1.NewMasterCreatorHandler(mc, cloudStorage)
+	hnd := masterhandlerv1.NewMasterCreatorHandler(mc, cloudStorage)
 	v1 := router.Group("/v1")
 
-	v1.Use(middleware.Auth(cfg))
 	v1.Use(middleware.Admin(cfg))
+	{
+		v1.POST("/book", hnd.CreateBook)
+	}
+}
+
+// MasterDeleterHTTPHandler is a handler for master APIs
+func MasterDeleterHTTPHandler(cfg config.Config, router *gin.Engine, md masterservicev1.MasterDeleterUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+	hnd := masterhandlerv1.NewMasterDeleterHandler(md, cloudStorage)
+	v1 := router.Group("/v1")
+
+	v1.Use(middleware.Admin(cfg))
+	{
+		v1.DELETE("/book/:id", hnd.DeleteBook)
+	}
+}
+
+// MasterUpdaterHTTPHandler is a handler for master APIs
+func MasterUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, mu masterservicev1.MasterUpdaterUseCase, masterFinder masterservicev1.MasterFinderUseCase ,cloudStorage interfaces.CloudStorageUseCase) {
+	hnd := masterhandlerv1.NewMasterUpdaterHandler(mu, masterFinder,cloudStorage)
+	v1 := router.Group("/v1")
+
+	v1.Use(middleware.Admin(cfg))
+	{
+		v1.PUT("/book/:id", hnd.UpdateBook)
+	}
 }
 
 // UserFinderHTTPHandler is a handler for user APIs
@@ -128,7 +154,7 @@ func UserCreatorHTTPHandler(cfg config.Config, router *gin.Engine, uc userservic
 	hnd := userhandlerv1.NewUserCreatorHandler(uc, cloudStorage)
 	v1 := router.Group("/v1")
 	{
-	v1.POST("/user/register", hnd.RegisterUser)
+		v1.POST("/user/register", hnd.RegisterUser)
 	}
 	v1.Use(middleware.Auth(cfg))
 	v1.Use(middleware.Admin(cfg))

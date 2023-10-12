@@ -35,12 +35,11 @@ func NewMasterUpdaterHandler(
 
 func (masterUpdater *MasterUpdaterHandler) UpdateBook(c *gin.Context) {
 	var request resource.UpdateBookRequest
-	if err := c.ShouldBindUri(&request); err != nil {
+	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 		c.Abort()
 		return
 	}
-
 	bookIDstr := c.Param("id")
 	bookID, err := uuid.Parse(bookIDstr)
 	if err != nil {
@@ -60,12 +59,12 @@ func (masterUpdater *MasterUpdaterHandler) UpdateBook(c *gin.Context) {
 
 	book := entity.NewBook(
 		bookID,
-		request.Isbn,
-		request.Title,
-		request.Author,
-		request.Genre,
-		request.Publisher,
-		request.Edition,
+		request.Isbn, 
+		request.Title, 
+		request.Author, 
+		request.Genre, 
+		request.Publisher, 
+		request.Edition, 
 		request.Description,
 		"System",
 	)

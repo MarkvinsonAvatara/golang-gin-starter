@@ -28,7 +28,7 @@ type CreateBookRequest struct {
 	Author      string `form:"author" json:"author"`
 	Publisher   string `form:"publisher" json:"publisher"`
 	Edition     int64  `form:"edition" json:"edition"`
-	Description string `form:"desc" json:"description"`
+	Description string `form:"description" json:"description"`
 }
 
 type BookResponse struct {
@@ -50,7 +50,7 @@ type UpdateBookRequest struct {
 	Author      string `form:"author" json:"author"`
 	Publisher   string `form:"publisher" json:"publisher"`
 	Edition     int64  `form:"edition" json:"edition"`
-	Description string `form:"desc" json:"description"`
+	Description string `form:"description" json:"description"`
 }
 
 type GetBookListResponse struct {

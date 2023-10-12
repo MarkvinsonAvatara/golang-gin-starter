@@ -241,7 +241,7 @@ func (ur *UserRepository) GetAdminUsers(ctx context.Context, query, sort, order 
 		WithContext(ctx).
 		Model(&entity.User{}).
 		Joins("inner join public.role on public.user.roleid=public.role.id").
-		Where("public.role.name is 'Super Admin'")
+		Where("public.role.name = 'Super Admin'")
 
 	gormDB.Count(&total)
 

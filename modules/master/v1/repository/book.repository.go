@@ -117,13 +117,10 @@ func (bookRepository *BookRepository) FindBookByTitle(ctx context.Context, title
 }
 
 func (bookRepository *BookRepository) UpdateBook(ctx context.Context, book *entity.Book) error {
-	// Your implementation here
-	if err := bookRepository.db.
-		WithContext(ctx).
+	if err := bookRepository.db.WithContext(ctx).
 		Model(&entity.Book{}).
-		Where("id = ?", book.ID).
-		Updates(book).
-		Error; err != nil {
+		Where(`id = ?`, book.ID).
+		Updates(book).Error; err != nil {
 		return errors.Wrap(err, "[BookBookRepositorysitory-UpdateBook]")
 	}
 	return nil

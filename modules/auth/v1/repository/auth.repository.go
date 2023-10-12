@@ -77,7 +77,7 @@ func (ar *AuthRepository) GetAdminByEmail(ctx context.Context, email string) (*e
 
 	if err := ar.db.
 		WithContext(ctx).
-		Joins("inner join public.role on public.user.role_id=public.role.id").
+		Joins("inner join public.role on public.user.roleid=public.role.id").
 		Where("email = ?", email).
 		Find(result).
 		Error; err != nil {

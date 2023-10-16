@@ -22,7 +22,7 @@ type UserCreatorUseCase interface {
 }
 
 // NewUserCreator is a constructor for the User creator
-func NewUserCreator(
+func NewUserRoleCreator(
 	cfg config.Config,
 	userRoleRepo repository.UserRoleRepositoryUseCase,
 	cloudStorage interfaces.CloudStorageUseCase,

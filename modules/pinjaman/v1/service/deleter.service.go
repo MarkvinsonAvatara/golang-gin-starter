@@ -27,7 +27,7 @@ type UserDeleterUseCase interface {
 }
 
 // NewUserDeleter creates a new UserDeleter
-func NewUserRoleDeleter(
+func NewUserDeleter(
 	cfg config.Config,
 	userRoleRepo repository.UserRoleRepositoryUseCase,
 

@@ -9,7 +9,8 @@ import (
 	masterBuilder "gin-starter/modules/master/v1/builder"
 	notificationBuilder "gin-starter/modules/notification/v1/builder"
 	userBuilder "gin-starter/modules/user/v1/builder"
-	pubsubSDK "gin-starter/sdk/pubsub"
+	userRoleBuilder "gin-starter/modules/role/v1/builder"
+	// pubsubSDK "gin-starter/sdk/pubsub"
 	"gin-starter/utils"
 	"io"
 	"log"
@@ -120,6 +121,7 @@ func BuildHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redisPool 
 	app.DefaultHTTPHandler(cfg, router)
 	authBuilder.BuildAuthHandler(cfg, router, db, redisPool, awsSession)
 	userBuilder.BuildUserHandler(cfg, router, db, redisPool, awsSession)
+	userRoleBuilder.BuildUserRoleHandler(cfg, router, db, redisPool, awsSession)
 	notificationBuilder.BuildNotificationHandler(cfg, router, db, redisPool, awsSession)
 	masterBuilder.BuildMasterHandler(cfg, router, db, redisPool, awsSession)
 }
@@ -147,17 +149,17 @@ func CORSMiddleware() gin.HandlerFunc {
 }
 
 // registerPubsubHandlers is a function to register pubsub handlers
-func registerPubsubHandlers(
-	ctx context.Context,
-	cfg *config.Config,
-	gconn *gorm.DB,
-	redisPool *redis.Pool,
-) []pubsubSDK.Subscriber {
-	var handlers []pubsubSDK.Subscriber
+// func registerPubsubHandlers(
+// 	ctx context.Context,
+// 	cfg *config.Config,
+// 	gconn *gorm.DB,
+// 	redisPool *redis.Pool,
+// ) []pubsubSDK.Subscriber {
+// 	var handlers []pubsubSDK.Subscriber
 
-	handlers = append(handlers, notificationBuilder.BuildSendEmailPubsubHandler(*cfg, gconn))
-	return handlers
-}
+// 	handlers = append(handlers, notificationBuilder.BuildSendEmailPubsubHandler(*cfg, gconn))
+// 	return handlers
+// }
 
 // buildRedisPool is a function to build redis pool
 func buildRedisPool(cfg *config.Config) *redis.Pool {
@@ -175,9 +177,9 @@ func buildRedisPool(cfg *config.Config) *redis.Pool {
 }
 
 // createPubSubClient is a function to create pubsub client
-func createPubSubClient(projectID, googleSaFile string) *pubsubSDK.PubSub {
-	return pubsubSDK.NewPubSub(projectID, &googleSaFile)
-}
+// func createPubSubClient(projectID, googleSaFile string) *pubsubSDK.PubSub {
+// 	return pubsubSDK.NewPubSub(projectID, &googleSaFile)
+// }
 
 // NewJaegerTracer is a function to create a new Jaeger tracer
 func NewJaegerTracer(serviceName string, jaegerHostPort string) (opentracing.Tracer, io.Closer, error) {

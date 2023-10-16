@@ -54,6 +54,7 @@ func (bookRepository *BookRepository) GetBooks(ctx context.Context) ([]*entity.B
 	if err := bookRepository.db.
 		WithContext(ctx).
 		Model(&entity.Book{}).
+		Limit(5).
 		Find(&models).
 		Error; err != nil {
 		return nil, errors.Wrap(err, "[BookRepository-GetBooks]")

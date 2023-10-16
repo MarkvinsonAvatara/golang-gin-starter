@@ -22,7 +22,7 @@ type UserUpdaterUseCase interface {
 }
 
 // NewUserUpdater is a function that creates a new UserUpdater
-func NewUserRoleUpdater(
+func NewUserRoleDeleter(
 	cfg config.Config,
 	userRoleRepo repository.UserRoleRepositoryUseCase,
 ) *UserUpdater {

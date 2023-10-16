@@ -8,13 +8,11 @@ import (
 	"gin-starter/common/constant"
 	"gin-starter/common/interfaces"
 	"gin-starter/entity"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 // UserRoleRepository is a repository for user role
@@ -25,16 +23,12 @@ type UserRoleRepository struct {
 
 // UserRoleRepositoryUseCase is a use case for user role
 type UserRoleRepositoryUseCase interface {
-	// CreateOrUpdate is a method for creating or updating user role
-	CreateOrUpdate(ctx context.Context, userRole *entity.UserRole) error
 	// GetUser Role gets all user role
 	GetUserRoles(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.UserRole, int64, error)
 	// FindByUserID is a method for finding user role by user id
 	GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error)
 	// UpdateUseRole is a method for updating user role
 	UpdateUserRole(ctx context.Context, UserRole *entity.UserRole) error
-	// Update is a method for updating user role
-	Update(ctx context.Context, userRole *entity.UserRole) error
 	// Delete is a method for deleting user role
 	DeleteUserRole(ctx context.Context, id uuid.UUID) error
 	// CreateUserRole is a method for creating user role
@@ -46,35 +40,6 @@ func NewUserRoleRepository(db *gorm.DB, cache interfaces.Cacheable) *UserRoleRep
 	return &UserRoleRepository{db, cache}
 }
 
-// CreateOrUpdate is a method for creating or updating user role
-func (nc *UserRoleRepository) CreateOrUpdate(ctx context.Context, userRole *entity.UserRole) error {
-	var find *entity.UserRole
-
-	findUser := nc.db.
-		Where("user_id = ?", userRole.ID).
-		First(&find)
-
-	if err := findUser.Error; err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return err
-		}
-	}
-
-
-	if err := nc.db.
-		WithContext(ctx).
-		Model(&entity.UserRole{}).
-		Create(userRole).
-		Error; err != nil {
-		return errors.Wrap(err, "[UserRoleRepository-CreateNews] error while creating user")
-	}
-
-	if err := nc.cache.BulkRemove(fmt.Sprintf(commonCache.UserRoleByUserID, "*")); err != nil {
-		return err
-	}
-
-	return nil
-}
 
 func (nc *UserRoleRepository) CreateUserRole(ctx context.Context, role *entity.UserRole) error {
 
@@ -170,38 +135,6 @@ func (nc *UserRoleRepository) UpdateUserRole(ctx context.Context, UserRole *enti
 		Updates(UserRole).Error; err != nil {
 		return errors.Wrap(err, "[UserRepository-DeactivateUser] error when updating user data")
 	}
-	return nil
-}
-
-// Update is a method for updating user role
-func (nc *UserRoleRepository) Update(ctx context.Context, userRole *entity.UserRole) error {
-	oldTime := userRole.UpdatedAt
-	userRole.UpdatedAt = time.Now()
-	if err := nc.db.
-		WithContext(ctx).
-		Transaction(func(tx *gorm.DB) error {
-			sourceModel := new(entity.UserRole)
-			if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-				Where("user_id = ?", userRole.ID).
-				Find(&sourceModel).Error; err != nil {
-				log.Println("[GamPTKRepository - Update]", err)
-				return err
-			}
-			if err := tx.Model(&entity.UserRole{}).
-				Where(`user_id`, userRole.ID).
-				UpdateColumns(sourceModel.MapUpdateFrom(userRole)).Error; err != nil {
-				log.Println("[GamPTKRepository - Update]", err)
-				return err
-			}
-			return nil
-		}); err != nil {
-		userRole.UpdatedAt = oldTime
-	}
-
-	if err := nc.cache.BulkRemove(fmt.Sprintf(commonCache.UserRoleByUserID, "*")); err != nil {
-		return err
-	}
-
 	return nil
 }
 

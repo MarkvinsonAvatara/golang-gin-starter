@@ -5,7 +5,7 @@ import (
 	"gin-starter/common/errors"
 	"gin-starter/config"
 	"gin-starter/entity"
-	"gin-starter/modules/user/v1/repository"
+	"gin-starter/modules/role/v1/repository"
 
 	"github.com/google/uuid"
 )
@@ -25,7 +25,7 @@ type UserFinderUseCase interface {
 }
 
 // NewUserFinder creates a new UserFinder
-func NewUserFinder(
+func NewUserRoleFinder(
 	ufg config.Config,
 	userRoleRepo repository.UserRoleRepositoryUseCase,
 ) *UserRoleFinder {

@@ -15,12 +15,12 @@ const (
 
 type Pinjaman struct {
 	ID         uuid.UUID    `json:"id"`
-	Userid     *User        `gorm:"foreignKey:id" json:"user"`
-	Bookid     *Book        `gorm:"foreignKey:id" json:"book"`
+	UserID     string       `gorm:"foreignKey:id" json:"userid"`
+	BukuID     string       `gorm:"foreignKey:id" json:"bukuid"`
 	Tglpinjam  sql.NullTime `json:"tglpinjam"`
 	Tglkembali sql.NullTime `json:"tglkembali"`
-	Status     string       `json:"status"`
-	Auditable
+	Status     bool         `json:"status"`
+	AuditablePinjaman
 }
 
 // TableName specifies table name
@@ -31,40 +31,41 @@ func (model *Pinjaman) TableName() string {
 // NewPinjaman create new entity Pinjaman
 func NewPinjaman(
 	id uuid.UUID,
+	userid string,
+	bukuid string,
 	tglpinjam sql.NullTime,
 	tglkembali sql.NullTime,
-	status string,
-	createdBy string,
+	requestedBy string,
 ) *Pinjaman {
 	return &Pinjaman{
-		ID:         id,
-		Tglpinjam:  tglpinjam,
-		Tglkembali: tglkembali,
-		Status:     status,
-		Auditable:  NewAuditable(createdBy),
+		ID:                id,
+		UserID:            userid,
+		BukuID:            bukuid,
+		Tglpinjam:         tglpinjam,
+		Tglkembali:        tglkembali,
+		AuditablePinjaman: NewUditablePinjaman(requestedBy),
 	}
 }
 
-func UpdatePinjaman(
+func HandledPinjaman(
 	id uuid.UUID,
-	tglkembali sql.NullTime,
-	status string,
-	updatedBy string,
+	status bool,
+	approvedBy string,
 ) *Pinjaman {
 	return &Pinjaman{
-		ID:         id,
-		Tglkembali: tglkembali,
-		Status:     status,
-		Auditable:  NewAuditable(updatedBy),
+		ID:                id,
+		Status:            status,
+		AuditablePinjaman: NewUditablePinjaman(approvedBy),
 	}
 }
 
 func (model *Pinjaman) MapUpdateFrom(from *Pinjaman) *map[string]interface{} {
 	if from == nil {
 		return &map[string]interface{}{
-			"tglkembali": model.Tglkembali,
-			"status":     model.Status,
-			"updated_at": model.UpdatedAt,
+			"tglkembali":    model.Tglkembali,
+			"status":        model.Status,
+			"handled_at":    model.HandledAt,
+			"handled_by": model.HandledBy,
 		}
 	}
 

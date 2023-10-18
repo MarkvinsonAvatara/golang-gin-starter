@@ -23,6 +23,7 @@ type UserUpdater struct {
 	userRoleRepo   repository.UserRoleRepositoryUseCase
 	roleRepo       repository.RoleRepositoryUseCase
 	permissionRepo repository.PermissionRepositoryUseCase
+	pinjamanRepo   repository.PinjamanRepositoryUseCase
 }
 
 // UserUpdaterUseCase is a struct that contains the dependencies of UserUpdaterUseCase
@@ -49,7 +50,8 @@ type UserUpdaterUseCase interface {
 	UpdatePermission(ctx context.Context, id uuid.UUID, name, label string) error
 	// UpdateUserRoles updates user roles
 	UpdateUserRoles(ctx context.Context, userRole *entity.UserRole) error
-
+	// HandledPinjaman updates pinjaman
+	HandledPinjaman(ctx context.Context, pinjaman *entity.Pinjaman) error
 }
 
 // NewUserUpdater is a function that creates a new UserUpdater
@@ -58,6 +60,7 @@ func NewUserUpdater(
 	userRepo repository.UserRepositoryUseCase,
 	userRoleRepo repository.UserRoleRepositoryUseCase,
 	roleRepo repository.RoleRepositoryUseCase,
+	pinjamanRepo repository.PinjamanRepositoryUseCase,
 	permissionRepo repository.PermissionRepositoryUseCase,
 ) *UserUpdater {
 	return &UserUpdater{
@@ -65,6 +68,7 @@ func NewUserUpdater(
 		userRepo:       userRepo,
 		userRoleRepo:   userRoleRepo,
 		roleRepo:       roleRepo,
+		pinjamanRepo:   pinjamanRepo,
 		permissionRepo: permissionRepo,
 	}
 }
@@ -266,14 +270,13 @@ func (uu *UserUpdater) ActivateDeactivateUser(ctx context.Context, id uuid.UUID)
 	return nil
 }
 
-//UpdateUserRoles updates user roles
+// UpdateUserRoles updates user roles
 func (uu *UserUpdater) UpdateUserRoles(ctx context.Context, userRole *entity.UserRole) error {
 	if err := uu.userRoleRepo.UpdateUserRole(ctx, userRole); err != nil {
 		return errors.ErrInternalServerError.Error()
 	}
 	return nil
 }
-
 
 // UpdateAdmin updates an admin.
 func (uu *UserUpdater) UpdateAdmin(ctx context.Context, user *entity.User, roleID uuid.UUID) error {
@@ -342,6 +345,14 @@ func (uu *UserUpdater) UpdatePermission(ctx context.Context, id uuid.UUID, name,
 	newPermission := entity.NewPermission(id, name, label, permission.CreatedBy.String)
 
 	if err := uu.permissionRepo.Update(ctx, newPermission); err != nil {
+		return errors.ErrInternalServerError.Error()
+	}
+
+	return nil
+}
+
+func (uu *UserUpdater) HandledPinjaman(ctx context.Context, pinjaman *entity.Pinjaman) error {
+	if err := uu.pinjamanRepo.HandledPinjaman(ctx, pinjaman); err != nil {
 		return errors.ErrInternalServerError.Error()
 	}
 

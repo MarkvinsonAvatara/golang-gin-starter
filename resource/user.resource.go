@@ -17,6 +17,7 @@ type UpdateUserRequest struct {
 	Name        string                `form:"name" json:"name"`
 	Email       string                `form:"email" json:"email"`
 	DOB         string                `form:"dob" json:"dob"`
+	RoleId      string                `form:"roleid" json:"roleid" `
 }
 
 type UserProfile struct {

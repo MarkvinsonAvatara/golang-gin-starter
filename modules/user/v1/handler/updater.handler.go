@@ -242,6 +242,7 @@ func (uu *UserUpdaterHandler) UpdateUser(c *gin.Context) {
 		userID,
 		request.Name,
 		request.Email,
+		request.RoleId,
 		utils.TimeToNullTime(dob),
 		"System",
 	)
@@ -333,6 +334,7 @@ func (uu *UserUpdaterHandler) UpdateAdmin(c *gin.Context) {
 		request.Name,
 		request.Email,
 		request.Name,
+		request.RoleId,
 		utils.TimeToNullTime(dob),
 		"system",
 	)
@@ -460,4 +462,41 @@ func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context){
 
 }
 
+func (uu *UserUpdaterHandler) HandledPinjaman(c *gin.Context){
+	var request resource.HandledRequest
+	if err := c.ShouldBindUri(&request); err != nil{
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+	pinjamanIDstr := c.Param("id")
+	pinjamanID, err := uuid.Parse(pinjamanIDstr)
+	if err != nil{
+		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
+		c.Abort()
+		return
+	}
+	_, err = uu.userFinder.GetPinjamanByID(c, pinjamanID)
+	if err != nil{
+		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
+		c.Abort()
+		return
+	}
+
+	pinjaman := entity.HandledPinjaman(
+		pinjamanID,
+		request.Status,
+		"admin",
+	)
+
+	if err := uu.userUpdater.HandledPinjaman(c, pinjaman); err != nil{
+		parseError := errors.ParseError(err)
+		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+		c.Abort()
+		return
+	}
+
+	
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "Penangan Pinjaman Success", nil))
+}
 

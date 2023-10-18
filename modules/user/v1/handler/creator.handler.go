@@ -2,6 +2,7 @@ package handler
 
 import (
 	"gin-starter/common/errors"
+	"gin-starter/middleware"
 	"gin-starter/common/interfaces"
 	"gin-starter/modules/user/v1/service"
 	"gin-starter/resource"
@@ -10,7 +11,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-
 	"github.com/gin-gonic/gin"
 	// "github.com/google/uuid"
 )
@@ -18,16 +18,19 @@ import (
 // UserCreatorHandler is a handler for user finder
 type UserCreatorHandler struct {
 	userCreator  service.UserCreatorUseCase
+	userFinder  service.UserFinderUseCase
 	cloudStorage interfaces.CloudStorageUseCase
 }
 
 // NewUserCreatorHandler is a constructor for UserCreatorHandler
 func NewUserCreatorHandler(
 	userCreator service.UserCreatorUseCase,
+	userFinder service.UserFinderUseCase,
 	cloudStorage interfaces.CloudStorageUseCase,
 ) *UserCreatorHandler {
 	return &UserCreatorHandler{
 		userCreator:  userCreator,
+		userFinder:  userFinder,
 		cloudStorage: cloudStorage,
 	}
 }
@@ -76,6 +79,7 @@ func (uc *UserCreatorHandler) CreateUser(c *gin.Context) {
 		request.Name,
 		request.Email,
 		request.Password,
+		request.RoleId,
 		dob,
 	)
 
@@ -132,6 +136,7 @@ func (uc *UserCreatorHandler) CreateAdmin(c *gin.Context) {
 		request.Name,
 		request.Email,
 		request.Password,
+		request.RoleId,
 		dob,
 		request.RoleId,
 	)
@@ -247,6 +252,7 @@ func (uc *UserCreatorHandler) RegisterUser(c *gin.Context) {
 		request.Name,
 		request.Email,
 		request.Password,
+		request.RoleId,
 		dob,
 	)
 
@@ -260,3 +266,36 @@ func (uc *UserCreatorHandler) RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserProfile(user)))
 }
 
+func (uc *UserCreatorHandler) CreatePinjamanRequest(c *gin.Context) {
+	var request resource.CreatePinjamanRequest
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+	user, _ := uc.userFinder.GetUserByID(c, middleware.UserID)
+	userID:= user.ID
+	userIDString:= userID.String()
+
+	TglPinjam, _ := utils.DateStringToTime(request.TglPinjam)
+	TglKembali,_ := utils.DateStringToTime(request.TglKembali)
+	
+
+	pinjaman, err := uc.userCreator.CreatePinjamanRequest(
+		c.Request.Context(),
+		userIDString,
+		request.BukuId,
+		TglPinjam,
+		TglKembali,
+		"System",
+	)
+
+	if err != nil {
+		parseError := errors.ParseError(err)
+		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+		return
+	}
+
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "Pinjaman Sukses direquest", resource.NewPinjamanResponse(pinjaman)))
+
+}

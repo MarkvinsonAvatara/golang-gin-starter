@@ -60,6 +60,7 @@ func (ur *UserRepository) GetUserByEmail(ctx context.Context, email string) (*en
 
 	if err := ur.db.
 		WithContext(ctx).
+		Limit(10).
 		// Preload("UserRole").
 		// Preload("UserRole.Role").
 		// Preload("Employee").

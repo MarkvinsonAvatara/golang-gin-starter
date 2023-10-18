@@ -19,6 +19,22 @@ type Auditable struct {
 	DeletedAt gorm.DeletedAt `json:"deleted_at"`
 }
 
+type AuditablePinjaman struct {
+	RequestedBy sql.NullString `json:"requested_by"`
+	HandledBy  sql.NullString `json:"handled_by"`
+	RequestedAt time.Time      `json:"requested_at"`
+	HandledAt   time.Time      `json:"handled_at"`
+}
+
+func NewUditablePinjaman(requestedBy string) AuditablePinjaman {
+	return AuditablePinjaman{
+		RequestedAt: time.Now(),
+		HandledAt:   time.Now(),
+		RequestedBy: utils.StringToNullString(requestedBy),
+		HandledBy:   utils.StringToNullString(requestedBy),
+	}
+}
+
 // NewAuditable creates a new Auditable struct
 func NewAuditable(createdBy string) Auditable {
 	return Auditable{

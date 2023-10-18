@@ -347,3 +347,49 @@ func (uf *UserFinderHandler) GetUserRoleByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserRole(userRole)))
 }
+
+func (uf *UserFinderHandler) GetPinjamanList(c *gin.Context) {
+	pinjaman, err := uf.userFinder.GetPinjamanList(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+
+	res:= make([]*resource.PinjamanDetail, 0)
+	for _, p := range pinjaman {
+		res= append(res, resource.NewPinjamanResponse(p))
+	}
+
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.GetPinjamanListResponse{
+		List:  res,
+		Total: int64(len(res)),
+	}))
+}
+
+func (uf *UserFinderHandler) GetPinjamanByID(c *gin.Context) {
+	var request resource.GetPinjamanByIDRequest
+
+	if err := c.ShouldBindUri(&request); err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+	reqID, err := uuid.Parse(request.ID)
+
+	if err != nil {
+		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
+		c.Abort()
+		return
+	}
+
+	pinjaman, err := uf.userFinder.GetPinjamanByID(c, reqID)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewPinjamanResponse(pinjaman)))
+}

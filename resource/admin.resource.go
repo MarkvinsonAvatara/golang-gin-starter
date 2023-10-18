@@ -13,6 +13,7 @@ type CreateUserRequest struct {
 	Email       string `form:"email" json:"email" binding:"required"`
 	Password    string `form:"password" json:"password" binding:"required"`
 	DOB         string `form:"dob" json:"dob" binding:"required"`
+	RoleId      string `form:"roleid" json:"roleid" `
 }
 
 type CreateAdminRequest struct {

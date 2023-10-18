@@ -21,6 +21,7 @@ type UserCreator struct {
 	userRoleRepo   repository.UserRoleRepositoryUseCase
 	roleRepo       repository.RoleRepositoryUseCase
 	permissionRepo repository.PermissionRepositoryUseCase
+	pinjamanRepo  repository.PinjamanRepositoryUseCase
 	notifCreator   notificationService.NotificationCreatorUseCase
 	cloudStorage   interfaces.CloudStorageUseCase
 }
@@ -28,14 +29,18 @@ type UserCreator struct {
 // UserCreatorUseCase is a use case for the User creator
 type UserCreatorUseCase interface {
 	// CreateUser creates a new user
-	CreateUser(ctx context.Context, name string, email string, password string, dob time.Time) (*entity.User, error)
+	CreateUser(ctx context.Context, name string, email string, password string, roleid string, dob time.Time) (*entity.User, error)
 	// CreateAdmin creates a new admin
-	CreateAdmin(ctx context.Context, name string, email string, password string, dob time.Time, roleID string) (*entity.User, error)
+	CreateAdmin(ctx context.Context, name string, email string, password string, roleid string, dob time.Time, role string) (*entity.User, error)
 	// CreatePermission creates a permission
 	CreatePermission(ctx context.Context, name, label string) (*entity.Permission, error)
 	// CreateRole creates a role
 	CreateUserRole(ctx context.Context, name string, description string,createdBy string) (*entity.UserRole, error)
+	// Create Pinjaman Request
+	CreatePinjamanRequest(ctx context.Context, userid string, bookid string, tglpinjaman time.Time, tglkembali time.Time, requestedBy string)(*entity.Pinjaman, error)
+
 }
+
 
 // NewUserCreator is a constructor for the User creator
 func NewUserCreator(
@@ -43,6 +48,7 @@ func NewUserCreator(
 	userRepo repository.UserRepositoryUseCase,
 	userRoleRepo repository.UserRoleRepositoryUseCase,
 	roleRepo repository.RoleRepositoryUseCase,
+	pinjamanRepo repository.PinjamanRepositoryUseCase,
 	permissionRepo repository.PermissionRepositoryUseCase,
 	notifCreator notificationService.NotificationCreatorUseCase,
 	cloudStorage interfaces.CloudStorageUseCase,
@@ -52,6 +58,7 @@ func NewUserCreator(
 		userRepo:       userRepo,
 		userRoleRepo:   userRoleRepo,
 		roleRepo:       roleRepo,
+		pinjamanRepo:  pinjamanRepo,
 		permissionRepo: permissionRepo,
 		notifCreator:   notifCreator,
 		cloudStorage:   cloudStorage,
@@ -59,12 +66,13 @@ func NewUserCreator(
 }
 
 // CreateUser creates a new user
-func (uc *UserCreator) CreateUser(ctx context.Context, name string, email string, password string, dob time.Time) (*entity.User, error) {
+func (uc *UserCreator) CreateUser(ctx context.Context, name string, email string, password string, roleid string, dob time.Time) (*entity.User, error) {
 	user := entity.NewUser(
 		uuid.New(),
 		name,
 		email,
 		password,
+		roleid,
 		utils.TimeToNullTime(dob),
 		"",
 	)
@@ -77,13 +85,14 @@ func (uc *UserCreator) CreateUser(ctx context.Context, name string, email string
 }
 
 // CreateAdmin creates a new admin
-func (uc *UserCreator) CreateAdmin(ctx context.Context, name string, email string, password string, dob time.Time, roleID string) (*entity.User, error) {
+func (uc *UserCreator) CreateAdmin(ctx context.Context, name string, email string, password string, roleid string, dob time.Time, role_name string) (*entity.User, error) {
 	userID := uuid.New()
 	user := entity.NewUser(
 		userID,
 		name,
 		email,
 		password,
+		roleid,
 		utils.TimeToNullTime(dob),
 		"Super Admin",
 	)
@@ -125,4 +134,21 @@ func (uc *UserCreator) CreateUserRole(ctx context.Context, name string,descripti
 	}
 
 	return role, nil
+}
+
+// Create Pinjaman Request
+func (uc *UserCreator) CreatePinjamanRequest(ctx context.Context, userid string, bookid string, tglpinjaman time.Time, tglkembali time.Time, requestedBy string) (*entity.Pinjaman, error) {
+	pinjaman := entity.NewPinjaman(
+		uuid.New(), 
+		userid, 
+		bookid, 
+		utils.TimeToNullTime(tglpinjaman), 
+		utils.TimeToNullTime(tglkembali) ,
+		requestedBy, 
+	)
+	if err := uc.pinjamanRepo.CreatePinjamanRequest(ctx, pinjaman); err != nil {
+		return nil, err
+	}
+
+	return pinjaman, nil
 }

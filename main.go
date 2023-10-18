@@ -9,7 +9,7 @@ import (
 	masterBuilder "gin-starter/modules/master/v1/builder"
 	notificationBuilder "gin-starter/modules/notification/v1/builder"
 	userBuilder "gin-starter/modules/user/v1/builder"
-	userRoleBuilder "gin-starter/modules/role/v1/builder"
+	// userRoleBuilder "gin-starter/modules/role/v1/builder"
 	// pubsubSDK "gin-starter/sdk/pubsub"
 	"gin-starter/utils"
 	"io"
@@ -121,7 +121,7 @@ func BuildHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redisPool 
 	app.DefaultHTTPHandler(cfg, router)
 	authBuilder.BuildAuthHandler(cfg, router, db, redisPool, awsSession)
 	userBuilder.BuildUserHandler(cfg, router, db, redisPool, awsSession)
-	userRoleBuilder.BuildUserRoleHandler(cfg, router, db, redisPool, awsSession)
+	// userRoleBuilder.BuildUserRoleHandler(cfg, router, db, redisPool, awsSession)
 	notificationBuilder.BuildNotificationHandler(cfg, router, db, redisPool, awsSession)
 	masterBuilder.BuildMasterHandler(cfg, router, db, redisPool, awsSession)
 }

@@ -15,6 +15,7 @@ type UserFinder struct {
 	ufg            config.Config
 	userRepo       repository.UserRepositoryUseCase
 	userRoleRepo   repository.UserRoleRepositoryUseCase
+	pinjamanRepo  repository.PinjamanRepositoryUseCase
 	roleRepo       repository.RoleRepositoryUseCase
 	permissionRepo repository.PermissionRepositoryUseCase
 }
@@ -43,6 +44,10 @@ type UserFinderUseCase interface {
 	GetUserRoles(ctx context.Context, query, order, sort string, limit, offset int) ([]*entity.UserRole, int64, error)
 	// GetUserRolesByIDs gets all user roles by ids
 	GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error)
+	// GetPinjamanList gets all pinjaman
+	GetPinjamanList(ctx context.Context) ([]*entity.Pinjaman, error)
+	// GetPinjamanByID gets a pinjaman by ID
+	GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error)
 }
 
 // NewUserFinder creates a new UserFinder
@@ -50,6 +55,7 @@ func NewUserFinder(
 	ufg config.Config,
 	userRepo repository.UserRepositoryUseCase,
 	userRoleRepo repository.UserRoleRepositoryUseCase,
+	pinjamanRepo repository.PinjamanRepositoryUseCase,
 	roleRepo repository.RoleRepositoryUseCase,
 	permissionRepo repository.PermissionRepositoryUseCase,
 ) *UserFinder {
@@ -58,6 +64,7 @@ func NewUserFinder(
 		userRepo:       userRepo,
 		userRoleRepo:   userRoleRepo,
 		roleRepo:       roleRepo,
+		pinjamanRepo:  pinjamanRepo,
 		permissionRepo: permissionRepo,
 	}
 }
@@ -213,3 +220,29 @@ func (uf *UserFinder) GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entit
 
 	return userRole, nil
 }
+
+// GetPinjamanList gets all pinjaman
+func (uf *UserFinder) GetPinjamanList(ctx context.Context) ([]*entity.Pinjaman, error) {
+	pinjaman, err := uf.pinjamanRepo.GetPinjamanList(ctx)
+	if err != nil {
+		return nil, errors.ErrInternalServerError.Error()
+	}
+	return pinjaman, nil
+
+}
+
+// GetPinjamanByID gets a pinjaman by ID
+func (uf *UserFinder) GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error) {
+	pinjaman, err := uf.pinjamanRepo.GetPinjamanByID(ctx, id)
+
+	if err != nil {
+		return nil, errors.ErrInternalServerError.Error()
+	}
+
+	if pinjaman == nil {
+		return nil, errors.ErrRecordNotFound.Error()
+	}
+
+	return pinjaman, nil
+}
+

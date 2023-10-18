@@ -27,6 +27,7 @@ func BuildUserHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redisP
 	rr := userRepo.NewRoleRepository(db, cache)
 	urr := userRepo.NewUserRoleRepository(db, cache)
 	pr := userRepo.NewPermissionRepository(db, cache)
+	pinjamanRepository := userRepo.NewPinjamanRepository(db)
 	nr := notificationRepo.NewNotificationRepository(db)
 
 	// Cloud Storage
@@ -35,9 +36,9 @@ func BuildUserHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redisP
 
 	// Service
 	nc := notification.NewNotificationCreator(cfg, nr)
-	uc := service.NewUserCreator(cfg, ur, urr, rr, pr, nc, cloudStorage)
-	uf := service.NewUserFinder(cfg, ur, urr, rr, pr)
-	uu := service.NewUserUpdater(cfg, ur, urr, rr, pr)
+	uc := service.NewUserCreator(cfg, ur, urr, rr, pinjamanRepository, pr, nc, cloudStorage)
+	uf := service.NewUserFinder(cfg, ur, urr, pinjamanRepository, rr, pr)
+	uu := service.NewUserUpdater(cfg, ur, urr, rr, pinjamanRepository, pr)
 	ud := service.NewUserDeleter(cfg, ur, rr, urr)
 
 	// Handler

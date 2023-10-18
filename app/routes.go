@@ -12,8 +12,8 @@ import (
 	notificationservicev1 "gin-starter/modules/notification/v1/service"
 	userhandlerv1 "gin-starter/modules/user/v1/handler"
 	userservicev1 "gin-starter/modules/user/v1/service"
-	userRolehandlerv1 "gin-starter/modules/role/v1/handler"
-	userRoleservicev1 "gin-starter/modules/role/v1/service"
+	// userRolehandlerv1 "gin-starter/modules/role/v1/handler"
+	// userRoleservicev1 "gin-starter/modules/role/v1/service"
 	"gin-starter/response"
 	"net/http"
 
@@ -146,16 +146,25 @@ func UserFinderHTTPHandler(cfg config.Config, router *gin.Engine, cf userservice
 		v1.GET("/cms/user/detail/:id", hnd.GetUserByID)
 		v1.GET("/cms/permission", hnd.GetPermissions)
 		v1.GET("/cms/user/permission", hnd.GetUserPermissions)
+		v1.GET("/cms/role", hnd.GetUserRoles)
+		v1.GET("/cms/user/role/:id", hnd.GetUserRoleByID)
+		v1.GET("/cms/pinjaman/list", hnd.GetPinjamanList)
 	}
 }
 
 // UserCreatorHTTPHandler is a handler for user APIs
 func UserCreatorHTTPHandler(cfg config.Config, router *gin.Engine, uc userservicev1.UserCreatorUseCase, uf userservicev1.UserFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
-	hnd := userhandlerv1.NewUserCreatorHandler(uc, cloudStorage)
+	hnd := userhandlerv1.NewUserCreatorHandler(uc, uf,cloudStorage)
 	v1 := router.Group("/v1")
 	{
 		v1.POST("/user/register", hnd.RegisterUser)
 	}
+
+	v1.Use(middleware.Auth(cfg))
+	{
+		v1.POST("/user/pinjam", hnd.CreatePinjamanRequest)
+	}
+
 	v1.Use(middleware.Auth(cfg))
 	v1.Use(middleware.Admin(cfg))
 	{
@@ -187,8 +196,10 @@ func UserUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, uu userservic
 	{
 		v1.PUT("/cms/profile/:id", hnd.UpdateUser)
 		v1.PUT("/cms/admin/:id", hnd.UpdateAdmin)
+		v1.PUT("/cms/role/:id", hnd.UpdateUserRole)
 		v1.PUT("/cms/user/activate/:id", hnd.ActivateDeactivateUser)
 		v1.PUT("/cms/permission/:id", hnd.UpdatePermission)
+		v1.PUT("/cms/pinjaman/:id", hnd.HandledPinjaman)
 	}
 }
 
@@ -202,54 +213,55 @@ func UserDeleterHTTPHandler(cfg config.Config, router *gin.Engine, ud userservic
 	{
 		v1.DELETE("/cms/user/:id", hnd.DeleteUsers)
 		v1.DELETE("/cms/admin/:id", hnd.DeleteAdmin)
-	}
-}
-
-
-func UserRoleFinderHTTPHandler(cfg config.Config, router *gin.Engine,userRoleFinder userRoleservicev1.UserFinderUseCase) {
-	hnd := userRolehandlerv1.NewUserFinderHandler(userRoleFinder)
-	v1 := router.Group("/v1")
-
-	v1.Use(middleware.Auth(cfg))
-	v1.Use(middleware.Admin(cfg))
-	{
-		v1.GET("/cms/role", hnd.GetUserRoles)
-		v1.GET("/cms/role/:id", hnd.GetUserRoleByID)
-	}
-}
-
-func UserRoleCreatorHTTPHandler(cfg config.Config, router *gin.Engine, userRoleCreate userRoleservicev1.UserCreatorUseCase, userRoleFinder userRoleservicev1.UserFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
-	hnd := userRolehandlerv1.NewUserCreatorHandler(userRoleCreate, cloudStorage)
-	v1 := router.Group("/v1")
-
-	v1.Use(middleware.Auth(cfg))
-	v1.Use(middleware.Admin(cfg))
-	{
-		v1.POST("/cms/role", hnd.CreateUserRole)
-	}
-}
-
-func UserRoleUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, userRoleUpdate userRoleservicev1.UserUpdaterUseCase, userRoleFinder userRoleservicev1.UserFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
-	hnd := userRolehandlerv1.NewUserUpdaterHandler(userRoleUpdate, userRoleFinder, cloudStorage)
-	v1 := router.Group("/v1")
-
-	v1.Use(middleware.Auth(cfg))
-	v1.Use(middleware.Admin(cfg))
-	{
-		v1.PUT("/cms/role/:id", hnd.UpdateUserRole)
-	}
-}
-
-
-func UserRoleDeleterHTTPHandler(cfg config.Config, router *gin.Engine, userRoleDelete userRoleservicev1.UserDeleterUseCase, cloudStorage interfaces.CloudStorageUseCase) {
-	hnd := userRolehandlerv1.NewUserDeleterHandler(userRoleDelete, cloudStorage)
-	v1 := router.Group("/v1")
-
-	v1.Use(middleware.Auth(cfg))
-	v1.Use(middleware.Admin(cfg))
-	{
 		v1.DELETE("/cms/role/:id", hnd.DeleteUserRole)
 	}
 }
+
+
+// func UserRoleFinderHTTPHandler(cfg config.Config, router *gin.Engine,userRoleFinder userRoleservicev1.UserFinderUseCase) {
+// 	hnd := userRolehandlerv1.NewUserFinderHandler(userRoleFinder)
+// 	v1 := router.Group("/v1")
+
+// 	v1.Use(middleware.Auth(cfg))
+// 	v1.Use(middleware.Admin(cfg))
+// 	{
+// 		v1.GET("/cms/role", hnd.GetUserRoles)
+// 		v1.GET("/cms/role/:id", hnd.GetUserRoleByID)
+// 	}
+// }
+
+// func UserRoleCreatorHTTPHandler(cfg config.Config, router *gin.Engine, userRoleCreate userRoleservicev1.UserCreatorUseCase, userRoleFinder userRoleservicev1.UserFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+// 	hnd := userRolehandlerv1.NewUserCreatorHandler(userRoleCreate, cloudStorage)
+// 	v1 := router.Group("/v1")
+
+// 	v1.Use(middleware.Auth(cfg))
+// 	v1.Use(middleware.Admin(cfg))
+// 	{
+// 		v1.POST("/cms/role", hnd.CreateUserRole)
+// 	}
+// }
+
+// func UserRoleUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, userRoleUpdate userRoleservicev1.UserUpdaterUseCase, userRoleFinder userRoleservicev1.UserFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+// 	hnd := userRolehandlerv1.NewUserUpdaterHandler(userRoleUpdate, userRoleFinder, cloudStorage)
+// 	v1 := router.Group("/v1")
+
+// 	v1.Use(middleware.Auth(cfg))
+// 	v1.Use(middleware.Admin(cfg))
+// 	{
+// 		v1.PUT("/cms/role/:id", hnd.UpdateUserRole)
+// 	}
+// }
+
+
+// func UserRoleDeleterHTTPHandler(cfg config.Config, router *gin.Engine, userRoleDelete userRoleservicev1.UserDeleterUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+// 	hnd := userRolehandlerv1.NewUserDeleterHandler(userRoleDelete, cloudStorage)
+// 	v1 := router.Group("/v1")
+
+// 	v1.Use(middleware.Auth(cfg))
+// 	v1.Use(middleware.Admin(cfg))
+// 	{
+// 		v1.DELETE("/cms/role/:id", hnd.DeleteUserRole)
+// 	}
+// }
 
  

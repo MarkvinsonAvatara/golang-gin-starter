@@ -92,6 +92,7 @@ func createAdminUser(db *gorm.DB) {
 			"Rifqi Akram",
 			"rifqiakram57@gmail.com",
 			"testing1234",
+			"",
 			utils.TimeToNullTime(dobUser),
 			"system",
 		)).

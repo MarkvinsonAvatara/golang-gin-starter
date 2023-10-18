@@ -19,7 +19,7 @@ type User struct {
 	Email    string       `json:"email"`
 	Password string       `json:"password"`
 	DOB      sql.NullTime `json:"dob"`
-	Roleid   *UserRole    `gorm:"foreignKey:id" json:"role"`
+	Roleid   string    `gorm:"foreignKey:id" json:"roleid"`
 	Auditable
 }
 
@@ -33,6 +33,7 @@ func NewUser(
 	name string,
 	email string,
 	password string,
+	roleid string,
 	dob sql.NullTime,
 	createdBy string,
 ) *User {
@@ -43,6 +44,7 @@ func NewUser(
 		Name:      name,
 		Email:     email,
 		Password:  string(passwordHash),
+		Roleid:    roleid,
 		DOB:       dob,
 		Auditable: NewAuditable(createdBy),
 	}
@@ -52,6 +54,7 @@ func UpdateUser(
 	id uuid.UUID,
 	name string,
 	email string,
+	roleid string,
 	dob sql.NullTime,
 	updatedBy string,
 ) *User {
@@ -59,6 +62,7 @@ func UpdateUser(
 		ID:        id,
 		Name:      name,
 		Email:     email,
+		Roleid:    roleid,
 		DOB:       dob,
 		Auditable: NewAuditable(updatedBy),
 	}

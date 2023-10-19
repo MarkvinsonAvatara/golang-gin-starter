@@ -7,6 +7,8 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"strings"
+	"gin-starter/common/constant"
+	"fmt"
 )
 
 type PinjamanRepository struct {
@@ -15,7 +17,7 @@ type PinjamanRepository struct {
 
 type PinjamanRepositoryUseCase interface {
 	CreatePinjamanRequest(ctx context.Context, pinjaman *entity.Pinjaman) error
-	GetPinjamanList(ctx context.Context) ([]*entity.Pinjaman, error)
+	GetPinjamanList(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error)
 	GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error)
 	HandledPinjaman(ctx context.Context, book *entity.Pinjaman) error
 }
@@ -38,17 +40,35 @@ func (pinjamanRepository *PinjamanRepository) CreatePinjamanRequest(ctx context.
 }
 
 // GetBooks returns a list of books
-func (pinjamanRepository *PinjamanRepository) GetPinjamanList(ctx context.Context) ([]*entity.Pinjaman, error) {
-	models := make([]*entity.Pinjaman, 0)
-	if err := pinjamanRepository.db.
+func (pinjamanRepository *PinjamanRepository) GetPinjamanList(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error) {
+	var pinjaman []*entity.Pinjaman
+	var total int64
+	offsetPinjaman := ((page - 1) * limit)
+	var gormDB= pinjamanRepository.db.
 		WithContext(ctx).
 		Model(&entity.Pinjaman{}).
-		Limit(5).
-		Find(&models).
-		Error; err != nil {
-		return nil, errors.Wrap(err, "[PinjamanRepository-GetPinjamanList]")
+		Count(&total).
+		Limit(limit).
+		Offset(offsetPinjaman)
+
+		if order != constant.Ascending && order != constant.Descending {
+			order = constant.Descending
+		}
+	
+		if sort == "" {
+			sort = "created_at"
+		}
+
+	gormDB = gormDB.Order(fmt.Sprintf("%s %s", sort, order))
+	if err := gormDB.Find(&pinjaman).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, 0, nil
+		}
+		return nil, 0, errors.Wrap(err, "[PinjamanRepository-GetPinjamanList]")
 	}
-	return models, nil
+
+
+	return pinjaman,total, nil
 }
 
 // GetBookByID returns a book by its ID

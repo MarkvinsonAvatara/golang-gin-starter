@@ -15,7 +15,7 @@ type UserFinder struct {
 	ufg            config.Config
 	userRepo       repository.UserRepositoryUseCase
 	userRoleRepo   repository.UserRoleRepositoryUseCase
-	pinjamanRepo  repository.PinjamanRepositoryUseCase
+	pinjamanRepo   repository.PinjamanRepositoryUseCase
 	roleRepo       repository.RoleRepositoryUseCase
 	permissionRepo repository.PermissionRepositoryUseCase
 }
@@ -23,7 +23,7 @@ type UserFinder struct {
 // UserFinderUseCase is a usecase for user
 type UserFinderUseCase interface {
 	// GetUsers gets all users
-	GetUsers(ctx context.Context, query, order, sort string, limit, offset int) ([]*entity.User, int64, error)
+	GetUsers(ctx context.Context, query, order, sort string, limit, page int) ([]*entity.User, int64, error)
 	// GetUserByID gets a user by ID
 	GetUserByID(ctx context.Context, id uuid.UUID) (*entity.User, error)
 	// GetAdminUsers gets all admin users
@@ -45,7 +45,7 @@ type UserFinderUseCase interface {
 	// GetUserRolesByIDs gets all user roles by ids
 	GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error)
 	// GetPinjamanList gets all pinjaman
-	GetPinjamanList(ctx context.Context) ([]*entity.Pinjaman, error)
+	GetPinjamanList(ctx context.Context, query, order, sort string, limit, page int) ([]*entity.Pinjaman, int64, error)
 	// GetPinjamanByID gets a pinjaman by ID
 	GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error)
 }
@@ -64,14 +64,14 @@ func NewUserFinder(
 		userRepo:       userRepo,
 		userRoleRepo:   userRoleRepo,
 		roleRepo:       roleRepo,
-		pinjamanRepo:  pinjamanRepo,
+		pinjamanRepo:   pinjamanRepo,
 		permissionRepo: permissionRepo,
 	}
 }
 
 // GetUsers gets all users
-func (uf *UserFinder) GetUsers(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.User, int64, error) {
-	users, total, err := uf.userRepo.GetUsers(ctx, query, sort, order, limit, offset)
+func (uf *UserFinder) GetUsers(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.User, int64, error) {
+	users, total, err := uf.userRepo.GetUsers(ctx, query, sort, order, limit, page)
 
 	if err != nil {
 		return nil, 0, errors.ErrInternalServerError.Error()
@@ -197,8 +197,8 @@ func (uf *UserFinder) GetUserPermissions(ctx context.Context, userID uuid.UUID) 
 }
 
 // GetUsers Roles gets all User Roles
-func (uf *UserFinder) GetUserRoles(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.UserRole, int64, error) {
-	userroles, total, err := uf.userRoleRepo.GetUserRoles(ctx, query, sort, order, limit, offset)
+func (uf *UserFinder) GetUserRoles(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.UserRole, int64, error) {
+	userroles, total, err := uf.userRoleRepo.GetUserRoles(ctx, query, sort, order, limit, page)
 
 	if err != nil {
 		return nil, 0, errors.ErrInternalServerError.Error()
@@ -222,12 +222,12 @@ func (uf *UserFinder) GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entit
 }
 
 // GetPinjamanList gets all pinjaman
-func (uf *UserFinder) GetPinjamanList(ctx context.Context) ([]*entity.Pinjaman, error) {
-	pinjaman, err := uf.pinjamanRepo.GetPinjamanList(ctx)
+func (uf *UserFinder) GetPinjamanList(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error) {
+	pinjaman, total,err := uf.pinjamanRepo.GetPinjamanList(ctx, query, sort, order, limit, page)
 	if err != nil {
-		return nil, errors.ErrInternalServerError.Error()
+		return nil, 0,errors.ErrInternalServerError.Error()
 	}
-	return pinjaman, nil
+	return pinjaman, total,nil
 
 }
 
@@ -245,4 +245,3 @@ func (uf *UserFinder) GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entit
 
 	return pinjaman, nil
 }
-

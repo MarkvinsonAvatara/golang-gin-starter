@@ -149,6 +149,7 @@ func UserFinderHTTPHandler(cfg config.Config, router *gin.Engine, cf userservice
 		v1.GET("/cms/role", hnd.GetUserRoles)
 		v1.GET("/cms/user/role/:id", hnd.GetUserRoleByID)
 		v1.GET("/cms/pinjaman/list", hnd.GetPinjamanList)
+		v1.GET("/cms/pinjaman/detail/:id", hnd.GetPinjamanByID)
 	}
 }
 

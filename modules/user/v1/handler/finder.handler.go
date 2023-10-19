@@ -85,7 +85,7 @@ func (uf *UserFinderHandler) GetUsers(c *gin.Context) {
 		return
 	}
 
-	users, total, err := uf.userFinder.GetUsers(c, request.Query, request.Sort, request.Order, request.Limit, request.Offset)
+	users, total, err := uf.userFinder.GetUsers(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
 
 	if err != nil {
 		parseError := errors.ParseError(err)
@@ -146,7 +146,7 @@ func (uf *UserFinderHandler) GetAdminUsers(c *gin.Context) {
 		return
 	}
 
-	users, total, err := uf.userFinder.GetAdminUsers(c, request.Query, request.Sort, request.Order, request.Limit, request.Offset)
+	users, total, err := uf.userFinder.GetAdminUsers(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
 
 	if err != nil {
 		parseError := errors.ParseError(err)
@@ -289,7 +289,7 @@ func (uf *UserFinderHandler) GetUserPermissions(c *gin.Context) {
 
 //GetUser Role is a hand for get list role of user
 func (uf *UserFinderHandler)GetUserRoles(c *gin.Context){
-	var request resource.GetAdminUsersRequest
+	var request resource.GetUserRoleRequest
 
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
@@ -297,7 +297,7 @@ func (uf *UserFinderHandler)GetUserRoles(c *gin.Context){
 		return
 	}
 
-	userRoles, total, err := uf.userFinder.GetUserRoles(c, request.Query, request.Sort, request.Order, request.Limit, request.Offset)
+	userRoles, total, err := uf.userFinder.GetUserRoles(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
 
 	if err != nil {
 		parseError := errors.ParseError(err)
@@ -349,7 +349,13 @@ func (uf *UserFinderHandler) GetUserRoleByID(c *gin.Context) {
 }
 
 func (uf *UserFinderHandler) GetPinjamanList(c *gin.Context) {
-	pinjaman, err := uf.userFinder.GetPinjamanList(c)
+	var request resource.GetPinjamanRequest
+	if err := c.ShouldBindQuery(&request); err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+	pinjaman, total, err := uf.userFinder.GetPinjamanList(c , request.Query, request.Sort, request.Order, request.Limit, request.Page)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 		c.Abort()
@@ -363,7 +369,7 @@ func (uf *UserFinderHandler) GetPinjamanList(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.GetPinjamanListResponse{
 		List:  res,
-		Total: int64(len(res)),
+		Total: total,
 	}))
 }
 

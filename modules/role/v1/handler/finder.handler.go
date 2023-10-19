@@ -36,7 +36,7 @@ func (uf *UserFinderHandler)GetUserRoles(c *gin.Context){
 		return
 	}
 
-	userRoles, total, err := uf.userFinder.GetUserRoles(c, request.Query, request.Sort, request.Order, request.Limit, request.Offset)
+	userRoles, total, err := uf.userFinder.GetUserRoles(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
 
 	if err != nil {
 		parseError := errors.ParseError(err)

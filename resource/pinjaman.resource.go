@@ -24,12 +24,19 @@ type CreatePinjamanRequest struct {
 	BukuId     string `form:"bukuid" json:"bukuid"`
 	TglPinjam  string `form:"tglpinjam" json:"tglpinjam"`
 	TglKembali string `form:"tglkembali" json:"tglkembali"`
-
 }
 
 type GetPinjamanListResponse struct {
 	List  []*PinjamanDetail `json:"list"`
 	Total int64             `json:"total"`
+}
+
+type GetPinjamanRequest struct {
+	Query string `form:"query" json:"query"`
+	Sort  string `form:"sort" json:"sort"`
+	Order string `form:"order" json:"order"`
+	Limit int    `form:"limit,default=10" json:"limit"`
+	Page  int    `form:"page,default=0" json:"page"`
 }
 
 type PinjamanRespons struct {

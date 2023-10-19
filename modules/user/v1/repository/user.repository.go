@@ -36,7 +36,7 @@ type UserRepositoryUseCase interface {
 	// CreateUser is a function to create user
 	CreateUser(ctx context.Context, user *entity.User) error
 	// GetUsers is a function to get users
-	GetUsers(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.User, int64, error)
+	GetUsers(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.User, int64, error)
 	// GetAdminUsers is a function to get admin users
 	GetAdminUsers(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.User, int64, error)
 	// UpdateUser is a function to update user
@@ -194,18 +194,17 @@ func (ur *UserRepository) CreateUser(ctx context.Context, user *entity.User) err
 }
 
 // GetUsers is a function to get all users
-func (ur *UserRepository) GetUsers(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.User, int64, error) {
+func (ur *UserRepository) GetUsers(ctx context.Context, query,sort, order string, limit, page int) ([]*entity.User, int64, error) {
 	var user []*entity.User
 	var total int64
+	offsetUser:=((page - 1)*limit)
 	var gormDB = ur.db.
 		WithContext(ctx).
 		Model(&entity.User{}).
-		Where("public.user.roleid is null AND public.user.deleted_at is NULL")
-
-	gormDB.Count(&total)
-
-	gormDB = gormDB.Limit(limit).
-		Offset(offset)
+		Where("public.user.roleid is null AND public.user.deleted_at is NULL").
+		Count(&total).
+		Limit(limit).
+		Offset(offsetUser)
 
 	if query != "" {
 		gormDB = gormDB.

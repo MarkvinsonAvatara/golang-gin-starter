@@ -2,11 +2,13 @@ package repository
 
 import (
 	"context"
+	"gin-starter/common/constant"
 	"gin-starter/entity"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"strings"
+	"fmt"
 )
 
 // BookRepository is an struct for Book repository
@@ -16,12 +18,10 @@ type BookRepository struct {
 
 // BookRepositoryUseCase is an interface for Book repository use case
 type BookRepositoryUseCase interface {
-	// FindAll returns all Books
-	FindAll(ctx context.Context) ([]*entity.Book, error)
 	// CreateBook creates a new Book
 	CreateBook(ctx context.Context, book *entity.Book) error
 	// GetBooks returns a list of books
-	GetBooks(ctx context.Context) ([]*entity.Book, error)
+	GetBooks(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Book, int64,error)
 	// GetBookByID returns a book by its ID
 	GetBookByID(ctx context.Context, id uuid.UUID) (*entity.Book, error)
 	DeleteBookByID(ctx context.Context, id uuid.UUID) error
@@ -32,9 +32,9 @@ type BookRepositoryUseCase interface {
 }
 
 // NewBookRepository creates a new Book repository
-func NewBookRepository (db *gorm.DB) *BookRepository{
+func NewBookRepository(db *gorm.DB) *BookRepository {
 	return &BookRepository{db}
-	
+
 }
 
 // CreateBook creates a new Book
@@ -49,17 +49,39 @@ func (bookRepository *BookRepository) CreateBook(ctx context.Context, book *enti
 }
 
 // GetBooks returns a list of books
-func (bookRepository *BookRepository) GetBooks(ctx context.Context) ([]*entity.Book, error) {
-	models := make([]*entity.Book, 0)
-	if err := bookRepository.db.
+func (bookRepository *BookRepository) GetBooks(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Book, int64, error) {
+	var buku []*entity.Book
+	var total int64
+	offsetBook := ((page - 1) * limit)
+	var gormDB = bookRepository.db.
 		WithContext(ctx).
 		Model(&entity.Book{}).
-		Limit(5).
-		Find(&models).
-		Error; err != nil {
-		return nil, errors.Wrap(err, "[BookRepository-GetBooks]")
+		Count(&total).
+		Limit(limit).
+		Offset(offsetBook)
+
+	if query != "" {
+		gormDB = gormDB.Where("title LIKE ?", "%"+query+"%")
 	}
-	return models, nil
+
+	if order != constant.Ascending && order != constant.Descending {
+		order = constant.Descending
+	}
+
+	if sort == "" {
+		sort = "created_at"
+	}
+
+	gormDB = gormDB.Order(fmt.Sprintf("%s %s", sort, order))
+
+	if err := gormDB.Find(&buku).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, 0, nil
+		}
+		return nil, 0, errors.Wrap(err, "[BookRepository-GetBooks]")
+	}
+
+	return buku, total, nil
 }
 
 // GetBookByID returns a book by its ID
@@ -77,19 +99,6 @@ func (bookRepository *BookRepository) GetBookByID(ctx context.Context, id uuid.U
 		return nil, errors.Wrap(err, "[BookRepository-GetBookByID]")
 	}
 	return book, nil
-}
-
-// FindAll returns all Books
-func (bookRepository *BookRepository) FindAll(ctx context.Context) ([]*entity.Book, error) {
-	models := make([]*entity.Book, 0)
-	if err := bookRepository.db.
-		WithContext(ctx).
-		Model(&entity.Book{}).
-		Find(&models).
-		Error; err != nil {
-		return nil, errors.Wrap(err, "[BookRepository-FindAll]")
-	}
-	return models, nil
 }
 
 // DeleteBookByID deletes a book by its ID

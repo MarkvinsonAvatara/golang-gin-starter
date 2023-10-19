@@ -30,7 +30,7 @@ type MasterFinderUseCase interface {
 	// GetVillages returns all villages
 	GetVillages(ctx context.Context, id int64) ([]*entity.Village, error)
 	// GetBooks returns all books
-	GetBooks(ctx context.Context) ([]*entity.Book, error)
+	GetBooks(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Book, int64, error)
 	// GetBookByID returns a book by its ID
 	GetBookByID(ctx context.Context, id uuid.UUID) (*entity.Book, error)
 }
@@ -100,14 +100,14 @@ func (masterFinder *MasterFinder) GetVillages(ctx context.Context, id int64) ([]
 }
 
 // GetBooks returns all books
-func (masterFinder *MasterFinder) GetBooks(ctx context.Context) ([]*entity.Book, error) {
-	books, err := masterFinder.bookRepository.FindAll(ctx)
+func (masterFinder *MasterFinder) GetBooks(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Book, int64, error) {
+	books, total, err := masterFinder.bookRepository.GetBooks(ctx, query, sort, order, limit, page)
 
 	if err != nil {
-		return nil, errors.ErrInternalServerError.Error()
+		return nil, 0, errors.ErrInternalServerError.Error()
 	}
 
-	return books, nil
+	return books, total, nil
 }
 
 func (masterFinder *MasterFinder) GetBookByID(ctx context.Context, id uuid.UUID) (*entity.Book, error) {
@@ -119,4 +119,3 @@ func (masterFinder *MasterFinder) GetBookByID(ctx context.Context, id uuid.UUID)
 
 	return book, nil
 }
-

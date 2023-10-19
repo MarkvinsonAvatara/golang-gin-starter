@@ -50,12 +50,12 @@ func NewPinjaman(
 func HandledPinjaman(
 	id uuid.UUID,
 	status bool,
-	approvedBy string,
+	handledBy string,
 ) *Pinjaman {
 	return &Pinjaman{
 		ID:                id,
 		Status:            status,
-		AuditablePinjaman: NewUditablePinjaman(approvedBy),
+		AuditablePinjaman: NewUditablePinjaman(handledBy),
 	}
 }
 

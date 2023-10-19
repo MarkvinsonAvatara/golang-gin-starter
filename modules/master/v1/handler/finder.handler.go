@@ -132,7 +132,15 @@ func (mf *MasterFinderHandler) GetVillagesByDistrictID(c *gin.Context) {
 
 // GetBooks is a handler for getting all books
 func (mf *MasterFinderHandler) GetBooks(c *gin.Context) {
-	books, err := mf.masterFinder.GetBooks(c.Request.Context())
+	var request resource.GetBookRequest
+
+	if err := c.ShouldBindQuery(&request); err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+
+	books, total, err := mf.masterFinder.GetBooks(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
 	if err != nil {
 		c.JSON(errors.ErrInternalServerError.Code, response.ErrorAPIResponse(errors.ErrInternalServerError.Code, err.Error()))
 		c.Abort()
@@ -147,7 +155,7 @@ func (mf *MasterFinderHandler) GetBooks(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", &resource.GetBookListResponse{
 		List:  res,
-		Total: int64(len(res)),
+		Total: total,
 	}))
 }
 

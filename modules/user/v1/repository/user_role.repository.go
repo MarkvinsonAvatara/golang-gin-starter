@@ -28,7 +28,7 @@ type UserRoleRepositoryUseCase interface {
 	// CreateOrUpdate is a method for creating or updating user role
 	CreateOrUpdate(ctx context.Context, userRole *entity.UserRole) error
 	// GetUser Role gets all user role
-	GetUserRoles(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.UserRole, int64, error)
+	GetUserRoles(ctx context.Context, query, sort, order string, limit, Page int) ([]*entity.UserRole, int64, error)
 	// FindByUserID is a method for finding user role by user id
 	GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error)
 	// UpdateUseRole is a method for updating user role
@@ -101,18 +101,18 @@ func (nc *UserRoleRepository) CreateUserRole(ctx context.Context, role *entity.U
 	return nil
 }
 
-func (nc *UserRoleRepository) GetUserRoles(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.UserRole, int64, error) {
+func (nc *UserRoleRepository) GetUserRoles(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.UserRole, int64, error) {
 	var userRoles []*entity.UserRole
 	var total int64
+	offsetUser:=((page - 1)*limit)
+
 	var gormDB = nc.db.
 		WithContext(ctx).
 		Model(&entity.UserRole{}).
-		Find(&userRoles)
-
-	gormDB.Count(&total)
-
-	gormDB = gormDB.Limit(limit).
-		Offset(offset)
+		Find(&userRoles).
+		Count(&total).
+		Limit(limit).
+		Offset(offsetUser)
 
 	// if query != "" {
 	// 	gormDB = gormDB.
@@ -135,7 +135,7 @@ func (nc *UserRoleRepository) GetUserRoles(ctx context.Context, query, sort, ord
 		if err == gorm.ErrRecordNotFound {
 			return nil, 0, nil
 		}
-		return nil, 0, errors.Wrap(err, "[UserRepository-GetAdminUsers] error when looking up all user")
+		return nil, 0, errors.Wrap(err, "[UserRoleRepository-GetUserRoles] error when looking up all user")
 	}
 
 	return userRoles, total, nil

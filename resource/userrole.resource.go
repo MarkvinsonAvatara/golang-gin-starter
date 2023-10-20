@@ -15,7 +15,7 @@ import (
 // GetUserRoleResponse
 type GetUserRoleRespone struct {
 	List  []*UserRole `json:"list"`
-	Total int64       `json:"total"`
+	Meta  *Meta       `json:"meta"`
 }
 
 type GetUserRoleRequest struct {

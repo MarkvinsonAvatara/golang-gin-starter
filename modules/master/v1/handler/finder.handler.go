@@ -153,9 +153,18 @@ func (mf *MasterFinderHandler) GetBooks(c *gin.Context) {
 		res = append(res, resource.NewBookResponse(book))
 	}
 
+	// offset := (request.Page - 1) * request.Limit
+
+	meta := &resource.Meta{
+		Total_Data:   total,
+		Per_Page:     request.Limit,
+		Current_Page: request.Page,
+		Total_Page:    total / int64(request.Limit),
+	}
+
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", &resource.GetBookListResponse{
-		List:  res,
-		Total: total,
+		List: res,
+		Meta: meta,
 	}))
 }
 

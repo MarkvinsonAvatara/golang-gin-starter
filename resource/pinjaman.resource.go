@@ -28,7 +28,7 @@ type CreatePinjamanRequest struct {
 
 type GetPinjamanListResponse struct {
 	List  []*PinjamanDetail `json:"list"`
-	Total int64             `json:"total"`
+	Meta  *Meta             `json:"meta"`
 }
 
 type GetPinjamanRequest struct {

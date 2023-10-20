@@ -46,6 +46,7 @@ type UserAdmin struct {
 type GetUsersResponse struct {
 	List  []*UserProfile `json:"list"`
 	Total int64          `json:"total"`
+	Meta  *Meta          `json:"meta"`
 }
 
 type GetAdminUsersResponse struct {

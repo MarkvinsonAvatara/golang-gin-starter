@@ -63,7 +63,7 @@ type UpdateBookRequest struct {
 
 type GetBookListResponse struct {
 	List  []*BookDetail `json:"list"`
-	Total int64         `json:"total"`
+	Meta  *Meta         `json:"meta"`
 }
 
 type DeleteBookRequest struct {

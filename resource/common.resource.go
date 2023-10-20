@@ -15,9 +15,8 @@ type PaginationQueryParam struct {
 
 // Meta is a meta response
 type Meta struct {
-	Total       int `json:"total"`
-	Limit       int `json:"limit"`
-	Offset      int `json:"offset"`
-	CurrentPage int `json:"current_page"`
-	TotalPage   int `json:"total_page"`
+	Total_Data   int64 `json:"total_data"`
+	Per_Page     int   `json:"per_page"`
+	Current_Page int   `json:"current_page"`
+	Total_Page   int64 `json:"total_page"`
 }

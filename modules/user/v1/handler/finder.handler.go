@@ -100,9 +100,16 @@ func (uf *UserFinderHandler) GetUsers(c *gin.Context) {
 		res = append(res, resource.NewUserProfile(u))
 	}
 
+	meta := &resource.Meta{
+		Total_Data:   total,
+		Per_Page:     request.Limit,
+		Current_Page: request.Page,
+		Total_Page:    total / int64(request.Limit),
+	}
+
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", &resource.GetUsersResponse{
 		List:  res,
-		Total: total,
+		Meta: meta,
 	}))
 }
 
@@ -221,24 +228,23 @@ func (uf *UserFinderHandler) GetRoles(c *gin.Context) {
 		res = append(res, resource.NewRoleResponse(v))
 	}
 
-	currentPage := request.Offset/request.Limit + 1
-	totalPage := len(res) / request.Limit
-	if len(res)%request.Limit > 0 {
-		totalPage++
-	}
+	// currentPage := request.Offset/request.Limit + 1
+	// totalPage := len(res) / request.Limit
+	// if len(res)%request.Limit > 0 {
+	// 	totalPage++
+	// }
 
-	meta := &resource.Meta{
-		Total:       len(res),
-		Limit:       request.Limit,
-		Offset:      request.Offset,
-		CurrentPage: currentPage,
-		TotalPage:   totalPage,
-	}
+	// meta := &resource.Meta{
+	// 	Total_Data:   total,
+	// 	Per_Page:     request.Limit,
+	// 	Current_Page: request.Page,
+	// 	Total_Page:   total / int64(request.Limit),
+	// }
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", &resource.GetRoleResponse{
 		List:  res,
 		Total: int64(len(res)),
-		Meta:  meta,
+		Meta:  nil,
 	}))
 }
 
@@ -286,9 +292,8 @@ func (uf *UserFinderHandler) GetUserPermissions(c *gin.Context) {
 	}))
 }
 
-
-//GetUser Role is a hand for get list role of user
-func (uf *UserFinderHandler)GetUserRoles(c *gin.Context){
+// GetUser Role is a hand for get list role of user
+func (uf *UserFinderHandler) GetUserRoles(c *gin.Context) {
 	var request resource.GetUserRoleRequest
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -312,12 +317,18 @@ func (uf *UserFinderHandler)GetUserRoles(c *gin.Context){
 		res = append(res, resource.NewUserRole(u))
 	}
 
+	meta := &resource.Meta{
+		Total_Data:   total,
+		Per_Page:     request.Limit,
+		Current_Page: request.Page,
+		Total_Page:    total / int64(request.Limit),
+	}
+
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", &resource.GetUserRoleRespone{
 		List:  res,
-		Total: total,
+		Meta: meta,
 	}))
 }
-
 
 func (uf *UserFinderHandler) GetUserRoleByID(c *gin.Context) {
 	var request resource.GetUserRoleByID
@@ -355,21 +366,28 @@ func (uf *UserFinderHandler) GetPinjamanList(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	pinjaman, total, err := uf.userFinder.GetPinjamanList(c , request.Query, request.Sort, request.Order, request.Limit, request.Page)
+	pinjaman, total, err := uf.userFinder.GetPinjamanList(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 		c.Abort()
 		return
 	}
 
-	res:= make([]*resource.PinjamanDetail, 0)
+	res := make([]*resource.PinjamanDetail, 0)
 	for _, p := range pinjaman {
-		res= append(res, resource.NewPinjamanResponse(p))
+		res = append(res, resource.NewPinjamanResponse(p))
+	}
+
+	meta := &resource.Meta{
+		Total_Data:   total,
+		Per_Page:     request.Limit,
+		Current_Page: request.Page,
+		Total_Page:    total / int64(request.Limit),
 	}
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.GetPinjamanListResponse{
 		List:  res,
-		Total: total,
+		Meta: meta,
 	}))
 }
 

@@ -19,7 +19,7 @@ type GetUserRoleRespone struct {
 }
 
 type GetUserRoleRequest struct {
-	Query string `form:"query" json:"query"`
+	Search string `form:"search" json:"search"`
 	Sort  string `form:"sort" json:"sort"`
 	Order string `form:"order" json:"order"`
 	Limit int    `form:"limit,default=10" json:"limit"`

@@ -36,7 +36,7 @@ func (uf *UserFinderHandler)GetUserRoles(c *gin.Context){
 		return
 	}
 
-	userRoles, total, err := uf.userFinder.GetUserRoles(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
+	userRoles, total, err := uf.userFinder.GetUserRoles(c, request.Search, request.Sort, request.Order, request.Limit, request.Page)
 
 	if err != nil {
 		parseError := errors.ParseError(err)
@@ -51,9 +51,17 @@ func (uf *UserFinderHandler)GetUserRoles(c *gin.Context){
 		res = append(res, resource.NewUserRole(u))
 	}
 
+	meta := &resource.Meta{
+		Total_Data:   total,
+		Per_Page:     0,
+		Current_Page: 0,
+		Total_Page:    0,
+	}
+
+
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", &resource.GetUserRoleRespone{
 		List:  res,
-		Total: total,
+		Meta: meta,
 	}))
 }
 

@@ -23,11 +23,11 @@ type UserFinder struct {
 // UserFinderUseCase is a usecase for user
 type UserFinderUseCase interface {
 	// GetUsers gets all users
-	GetUsers(ctx context.Context, query, order, sort string, limit, page int) ([]*entity.User, int64, error)
+	GetUsers(ctx context.Context, search, order, sort string, limit, page int) ([]*entity.User, int64, error)
 	// GetUserByID gets a user by ID
 	GetUserByID(ctx context.Context, id uuid.UUID) (*entity.User, error)
 	// GetAdminUsers gets all admin users
-	GetAdminUsers(ctx context.Context, query, order, sort string, limit, offset int) ([]*entity.User, int64, error)
+	GetAdminUsers(ctx context.Context, search, order, sort string, limit, offset int) ([]*entity.User, int64, error)
 	// GetAdminUserByID gets a admin user by ID
 	GetAdminUserByID(ctx context.Context, id uuid.UUID) (*entity.User, error)
 	// GetUserByEmail gets user by email
@@ -35,17 +35,17 @@ type UserFinderUseCase interface {
 	// GetUserByForgotPasswordToken gets user by forgot password token
 	GetUserByForgotPasswordToken(ctx context.Context, token string) (*entity.User, error)
 	// GetRoles gets all roles
-	GetRoles(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.Role, error)
+	GetRoles(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.Role, error)
 	// GetPermissions gets all permissions
 	GetPermissions(ctx context.Context) ([]*entity.Permission, error)
 	// GetUserPermissions gets all user permissions
 	GetUserPermissions(ctx context.Context, userID uuid.UUID) ([]*entity.Permission, error)
 	// GetUserRoles gets all user roles
-	GetUserRoles(ctx context.Context, query, order, sort string, limit, offset int) ([]*entity.UserRole, int64, error)
+	GetUserRoles(ctx context.Context, search, order, sort string, limit, offset int) ([]*entity.UserRole, int64, error)
 	// GetUserRolesByIDs gets all user roles by ids
 	GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error)
 	// GetPinjamanList gets all pinjaman
-	GetPinjamanList(ctx context.Context, query, order, sort string, limit, page int) ([]*entity.Pinjaman, int64, error)
+	GetPinjamanList(ctx context.Context, search, order, sort string, limit, page int) ([]*entity.Pinjaman, int64, error)
 	// GetPinjamanByID gets a pinjaman by ID
 	GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error)
 }
@@ -70,8 +70,8 @@ func NewUserFinder(
 }
 
 // GetUsers gets all users
-func (uf *UserFinder) GetUsers(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.User, int64, error) {
-	users, total, err := uf.userRepo.GetUsers(ctx, query, sort, order, limit, page)
+func (uf *UserFinder) GetUsers(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.User, int64, error) {
+	users, total, err := uf.userRepo.GetUsers(ctx, search, sort, order, limit, page)
 
 	if err != nil {
 		return nil, 0, errors.ErrInternalServerError.Error()
@@ -81,8 +81,8 @@ func (uf *UserFinder) GetUsers(ctx context.Context, query, sort, order string, l
 }
 
 // GetAdminUsers gets all admin users
-func (uf *UserFinder) GetAdminUsers(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.User, int64, error) {
-	users, total, err := uf.userRepo.GetAdminUsers(ctx, query, sort, order, limit, offset)
+func (uf *UserFinder) GetAdminUsers(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.User, int64, error) {
+	users, total, err := uf.userRepo.GetAdminUsers(ctx, search, sort, order, limit, offset)
 
 	if err != nil {
 		return nil, 0, errors.ErrInternalServerError.Error()
@@ -144,8 +144,8 @@ func (uf *UserFinder) GetUserByForgotPasswordToken(ctx context.Context, token st
 }
 
 // GetRoles gets all roles
-func (uf *UserFinder) GetRoles(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.Role, error) {
-	roles, err := uf.roleRepo.FindAll(ctx, query, sort, order, limit, offset)
+func (uf *UserFinder) GetRoles(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.Role, error) {
+	roles, err := uf.roleRepo.FindAll(ctx, search, sort, order, limit, offset)
 
 	if err != nil {
 		return nil, errors.ErrInternalServerError.Error()
@@ -197,8 +197,8 @@ func (uf *UserFinder) GetUserPermissions(ctx context.Context, userID uuid.UUID) 
 }
 
 // GetUsers Roles gets all User Roles
-func (uf *UserFinder) GetUserRoles(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.UserRole, int64, error) {
-	userroles, total, err := uf.userRoleRepo.GetUserRoles(ctx, query, sort, order, limit, page)
+func (uf *UserFinder) GetUserRoles(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.UserRole, int64, error) {
+	userroles, total, err := uf.userRoleRepo.GetUserRoles(ctx, search, sort, order, limit, page)
 
 	if err != nil {
 		return nil, 0, errors.ErrInternalServerError.Error()
@@ -222,8 +222,8 @@ func (uf *UserFinder) GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entit
 }
 
 // GetPinjamanList gets all pinjaman
-func (uf *UserFinder) GetPinjamanList(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error) {
-	pinjaman, total,err := uf.pinjamanRepo.GetPinjamanList(ctx, query, sort, order, limit, page)
+func (uf *UserFinder) GetPinjamanList(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error) {
+	pinjaman, total,err := uf.pinjamanRepo.GetPinjamanList(ctx, search, sort, order, limit, page)
 	if err != nil {
 		return nil, 0,errors.ErrInternalServerError.Error()
 	}

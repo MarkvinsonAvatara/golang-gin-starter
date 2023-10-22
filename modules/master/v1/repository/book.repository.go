@@ -2,13 +2,13 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"gin-starter/common/constant"
 	"gin-starter/entity"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"strings"
-	"fmt"
 )
 
 // BookRepository is an struct for Book repository
@@ -21,7 +21,7 @@ type BookRepositoryUseCase interface {
 	// CreateBook creates a new Book
 	CreateBook(ctx context.Context, book *entity.Book) error
 	// GetBooks returns a list of books
-	GetBooks(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Book, int64,error)
+	GetBooks(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.Book, int64, error)
 	// GetBookByID returns a book by its ID
 	GetBookByID(ctx context.Context, id uuid.UUID) (*entity.Book, error)
 	DeleteBookByID(ctx context.Context, id uuid.UUID) error
@@ -49,7 +49,7 @@ func (bookRepository *BookRepository) CreateBook(ctx context.Context, book *enti
 }
 
 // GetBooks returns a list of books
-func (bookRepository *BookRepository) GetBooks(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Book, int64, error) {
+func (bookRepository *BookRepository) GetBooks(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.Book, int64, error) {
 	var buku []*entity.Book
 	var total int64
 	offsetBook := ((page - 1) * limit)
@@ -60,8 +60,15 @@ func (bookRepository *BookRepository) GetBooks(ctx context.Context, query, sort,
 		Limit(limit).
 		Offset(offsetBook)
 
-	if query != "" {
-		gormDB = gormDB.Where("title LIKE ?", "%"+query+"%")
+	if search != "" {
+		gormDB = gormDB.
+			Where("CAST(isbn AS TEXT)ILIKE ?", "%"+search+"%").
+			Or("title ILIKE ?", "%"+search+"%").
+			Or("genre ILIKE ?", "%"+search+"%").
+			Or("author ILIKE ?", "%"+search+"%").
+			Or("publisher ILIKE ?", "%"+search+"%").
+			Or("CAST(edition AS TEXT) ILIKE ?", "%"+search+"%")
+
 	}
 
 	if order != constant.Ascending && order != constant.Descending {

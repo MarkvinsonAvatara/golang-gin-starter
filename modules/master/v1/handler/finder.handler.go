@@ -140,7 +140,7 @@ func (mf *MasterFinderHandler) GetBooks(c *gin.Context) {
 		return
 	}
 
-	books, total, err := mf.masterFinder.GetBooks(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
+	books, total, err := mf.masterFinder.GetBooks(c, request.Search, request.Sort, request.Order, request.Limit, request.Page)
 	if err != nil {
 		c.JSON(errors.ErrInternalServerError.Code, response.ErrorAPIResponse(errors.ErrInternalServerError.Code, err.Error()))
 		c.Abort()

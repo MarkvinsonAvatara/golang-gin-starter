@@ -85,7 +85,7 @@ func (uf *UserFinderHandler) GetUsers(c *gin.Context) {
 		return
 	}
 
-	users, total, err := uf.userFinder.GetUsers(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
+	users, total, err := uf.userFinder.GetUsers(c, request.Search, request.Sort, request.Order, request.Limit, request.Page)
 
 	if err != nil {
 		parseError := errors.ParseError(err)
@@ -153,7 +153,7 @@ func (uf *UserFinderHandler) GetAdminUsers(c *gin.Context) {
 		return
 	}
 
-	users, total, err := uf.userFinder.GetAdminUsers(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
+	users, total, err := uf.userFinder.GetAdminUsers(c, request.Search, request.Sort, request.Order, request.Limit, request.Page)
 
 	if err != nil {
 		parseError := errors.ParseError(err)
@@ -302,7 +302,7 @@ func (uf *UserFinderHandler) GetUserRoles(c *gin.Context) {
 		return
 	}
 
-	userRoles, total, err := uf.userFinder.GetUserRoles(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
+	userRoles, total, err := uf.userFinder.GetUserRoles(c, request.Search, request.Sort, request.Order, request.Limit, request.Page)
 
 	if err != nil {
 		parseError := errors.ParseError(err)

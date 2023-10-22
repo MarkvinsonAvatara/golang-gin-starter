@@ -45,7 +45,6 @@ type UserAdmin struct {
 
 type GetUsersResponse struct {
 	List  []*UserProfile `json:"list"`
-	Total int64          `json:"total"`
 	Meta  *Meta          `json:"meta"`
 }
 
@@ -75,7 +74,7 @@ type GetAdminUserByIDRequest struct {
 }
 
 type GetAdminUsersRequest struct {
-	Query string `form:"query" json:"query"`
+	Search string `form:"search" json:"search"`
 	Sort  string `form:"sort" json:"sort"`
 	Order string `form:"order" json:"order"`
 	Limit int    `form:"limit,default=10" json:"limit"`

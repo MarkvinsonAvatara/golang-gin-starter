@@ -17,7 +17,7 @@ type PinjamanRepository struct {
 
 type PinjamanRepositoryUseCase interface {
 	CreatePinjamanRequest(ctx context.Context, pinjaman *entity.Pinjaman) error
-	GetPinjamanList(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error)
+	GetPinjamanList(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error)
 	GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error)
 	HandledPinjaman(ctx context.Context, book *entity.Pinjaman) error
 }
@@ -40,7 +40,7 @@ func (pinjamanRepository *PinjamanRepository) CreatePinjamanRequest(ctx context.
 }
 
 // GetBooks returns a list of books
-func (pinjamanRepository *PinjamanRepository) GetPinjamanList(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error) {
+func (pinjamanRepository *PinjamanRepository) GetPinjamanList(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error) {
 	var pinjaman []*entity.Pinjaman
 	var total int64
 	offsetPinjaman := ((page - 1) * limit)
@@ -51,9 +51,16 @@ func (pinjamanRepository *PinjamanRepository) GetPinjamanList(ctx context.Contex
 		Limit(limit).
 		Offset(offsetPinjaman)
 
+		if search != "" {
+			gormDB = gormDB.
+				Where("CAST(tglpinjam AS TEXT) ILIKE ?", "%"+search+"%").
+				Or("CAST(tglkembali AS TEXT ILIKE ?", "%"+search+"%")
+		}
+
 		if order != constant.Ascending && order != constant.Descending {
 			order = constant.Descending
 		}
+
 	
 		if sort == "" {
 			sort = "created_at"

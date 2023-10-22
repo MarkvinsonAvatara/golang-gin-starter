@@ -28,7 +28,7 @@ type UserRoleRepositoryUseCase interface {
 	// CreateOrUpdate is a method for creating or updating user role
 	CreateOrUpdate(ctx context.Context, userRole *entity.UserRole) error
 	// GetUser Role gets all user role
-	GetUserRoles(ctx context.Context, query, sort, order string, limit, Page int) ([]*entity.UserRole, int64, error)
+	GetUserRoles(ctx context.Context, search, sort, order string, limit, Page int) ([]*entity.UserRole, int64, error)
 	// FindByUserID is a method for finding user role by user id
 	GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error)
 	// UpdateUseRole is a method for updating user role
@@ -101,25 +101,21 @@ func (nc *UserRoleRepository) CreateUserRole(ctx context.Context, role *entity.U
 	return nil
 }
 
-func (nc *UserRoleRepository) GetUserRoles(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.UserRole, int64, error) {
+func (nc *UserRoleRepository) GetUserRoles(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.UserRole, int64, error) {
 	var userRoles []*entity.UserRole
 	var total int64
 	offsetUser:=((page - 1)*limit)
-
 	var gormDB = nc.db.
 		WithContext(ctx).
 		Model(&entity.UserRole{}).
-		Find(&userRoles).
 		Count(&total).
 		Limit(limit).
 		Offset(offsetUser)
 
-	// if query != "" {
-	// 	gormDB = gormDB.
-	// 		Where("name ILIKE ?", "%"+query+"%").
-	// 		Or("email ILIKE ?", "%"+query+"%").
-	// 		Or("phone_number ILIKE ?", "%"+query+"%")
-	// }
+	if search != "" {
+		gormDB = gormDB.
+			Where("name ILIKE ?", "%"+search+"%")
+	}
 
 	if order != constant.Ascending && order != constant.Descending {
 		order = constant.Descending

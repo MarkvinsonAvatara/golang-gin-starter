@@ -36,9 +36,9 @@ type UserRepositoryUseCase interface {
 	// CreateUser is a function to create user
 	CreateUser(ctx context.Context, user *entity.User) error
 	// GetUsers is a function to get users
-	GetUsers(ctx context.Context, query, sort, order string, limit, page int) ([]*entity.User, int64, error)
+	GetUsers(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.User, int64, error)
 	// GetAdminUsers is a function to get admin users
-	GetAdminUsers(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.User, int64, error)
+	GetAdminUsers(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.User, int64, error)
 	// UpdateUser is a function to update user
 	UpdateUser(ctx context.Context, user *entity.User) error
 	// UpdateUserStatus is a function to update user status
@@ -194,7 +194,7 @@ func (ur *UserRepository) CreateUser(ctx context.Context, user *entity.User) err
 }
 
 // GetUsers is a function to get all users
-func (ur *UserRepository) GetUsers(ctx context.Context, query,sort, order string, limit, page int) ([]*entity.User, int64, error) {
+func (ur *UserRepository) GetUsers(ctx context.Context, search,sort, order string, limit, page int) ([]*entity.User, int64, error) {
 	var user []*entity.User
 	var total int64
 	offsetUser:=((page - 1)*limit)
@@ -206,11 +206,11 @@ func (ur *UserRepository) GetUsers(ctx context.Context, query,sort, order string
 		Limit(limit).
 		Offset(offsetUser)
 
-	if query != "" {
+	if search != "" {
 		gormDB = gormDB.
-			Where("name ILIKE ?", "%"+query+"%").
-			Or("email ILIKE ?", "%"+query+"%").
-			Or("phone_number ILIKE ?", "%"+query+"%")
+			Where("name ILIKE ?", "%"+search+"%").
+			Or("email ILIKE ?", "%"+search+"%").
+			Or("Cast(dob AS TEXT) ILIKE ?", "%"+search+"%")
 	}
 
 	if order != constant.Ascending && order != constant.Descending {
@@ -234,7 +234,7 @@ func (ur *UserRepository) GetUsers(ctx context.Context, query,sort, order string
 }
 
 // GetAdminUsers is a function to get all admin users
-func (ur *UserRepository) GetAdminUsers(ctx context.Context, query, sort, order string, limit, offset int) ([]*entity.User, int64, error) {
+func (ur *UserRepository) GetAdminUsers(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.User, int64, error) {
 	var user []*entity.User
 	var total int64
 	var gormDB = ur.db.
@@ -248,11 +248,11 @@ func (ur *UserRepository) GetAdminUsers(ctx context.Context, query, sort, order 
 	gormDB = gormDB.Limit(limit).
 		Offset(offset)
 
-	if query != "" {
+	if search != "" {
 		gormDB = gormDB.
-			Where("name ILIKE ?", "%"+query+"%").
-			Or("email ILIKE ?", "%"+query+"%").
-			Or("phone_number ILIKE ?", "%"+query+"%")
+			Where("name ILIKE ?", "%"+search+"%").
+			Or("email ILIKE ?", "%"+search+"%").
+			Or("phone_number ILIKE ?", "%"+search+"%")
 	}
 
 	if order != constant.Ascending && order != constant.Descending {

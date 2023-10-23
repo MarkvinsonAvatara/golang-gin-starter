@@ -54,7 +54,7 @@ func (pinjamanRepository *PinjamanRepository) GetPinjamanList(ctx context.Contex
 		if search != "" {
 			gormDB = gormDB.
 				Where("CAST(tglpinjam AS TEXT) ILIKE ?", "%"+search+"%").
-				Or("CAST(tglkembali AS TEXT ILIKE ?", "%"+search+"%")
+				Or("CAST(tglkembali AS TEXT) ILIKE ?", "%"+search+"%")
 		}
 
 		if order != constant.Ascending && order != constant.Descending {

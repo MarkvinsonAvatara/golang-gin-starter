@@ -171,6 +171,7 @@ func UserCreatorHTTPHandler(cfg config.Config, router *gin.Engine, uc userservic
 	{
 		v1.POST("/cms/user", hnd.CreateUser)
 		v1.POST("/cms/admin/user", hnd.CreateAdmin)
+		v1.POST("/cms/role", hnd.CreateUserRole)
 		// v1.POST("/cms/permission", hnd.CreatePermission)
 	}
 }

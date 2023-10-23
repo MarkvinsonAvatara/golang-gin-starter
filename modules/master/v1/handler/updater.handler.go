@@ -57,7 +57,7 @@ func (masterUpdater *MasterUpdaterHandler) UpdateBook(c *gin.Context) {
 		return
 	}
 
-	book := entity.NewBook(
+	book := entity.UpdateBook(
 		bookID,
 		request.Isbn, 
 		request.Title, 

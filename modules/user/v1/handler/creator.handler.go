@@ -287,7 +287,7 @@ func (uc *UserCreatorHandler) CreatePinjamanRequest(c *gin.Context) {
 		request.BukuId,
 		TglPinjam,
 		TglKembali,
-		"System",
+		"User",
 	)
 
 	if err != nil {

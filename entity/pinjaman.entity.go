@@ -55,16 +55,16 @@ func HandledPinjaman(
 	return &Pinjaman{
 		ID:                id,
 		Status:            status,
-		AuditablePinjaman: NewUditablePinjaman(handledBy),
+		AuditablePinjaman: NewHandledPinjaman(handledBy),
 	}
 }
 
 func (model *Pinjaman) MapUpdateFrom(from *Pinjaman) *map[string]interface{} {
 	if from == nil {
 		return &map[string]interface{}{
-			"tglkembali":    model.Tglkembali,
-			"status":        model.Status,
-			"handled_at":    model.HandledAt,
+			"tglkembali": model.Tglkembali,
+			"status":     model.Status,
+			"handled_at": model.HandledAt,
 			"handled_by": model.HandledBy,
 		}
 	}

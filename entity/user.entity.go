@@ -46,7 +46,7 @@ func NewUser(
 		Password:  string(passwordHash),
 		Roleid:    roleid,
 		DOB:       dob,
-		Auditable: NewAuditable(createdBy),
+		Auditable: NewUserAuditable(createdBy),
 	}
 }
 
@@ -64,7 +64,7 @@ func UpdateUser(
 		Email:     email,
 		Roleid:    roleid,
 		DOB:       dob,
-		Auditable: NewAuditable(updatedBy),
+		Auditable: NewUserUpdateAuditable(updatedBy),
 	}
 }
 

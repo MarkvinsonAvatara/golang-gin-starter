@@ -74,7 +74,7 @@ func (uc *UserCreator) CreateUser(ctx context.Context, name string, email string
 		password,
 		roleid,
 		utils.TimeToNullTime(dob),
-		"",
+		"System",
 	)
 
 	if err := uc.userRepo.CreateUser(ctx, user); err != nil {

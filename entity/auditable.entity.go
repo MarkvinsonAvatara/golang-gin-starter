@@ -21,7 +21,7 @@ type Auditable struct {
 
 type AuditablePinjaman struct {
 	RequestedBy sql.NullString `json:"requested_by"`
-	HandledBy  sql.NullString `json:"handled_by"`
+	HandledBy   sql.NullString `json:"handled_by"`
 	RequestedAt time.Time      `json:"requested_at"`
 	HandledAt   time.Time      `json:"handled_at"`
 }
@@ -29,9 +29,28 @@ type AuditablePinjaman struct {
 func NewUditablePinjaman(requestedBy string) AuditablePinjaman {
 	return AuditablePinjaman{
 		RequestedAt: time.Now(),
-		HandledAt:   time.Now(),
 		RequestedBy: utils.StringToNullString(requestedBy),
-		HandledBy:   utils.StringToNullString(requestedBy),
+	}
+}
+
+func NewAuditableBook(createdBy string) Auditable {
+	return Auditable{
+		CreatedAt: time.Now(),
+		CreatedBy: utils.StringToNullString(createdBy),
+	}
+}
+
+func NewUpdateAuditableBook(updatedBy string) Auditable {
+	return Auditable{
+		UpdatedAt: time.Now(),
+		UpdatedBy: utils.StringToNullString(updatedBy),
+	}
+}
+
+func NewHandledPinjaman(handledBy string) AuditablePinjaman {
+	return AuditablePinjaman{
+		HandledAt: time.Now(),
+		HandledBy: utils.StringToNullString(handledBy),
 	}
 }
 
@@ -42,5 +61,34 @@ func NewAuditable(createdBy string) Auditable {
 		UpdatedAt: time.Now(),
 		CreatedBy: utils.StringToNullString(createdBy),
 		UpdatedBy: utils.StringToNullString(createdBy),
+	}
+}
+
+func NewUserAuditable(createdBy string) Auditable {
+	return Auditable{
+		CreatedAt: time.Now(),
+		CreatedBy: utils.StringToNullString(createdBy),
+	}
+}
+
+func NewUserUpdateAuditable(updatedBy string) Auditable {
+	return Auditable{
+		UpdatedAt: time.Now(),
+		UpdatedBy: utils.StringToNullString(updatedBy),
+	}
+}
+
+
+func NewAuditableUserRole(createdBy string) Auditable {
+	return Auditable{
+		CreatedAt: time.Now(),
+		CreatedBy: utils.StringToNullString(createdBy),
+	}
+}
+
+func NewAuditableUserRoleUpdate(updatedBy string) Auditable {
+	return Auditable{
+		UpdatedAt: time.Now(),
+		UpdatedBy: utils.StringToNullString(updatedBy),
 	}
 }

@@ -187,7 +187,7 @@ func (uu *UserUpdaterHandler) ForgotPassword(c *gin.Context) {
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", nil))
 }
 
-/// UpdateUser is a handler for updating user
+// / UpdateUser is a handler for updating user
 func (uu *UserUpdaterHandler) UpdateUser(c *gin.Context) {
 	var request resource.UpdateUserRequest
 
@@ -197,7 +197,7 @@ func (uu *UserUpdaterHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	userIDstr:= c.Param("id")
+	userIDstr := c.Param("id")
 	userID, err := uuid.Parse(userIDstr)
 	if err != nil {
 		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
@@ -206,7 +206,6 @@ func (uu *UserUpdaterHandler) UpdateUser(c *gin.Context) {
 	}
 
 	_, err = uu.userFinder.GetUserByID(c, userID)
-
 
 	if err != nil {
 		parseError := errors.ParseError(err)
@@ -228,7 +227,6 @@ func (uu *UserUpdaterHandler) UpdateUser(c *gin.Context) {
 		c.Abort()
 		return
 	}
-
 
 	dob, err := utils.DateStringToTime(request.DOB)
 
@@ -329,11 +327,10 @@ func (uu *UserUpdaterHandler) UpdateAdmin(c *gin.Context) {
 		return
 	}
 
-	user := entity.NewUser(
+	user := entity.UpdateUser(
 		userID,
 		request.Name,
 		request.Email,
-		request.Name,
 		request.RoleId,
 		utils.TimeToNullTime(dob),
 		"system",
@@ -423,14 +420,14 @@ func (uu *UserUpdaterHandler) UpdatePermission(c *gin.Context) {
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", nil))
 }
 
-func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context){
+func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context) {
 	var request resource.UpdateUserRoleRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 		c.Abort()
 		return
 	}
-	userRoleIDstr:= c.Param("id")
+	userRoleIDstr := c.Param("id")
 	userRoleID, err := uuid.Parse(userRoleIDstr)
 	if err != nil {
 		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
@@ -439,13 +436,13 @@ func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context){
 	}
 
 	_, err = uu.userFinder.GetUserRoleByID(c, userRoleID)
-	
+
 	if err != nil {
 		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
 		c.Abort()
 		return
 	}
-	userRole := entity.NewUserRole(
+	userRole := entity.UpdateUserRole(
 		userRoleID,
 		request.Name,
 		request.Description,
@@ -454,7 +451,7 @@ func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context){
 
 	if err := uu.userUpdater.UpdateUserRoles(c, userRole); err != nil {
 		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))	
+		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
 		c.Abort()
 		return
 	}
@@ -462,22 +459,22 @@ func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context){
 
 }
 
-func (uu *UserUpdaterHandler) HandledPinjaman(c *gin.Context){
+func (uu *UserUpdaterHandler) HandledPinjaman(c *gin.Context) {
 	var request resource.HandledRequest
-	if err := c.ShouldBindUri(&request); err != nil{
+	if err := c.ShouldBindUri(&request); err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 		c.Abort()
 		return
 	}
 	pinjamanIDstr := c.Param("id")
 	pinjamanID, err := uuid.Parse(pinjamanIDstr)
-	if err != nil{
+	if err != nil {
 		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
 		c.Abort()
 		return
 	}
 	_, err = uu.userFinder.GetPinjamanByID(c, pinjamanID)
-	if err != nil{
+	if err != nil {
 		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
 		c.Abort()
 		return
@@ -489,14 +486,12 @@ func (uu *UserUpdaterHandler) HandledPinjaman(c *gin.Context){
 		"admin",
 	)
 
-	if err := uu.userUpdater.HandledPinjaman(c, pinjaman); err != nil{
+	if err := uu.userUpdater.HandledPinjaman(c, pinjaman); err != nil {
 		parseError := errors.ParseError(err)
 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
 		c.Abort()
 		return
 	}
 
-	
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "Penangan Pinjaman Success", nil))
 }
-

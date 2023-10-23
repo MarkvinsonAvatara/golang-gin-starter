@@ -34,9 +34,24 @@ func NewUserRole(
 		ID:        id,
 		Name:      name,
 		Description: description,
-		Auditable: NewAuditable(createdBy),
+		Auditable: NewAuditableUserRole(createdBy),
 	}
 }
+
+func UpdateUserRole(
+	id uuid.UUID,
+	name string,
+	description string,
+	updatedBy string,
+) *UserRole {
+	return &UserRole{
+		ID:        id,
+		Name:      name,
+		Description: description,
+		Auditable: NewAuditableUserRoleUpdate(updatedBy),
+	}
+}
+
 
 // MapUpdateFrom mapping from model
 func (model *UserRole) MapUpdateFrom(from *UserRole) *map[string]interface{} {

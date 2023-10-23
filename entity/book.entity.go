@@ -45,7 +45,31 @@ func NewBook(
 		Publisher:   publisher,
 		Edition:     edition,
 		Description: description,
-		Auditable:   NewAuditable(createdBy),
+		Auditable:   NewAuditableBook(createdBy),
+	}
+}
+
+func UpdateBook(
+	id uuid.UUID,
+	isbn int64,
+	title string,
+	author string,
+	genre string,
+	publisher string,
+	edition int64,
+	description string,
+	updatedBy string,
+) *Book {
+	return &Book{
+		ID:          id,
+		ISBN:        isbn,
+		Title:       title,
+		Author:      author,
+		Genre:       genre,
+		Publisher:   publisher,
+		Edition:     edition,
+		Description: description,
+		Auditable:   NewUpdateAuditableBook(updatedBy),
 	}
 }
 

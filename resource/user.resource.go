@@ -30,11 +30,6 @@ type UserProfile struct {
 }
 
 func NewUserProfile(user *entity.User) *UserProfile {
-	// otpIsNull := false
-	// if user.OTP.String != "" {
-	// 	otpIsNull = true
-	// }
-
 	dob := "1970-01-01"
 	if user.DOB.Valid {
 		dob = user.DOB.Time.Format(timeFormat)

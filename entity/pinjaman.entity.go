@@ -19,7 +19,7 @@ type Pinjaman struct {
 	BukuID     string       `gorm:"foreignKey:id" json:"bukuid"`
 	Tglpinjam  sql.NullTime `json:"tglpinjam"`
 	Tglkembali sql.NullTime `json:"tglkembali"`
-	Status     bool         `json:"status"`
+	Status     int64        `json:"status"`
 	AuditablePinjaman
 }
 
@@ -49,13 +49,13 @@ func NewPinjaman(
 
 func HandledPinjaman(
 	id uuid.UUID,
-	status bool,
 	handledBy string,
+	status int64,
 ) *Pinjaman {
 	return &Pinjaman{
 		ID:                id,
-		Status:            status,
 		AuditablePinjaman: NewHandledPinjaman(handledBy),
+		Status:            status,
 	}
 }
 

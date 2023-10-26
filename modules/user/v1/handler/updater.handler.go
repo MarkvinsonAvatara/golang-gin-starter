@@ -461,7 +461,7 @@ func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context) {
 
 func (uu *UserUpdaterHandler) HandledPinjaman(c *gin.Context) {
 	var request resource.HandledRequest
-	if err := c.ShouldBindUri(&request); err != nil {
+	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 		c.Abort()
 		return
@@ -482,8 +482,9 @@ func (uu *UserUpdaterHandler) HandledPinjaman(c *gin.Context) {
 
 	pinjaman := entity.HandledPinjaman(
 		pinjamanID,
-		request.Status,
 		"admin",
+		request.Status,
+
 	)
 
 	if err := uu.userUpdater.HandledPinjaman(c, pinjaman); err != nil {

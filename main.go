@@ -8,6 +8,7 @@ import (
 	authBuilder "gin-starter/modules/auth/v1/builder"
 	masterBuilder "gin-starter/modules/master/v1/builder"
 	notificationBuilder "gin-starter/modules/notification/v1/builder"
+	pinjamanBuilder "gin-starter/modules/pinjaman/v1/builder"
 	userBuilder "gin-starter/modules/user/v1/builder"
 	// userRoleBuilder "gin-starter/modules/role/v1/builder"
 	// pubsubSDK "gin-starter/sdk/pubsub"
@@ -124,6 +125,7 @@ func BuildHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redisPool 
 	// userRoleBuilder.BuildUserRoleHandler(cfg, router, db, redisPool, awsSession)
 	notificationBuilder.BuildNotificationHandler(cfg, router, db, redisPool, awsSession)
 	masterBuilder.BuildMasterHandler(cfg, router, db, redisPool, awsSession)
+	pinjamanBuilder.BuildPinjamanHandler(cfg, router, db, redisPool, awsSession)
 }
 
 func checkError(err error) {

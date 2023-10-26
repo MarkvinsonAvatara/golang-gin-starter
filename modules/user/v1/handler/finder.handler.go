@@ -44,7 +44,7 @@ func (uf *UserFinderHandler) GetUserProfile(c *gin.Context) {
 func (uf *UserFinderHandler) GetUserByForgotPasswordToken(c *gin.Context) {
 	var request resource.GetUserByForgotPasswordTokenRequest
 
-	if err := c.ShouldBindUri(&request); err != nil {
+	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 		c.Abort()
 		return
@@ -85,7 +85,7 @@ func (uf *UserFinderHandler) GetUsers(c *gin.Context) {
 		return
 	}
 
-	users, total, err := uf.userFinder.GetUsers(c, request.Search, request.Sort, request.Order, request.Limit, request.Page)
+	users, total, err := uf.userFinder.GetUsers(c, request.Search, request.Filter, request.Sort, request.Order, request.Limit, request.Page)
 
 	if err != nil {
 		parseError := errors.ParseError(err)
@@ -366,7 +366,7 @@ func (uf *UserFinderHandler) GetPinjamanList(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	pinjaman, total, err := uf.userFinder.GetPinjamanList(c, request.Query, request.Sort, request.Order, request.Limit, request.Page)
+	pinjaman, total, err := uf.userFinder.GetPinjamanList(c, request.Search, request.Filter,request.Sort, request.Order, request.Limit, request.Page)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 		c.Abort()

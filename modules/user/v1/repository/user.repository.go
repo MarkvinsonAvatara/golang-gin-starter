@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"gin-starter/common/constant"
 	"gin-starter/entity"
-	// "log"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -36,7 +36,7 @@ type UserRepositoryUseCase interface {
 	// CreateUser is a function to create user
 	CreateUser(ctx context.Context, user *entity.User) error
 	// GetUsers is a function to get users
-	GetUsers(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.User, int64, error)
+	GetUsers(ctx context.Context, search, filter, sort, order string, limit, page int) ([]*entity.User, int64, error)
 	// GetAdminUsers is a function to get admin users
 	GetAdminUsers(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.User, int64, error)
 	// UpdateUser is a function to update user
@@ -194,14 +194,14 @@ func (ur *UserRepository) CreateUser(ctx context.Context, user *entity.User) err
 }
 
 // GetUsers is a function to get all users
-func (ur *UserRepository) GetUsers(ctx context.Context, search,sort, order string, limit, page int) ([]*entity.User, int64, error) {
+func (ur *UserRepository) GetUsers(ctx context.Context, search, filter, sort, order string, limit, page int) ([]*entity.User, int64, error) {
 	var user []*entity.User
 	var total int64
-	offsetUser:=((page - 1)*limit)
+	offsetUser := ((page - 1) * limit)
 	var gormDB = ur.db.
 		WithContext(ctx).
 		Model(&entity.User{}).
-		Where("public.user.roleid is null AND public.user.deleted_at is NULL").
+		Where("public.user.deleted_at is NULL").
 		Count(&total).
 		Limit(limit).
 		Offset(offsetUser)
@@ -211,6 +211,12 @@ func (ur *UserRepository) GetUsers(ctx context.Context, search,sort, order strin
 			Where("name ILIKE ?", "%"+search+"%").
 			Or("email ILIKE ?", "%"+search+"%").
 			Or("Cast(dob AS TEXT) ILIKE ?", "%"+search+"%")
+	}
+
+	if filter == strings.ToLower("user") {
+		gormDB = gormDB.Where("public.user.roleid = '4ad98cc1-f2c7-4dc8-b67f-56c15022b05d'")
+	} else if filter == strings.ToLower("admin") {
+		gormDB = gormDB.Where("public.user.roleid = '6cb0f2c1-0408-44ec-b1ad-1095b57ec544'")
 	}
 
 	if order != constant.Ascending && order != constant.Descending {

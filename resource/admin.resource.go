@@ -75,6 +75,7 @@ type GetAdminUserByIDRequest struct {
 
 type GetAdminUsersRequest struct {
 	Search string `form:"search" json:"search"`
+	Filter string `form:"filter" json:"filter"`
 	Sort  string `form:"sort" json:"sort"`
 	Order string `form:"order" json:"order"`
 	Limit int    `form:"limit,default=10" json:"limit"`

@@ -17,23 +17,36 @@ import (
 // starting from handler down to repository or tool.
 func BuildMasterHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redisPool *redis.Pool, awsSession *session.Session) {
 	// Repository
-	pr := repository.NewProvinceRepository(db)
+	provinceRepo := repository.NewProvinceRepository(db)
 	dr := repository.NewDistrictRepository(db)
 	vr := repository.NewVillageRepository(db)
-	rr := repository.NewRegencyRepository(db)
-	bookRepository:=repository.NewBookRepository(db)
+	regencyRepo := repository.NewRegencyRepository(db)
+	createBookRepository:=repository.CreateNewBookRepository(db)
+	finderBookRepository:=repository.FinderNewBookRepository(db)
+	deleteBookRepository:=repository.DeleterNewBookRepository(db)
+	updaterBookRepository:=repository.UpdaterNewBookRepository(db)
 	cloudStorage := gcs.NewGoogleCloudStorage(cfg)
 	// cloudStorage := aws.NewS3Bucket(cfg, awsSession)
 
 	// Service
-	mc := service.NewMasterCreator(cfg, bookRepository, cloudStorage)
-	masterDeleter := service.NewMasterDeleter(cfg, bookRepository, cloudStorage)
-	mf := service.NewMasterFinder(cfg, pr, rr, dr, vr, bookRepository)
-	masterUpdater := service.NewMasterUpdater(cfg, bookRepository, cloudStorage)
+	bookCreator := service.BookNewMasterCreator(cfg, createBookRepository, finderBookRepository,cloudStorage)
+	// mc := service.(cfg, createBookRepository, finderBookRepository,cloudStorage)
+	masterDeleter := service.NewMasterDeleter(cfg, deleteBookRepository, cloudStorage)
+	bookFinder := service.BookNewMasterFinder(cfg,finderBookRepository)
+	provinceFinder := service.ProvinceNewMasterFinder(cfg, provinceRepo)
+	regencyFinder:=service.RegencyNewMasterFinder(cfg,regencyRepo)
+	districtFinder:=service.DistrictNewMasterFinder(cfg,dr)
+	villagerFinder:=service.VillageNewMasterFinder(cfg,vr)
+	
+	masterUpdater := service.NewMasterUpdater(cfg, updaterBookRepository, cloudStorage)
 
 	// Handler
-	app.MasterFinderHTTPHandler(cfg, router, mf)
-	app.MasterCreatorHTTPHandler(cfg, router, mc, cloudStorage)
-	app.MasterUpdaterHTTPHandler(cfg, router, masterUpdater, mf, cloudStorage)
-	app.MasterDeleterHTTPHandler(cfg, router, masterDeleter, cloudStorage)
+	app.BookMasterFinderHTTPHandler(cfg, router, bookFinder)
+	app.BookMasterCreatorHTTPHandler(cfg, router, bookCreator, cloudStorage)
+	app.BookMasterUpdaterHTTPHandler(cfg, router, masterUpdater, bookFinder, cloudStorage)
+	app.BookMasterDeleterHTTPHandler(cfg, router, masterDeleter, cloudStorage)
+	app.ProvinceFinderHTTPHandler(cfg, router, provinceFinder)
+	app.RegencyFinderHTTPHandler(cfg, router, regencyFinder)
+	app.DistrictFinderHTTPHandler(cfg, router, districtFinder)
+	app.VillageFinderHTTPHandler(cfg, router, villagerFinder)
 }

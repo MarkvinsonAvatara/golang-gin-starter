@@ -2,7 +2,7 @@ package entity
 
 const (
 	// provinceTableName is a variable for user table name
-	provinceTableName = "main.provinces"
+	provinceTableName = "public.province"
 )
 
 // Province entity

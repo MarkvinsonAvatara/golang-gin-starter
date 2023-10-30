@@ -1,15 +1,19 @@
 package entity
 
+// import (
+// 	"github.com/google/uuid"
+// )
+
 const (
 	// regencyTableName is a variable for user table name
-	regencyTableName = "main.regencies"
+	regencyTableName = "public.regency"
 )
 
-type ParamsLocation struct {
-	Limit   int64  `json:"limit"`
-	Offset  int64  `json:"offset"`
-	Keyword string `json:"keyword"`
-}
+// type ParamsLocation struct {
+// 	Limit   int64  `json:"limit"`
+// 	Offset  int64  `json:"offset"`
+// 	Keyword string `json:"keyword"`
+// }
 
 // Regency entity
 type Regency struct {

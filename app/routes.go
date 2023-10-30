@@ -79,22 +79,58 @@ func NotificationUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, cf no
 	}
 }
 
-// MasterFinderHTTPHandler is a handler for master APIs
-func MasterFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterservicev1.MasterFinderUseCase) {
-	hnd := masterhandlerv1.NewMasterFinderHandler(mf)
+func ProvinceFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterservicev1.ProvinceMasterFinderUseCase) {
+	hnd := masterhandlerv1.ProvinceNewMasterFinderHandler(mf)
 	v1 := router.Group("/v1")
 	{
 		v1.GET("/provinces", hnd.GetProvinces)
-		v1.GET("/regencies/:province_id", hnd.GetRegenciesByProvinceID)
-		v1.GET("/districts/:regency_id", hnd.GetDistrictsByRegencyID)
-		v1.GET("/villages/:district_id", hnd.GetVillagesByDistrictID)
+		v1.GET("/province/:id", hnd.GetProvinceByID)
+	}
+}
+
+func RegencyFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterservicev1.RegencyMasterFinderUseCase) {
+	hnd := masterhandlerv1.RegencyNewMasterFinderHandler(mf)
+	v1 := router.Group("/v1")
+	{
+		v1.GET("/regencies", hnd.GetRegency)
+		v1.GET("/regency/:id", hnd.GetRegencyByID)
+	}
+}
+
+func DistrictFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterservicev1.DistrictMasterFinderUseCase) {
+	hnd := masterhandlerv1.DistrictNewMasterFinderHandler(mf)
+	v1 := router.Group("/v1")
+	{
+		v1.GET("/districts", hnd.GetDistrict)
+		v1.GET("/district/:id", hnd.GetDistrictByID)
+	}
+}
+
+
+func VillageFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterservicev1.VillageMasterFinderUseCase) {
+	hnd := masterhandlerv1.VillageNewMasterFinderHandler(mf)
+	v1 := router.Group("/v1")
+	{
+		v1.GET("/villages", hnd.GetVillage)
+		v1.GET("/village/:id", hnd.GetVillageByID)
+	}
+}
+
+// MasterFinderHTTPHandler is a handler for master APIs
+func BookMasterFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterservicev1.BookMasterFinderUseCase) {
+	hnd := masterhandlerv1.NewMasterFinderHandler(mf)
+	v1 := router.Group("/v1")
+	{
+		// v1.GET("/regencies/:province_id", hnd.GetRegenciesByProvinceID)
+		// v1.GET("/districts/:regency_id", hnd.GetDistrictsByRegencyID)
+		// v1.GET("/villages/:district_id", hnd.GetVillagesByDistrictID)
 		v1.GET("/books", hnd.GetBooks)
 		v1.GET("/book/:id", hnd.GetBookByID)
 	}
 }
 
 // MasterCreatorHTTPHandler is a handler for master APIs
-func MasterCreatorHTTPHandler(cfg config.Config, router *gin.Engine, mc masterservicev1.MasterCreatorUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+func BookMasterCreatorHTTPHandler(cfg config.Config, router *gin.Engine, mc masterservicev1.BookMasterCreatorUseCase, cloudStorage interfaces.CloudStorageUseCase) {
 	hnd := masterhandlerv1.NewMasterCreatorHandler(mc, cloudStorage)
 	v1 := router.Group("/v1")
 
@@ -105,7 +141,7 @@ func MasterCreatorHTTPHandler(cfg config.Config, router *gin.Engine, mc masterse
 }
 
 // MasterDeleterHTTPHandler is a handler for master APIs
-func MasterDeleterHTTPHandler(cfg config.Config, router *gin.Engine, md masterservicev1.MasterDeleterUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+func BookMasterDeleterHTTPHandler(cfg config.Config, router *gin.Engine, md masterservicev1.BookMasterDeleterUseCase, cloudStorage interfaces.CloudStorageUseCase) {
 	hnd := masterhandlerv1.NewMasterDeleterHandler(md, cloudStorage)
 	v1 := router.Group("/v1")
 
@@ -116,7 +152,7 @@ func MasterDeleterHTTPHandler(cfg config.Config, router *gin.Engine, md masterse
 }
 
 // MasterUpdaterHTTPHandler is a handler for master APIs
-func MasterUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, mu masterservicev1.MasterUpdaterUseCase, masterFinder masterservicev1.MasterFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+func BookMasterUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, mu masterservicev1.BookMasterUpdaterUseCase, masterFinder masterservicev1.BookMasterFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
 	hnd := masterhandlerv1.NewMasterUpdaterHandler(mu, masterFinder, cloudStorage)
 	v1 := router.Group("/v1")
 

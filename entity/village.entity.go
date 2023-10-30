@@ -1,13 +1,17 @@
 package entity
 
+// import (
+// 	"github.com/google/uuid"
+// )
+
 const (
 	// villageTableName is a variable for user table name
-	villageTableName = "main.villages"
+	villageTableName = "public.village"
 )
 
 // Village entity
 type Village struct {
-	ID         int64     `json:"id"`
+	ID         int64 `json:"id"`
 	Name       string    `json:"name"`
 	AltName    string    `json:"alt_name"`
 	Latitude   string    `json:"latitude"`

@@ -184,8 +184,8 @@ func UserFinderHTTPHandler(cfg config.Config, router *gin.Engine, cf userservice
 		v1.GET("/cms/user/detail/:id", hnd.GetUserByID)
 		// v1.GET("/cms/permission", hnd.GetPermissions)
 		// v1.GET("/cms/user/permission", hnd.GetUserPermissions)
-		v1.GET("/cms/role", hnd.GetUserRoles)
-		v1.GET("/cms/user/role/:id", hnd.GetUserRoleByID)
+		// v1.GET("/cms/role", hnd.GetUserRoles)
+		// v1.GET("/cms/user/role/:id", hnd.GetUserRoleByID)
 		// v1.GET("/cms/pinjaman/list", hnd.GetPinjamanList)
 		// v1.GET("/cms/pinjaman/detail/:id", hnd.GetPinjamanByID)
 	}
@@ -209,7 +209,7 @@ func UserCreatorHTTPHandler(cfg config.Config, router *gin.Engine, uc userservic
 	{
 		v1.POST("/cms/user", hnd.CreateUser)
 		v1.POST("/cms/admin/user", hnd.CreateAdmin)
-		v1.POST("/cms/role", hnd.CreateUserRole)
+		// v1.POST("/cms/role", hnd.CreateUserRole)
 		// v1.POST("/cms/permission", hnd.CreatePermission)
 	}
 }
@@ -236,7 +236,7 @@ func UserUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, uu userservic
 	{
 		v1.PUT("/cms/profile/:id", hnd.UpdateUser)
 		v1.PUT("/cms/admin/:id", hnd.UpdateAdmin)
-		v1.PUT("/cms/role/:id", hnd.UpdateUserRole)
+		// v1.PUT("/cms/role/:id", hnd.UpdateUserRole)
 		// v1.PUT("/cms/user/activate/:id", hnd.ActivateDeactivateUser)
 		// v1.PUT("/cms/permission/:id", hnd.UpdatePermission)
 		// v1.PUT("/cms/pinjaman/:id", hnd.HandledPinjaman)
@@ -253,7 +253,7 @@ func UserDeleterHTTPHandler(cfg config.Config, router *gin.Engine, ud userservic
 	{
 		v1.DELETE("/cms/user/:id", hnd.DeleteUsers)
 		v1.DELETE("/cms/admin/:id", hnd.DeleteAdmin)
-		v1.DELETE("/cms/role/:id", hnd.DeleteUserRole)
+		// v1.DELETE("/cms/role/:id", hnd.DeleteUserRole)
 	}
 }
 

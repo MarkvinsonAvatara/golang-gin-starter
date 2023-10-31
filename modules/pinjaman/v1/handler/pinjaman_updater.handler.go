@@ -18,14 +18,14 @@ import (
 // UserUpdaterHandler is a handler for user updater
 type PinjamanUpdaterHandler struct {
 	userUpdater  service.PinjamanUpdaterUseCase
-	userFinder   service.PinjamanFinderUseCase
+	userFinder   service.FinderPinjamanFinderUseCase
 	cloudStorage interfaces.CloudStorageUseCase
 }
 
 // NewUserUpdaterHandler is a constructor for UserUpdaterHandler
 func NewPinjamanUpdaterHandler(
 	userUpdater service.PinjamanUpdaterUseCase,
-	userFinder service.PinjamanFinderUseCase,
+	userFinder service.FinderPinjamanFinderUseCase,
 	cloudStorage interfaces.CloudStorageUseCase,
 ) *PinjamanUpdaterHandler {
 	return &PinjamanUpdaterHandler{

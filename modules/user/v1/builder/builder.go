@@ -3,8 +3,8 @@ package builder
 import (
 	"gin-starter/app"
 	"gin-starter/config"
-	notificationRepo "gin-starter/modules/notification/v1/repository"
-	notification "gin-starter/modules/notification/v1/service"
+	// notificationRepo "gin-starter/modules/notification/v1/repository"
+	// notification "gin-starter/modules/notification/v1/service"
 	userRepo "gin-starter/modules/user/v1/repository"
 	"gin-starter/modules/user/v1/service"
 	"gin-starter/sdk/gcs"
@@ -24,24 +24,42 @@ func BuildUserHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redisP
 
 	// Repository
 	ur := userRepo.NewUserRepository(db)
-	rr := userRepo.NewRoleRepository(db, cache)
+	// rr := userRepo.NewRoleRepository(db, cache)
 	urr := userRepo.NewUserRoleRepository(db, cache)
-	pr := userRepo.NewPermissionRepository(db, cache)
-	pinjamanRepository := userRepo.NewPinjamanRepository(db)
-	nr := notificationRepo.NewNotificationRepository(db)
+	userRoleCreateRepo := userRepo.CreateNewUserRoleRepository(db, cache)
+	userRoleDeleteRepo := userRepo.DeleteNewUserRoleRepository(db, cache)
+	userRoleFinderRepo := userRepo.FinderNewUserRoleRepository(db, cache)
+	userRoleUpdateRepo := userRepo.UpdateNewUserRoleRepository(db, cache)
+	
+	// pr := userRepo.NewPermissionRepository(db, cache)
+	// pinjamanRepository := userRepo.NewPinjamanRepository(db)
+	// nr := notificationRepo.NewNotificationRepository(db)
 
 	// Cloud Storage
 	cloudStorage := gcs.NewGoogleCloudStorage(cfg)
 	// cloudStorage := aws.NewS3Bucket(cfg, awsSession)
 
 	// Service
-	nc := notification.NewNotificationCreator(cfg, nr)
-	uc := service.NewUserCreator(cfg, ur, urr, rr, pinjamanRepository, pr, nc, cloudStorage)
-	uf := service.NewUserFinder(cfg, ur, urr, pinjamanRepository, rr, pr)
-	uu := service.NewUserUpdater(cfg, ur, urr, rr, pinjamanRepository, pr)
-	ud := service.NewUserDeleter(cfg, ur, rr, urr)
+	// nc := notification.NewNotificationCreator(cfg, nr)
+
+	userRoleCreator := service.NewUserRoleCreator(cfg, userRoleCreateRepo, cloudStorage)
+	userRoleFinder := service.NewUserRoleFinder(cfg, userRoleFinderRepo)
+	userRoleUpdater := service.NewUserRoleUpdater(cfg, userRoleUpdateRepo)
+	userRoleDeleter := service.NewUserRoleDeleter(cfg, userRoleDeleteRepo)
+
+	uc := service.NewUserCreator(cfg, ur, urr,  cloudStorage)
+	uf := service.NewUserFinder(cfg, ur, urr, )
+	uu := service.NewUserUpdater(cfg, ur, urr,)
+	ud := service.NewUserDeleter(cfg, ur, urr)
+	
 
 	// Handler
+
+	app.UserRoleCreatorHTTPHandler(cfg, router, userRoleCreator, cloudStorage)
+	app.UserRoleFinderHTTPHandler(cfg, router, userRoleFinder)
+	app.UserRoleUpdaterHTTPHandler(cfg, router, userRoleUpdater, userRoleFinder, cloudStorage)
+	app.UserRoleDeleterHTTPHandler(cfg, router, userRoleDeleter, cloudStorage)
+
 	app.UserFinderHTTPHandler(cfg, router, uf)
 	app.UserCreatorHTTPHandler(cfg, router, uc, uf, cloudStorage)
 	app.UserUpdaterHTTPHandler(cfg, router, uu, uf, cloudStorage)

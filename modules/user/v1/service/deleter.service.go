@@ -13,7 +13,7 @@ import (
 type UserDeleter struct {
 	cfg      config.Config
 	userRepo repository.UserRepositoryUseCase
-	roleRepo repository.RoleRepositoryUseCase
+	// roleRepo repository.RoleRepositoryUseCase
 	userRoleRepo repository.UserRoleRepositoryUseCase
 
 }
@@ -30,7 +30,7 @@ type UserDeleterUseCase interface {
 	// DeleteAdmin deletes admin
 	DeleteAdmin(ctx context.Context, id uuid.UUID) error
 	// DeleteRole deletes role
-	DeleteRole(ctx context.Context, id uuid.UUID, deletedBy string) error
+	// DeleteRole(ctx context.Context, id uuid.UUID, deletedBy string) error
 	// DeleteUser deletes user role
 	DeleteUserRole(ctx context.Context, id uuid.UUID) error
 }
@@ -39,14 +39,14 @@ type UserDeleterUseCase interface {
 func NewUserDeleter(
 	cfg config.Config,
 	userRepo repository.UserRepositoryUseCase,
-	roleRepo repository.RoleRepositoryUseCase,
+	// roleRepo repository.RoleRepositoryUseCase,
 	userRoleRepo repository.UserRoleRepositoryUseCase,
 
 ) *UserDeleter {
 	return &UserDeleter{
 		cfg:      cfg,
 		userRepo: userRepo,
-		roleRepo: roleRepo,
+		// roleRepo: roleRepo,
 		userRoleRepo: userRoleRepo,
 	}
 }
@@ -69,13 +69,13 @@ func (ud *UserDeleter) DeleteUsers(ctx context.Context, id uuid.UUID) error {
 }
 
 // DeleteRole deletes role
-func (ud *UserDeleter) DeleteRole(ctx context.Context, id uuid.UUID, deletedBy string) error {
-	if err := ud.roleRepo.Delete(ctx, id, deletedBy); err != nil {
-		return errors.ErrInternalServerError.Error()
-	}
-
-	return nil
-}
+// func (ud *UserDeleter) DeleteRole(ctx context.Context, id uuid.UUID, deletedBy string) error {
+// 	if err := ud.roleRepo.Delete(ctx, id, deletedBy); err != nil {
+// 		return errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	return nil
+// }
 
 // DeleteUserRole deletes user role
 func (ud *UserDeleter) DeleteUserRole(ctx context.Context, id uuid.UUID) error {

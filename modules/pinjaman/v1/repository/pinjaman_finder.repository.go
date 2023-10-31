@@ -11,36 +11,24 @@ import (
 	"strings"
 )
 
-type PinjamanRepository struct {
+type FinderPinjamanRepository struct {
 	db *gorm.DB
 }
 
-type PinjamanRepositoryUseCase interface {
-	CreatePinjamanRequest(ctx context.Context, pinjaman *entity.Pinjaman) error
+type FinderPinjamanRepositoryUseCase interface {
 	GetPinjamanList(ctx context.Context, search, filter,sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error)
 	GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error)
-	HandledPinjaman(ctx context.Context, book *entity.Pinjaman) error
 }
 
 // NewBookRepository creates a new Book repository
-func NewPinjamanRepository(db *gorm.DB) *PinjamanRepository {
-	return &PinjamanRepository{db}
+func FinderNewPinjamanRepository(db *gorm.DB) *FinderPinjamanRepository {
+	return &FinderPinjamanRepository{db}
 
 }
 
-// CreateBook creates a new Book
-func (pinjamanRepository *PinjamanRepository) CreatePinjamanRequest(ctx context.Context, pinjaman *entity.Pinjaman) error {
-	if err := pinjamanRepository.db.
-		WithContext(ctx).
-		Create(pinjaman).
-		Error; err != nil {
-		return errors.Wrap(err, "[PinjamanRepository-CreatePinjamanRequest]")
-	}
-	return nil
-}
 
 // GetBooks returns a list of books
-func (pinjamanRepository *PinjamanRepository) GetPinjamanList(ctx context.Context, search, filter, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error) {
+func (pinjamanRepository *FinderPinjamanRepository) GetPinjamanList(ctx context.Context, search, filter, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error) {
 	var pinjaman []*entity.Pinjaman
 	var total int64
 	offsetPinjaman := ((page - 1) * limit)
@@ -85,7 +73,7 @@ func (pinjamanRepository *PinjamanRepository) GetPinjamanList(ctx context.Contex
 }
 
 // GetBookByID returns a book by its ID
-func (pinjamanRepository *PinjamanRepository) GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error) {
+func (pinjamanRepository *FinderPinjamanRepository) GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error) {
 	pinjaman := new(entity.Pinjaman)
 	if err := pinjamanRepository.db.
 		WithContext(ctx).
@@ -101,19 +89,7 @@ func (pinjamanRepository *PinjamanRepository) GetPinjamanByID(ctx context.Contex
 	return pinjaman, nil
 }
 
-// // DeleteBookByID deletes a book by its ID
-// func (pinjamanRepository *PinjamanRepository) DeleteBookByID(ctx context.Context, id uuid.UUID) error {
-// 	if err := pinjamanRepository.db.
-// 		WithContext(ctx).
-// 		Where("id = ?", id).
-// 		Delete(&entity.Pinjaman{}).
-// 		Error; err != nil {
-// 		return errors.Wrap(err, "[PinjamanRepository-DeleteBookByID]")
-// 	}
-// 	return nil
-// }
-
-func (pinjamanRepository *PinjamanRepository) GetPinjamanByUserID(ctx context.Context, userID string) (int, error) {
+func (pinjamanRepository *FinderPinjamanRepository) GetPinjamanByUserID(ctx context.Context, userID string) (int, error) {
 	models := make([]*entity.Pinjaman, 0)
 	if err := pinjamanRepository.db.
 		WithContext(ctx).
@@ -126,7 +102,7 @@ func (pinjamanRepository *PinjamanRepository) GetPinjamanByUserID(ctx context.Co
 	return len(models), nil
 }
 
-func (pinjamanRepository *PinjamanRepository) GetPinjamanByBukuID(ctx context.Context, bookID string) (int, error) {
+func (pinjamanRepository *FinderPinjamanRepository) GetPinjamanByBukuID(ctx context.Context, bookID string) (int, error) {
 	models := make([]*entity.Pinjaman, 0)
 	if err := pinjamanRepository.db.
 		WithContext(ctx).
@@ -139,12 +115,4 @@ func (pinjamanRepository *PinjamanRepository) GetPinjamanByBukuID(ctx context.Co
 	return len(models), nil
 }
 
-func (pinjamanRepository *PinjamanRepository) HandledPinjaman(ctx context.Context, pinjaman *entity.Pinjaman) error {
-	if err := pinjamanRepository.db.WithContext(ctx).
-		Model(&entity.Pinjaman{}).
-		Where(`id = ?`, pinjaman.ID).
-		Updates(pinjaman).Error; err != nil {
-		return errors.Wrap(err, "[PinjamanRepository-HandledPinjaman]")
-	}
-	return nil
-}
+

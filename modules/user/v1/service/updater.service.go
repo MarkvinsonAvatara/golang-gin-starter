@@ -21,17 +21,17 @@ type UserUpdater struct {
 	cfg            config.Config
 	userRepo       repository.UserRepositoryUseCase
 	userRoleRepo   repository.UserRoleRepositoryUseCase
-	roleRepo       repository.RoleRepositoryUseCase
-	permissionRepo repository.PermissionRepositoryUseCase
-	pinjamanRepo   repository.PinjamanRepositoryUseCase
+	// roleRepo       repository.RoleRepositoryUseCase
+	// permissionRepo repository.PermissionRepositoryUseCase
+	// pinjamanRepo   repository.PinjamanRepositoryUseCase
 }
 
 // UserUpdaterUseCase is a struct that contains the dependencies of UserUpdaterUseCase
 type UserUpdaterUseCase interface {
 	// VerifyOTP is a function that verifies the OTP
-	VerifyOTP(ctx context.Context, userID uuid.UUID, otp string) (bool, error)
+	// VerifyOTP(ctx context.Context, userID uuid.UUID, otp string) (bool, error)
 	// ResendOTP is a function that resends the OTP
-	ResendOTP(ctx context.Context, userID uuid.UUID) error
+	// ResendOTP(ctx context.Context, userID uuid.UUID) error
 	// ChangePassword is a function that changes the password
 	ChangePassword(ctx context.Context, userID uuid.UUID, oldPassword, newPassword string) error
 	// ForgotPasswordRequest is a function that requests the password reset
@@ -41,17 +41,17 @@ type UserUpdaterUseCase interface {
 	// Update is a function that updates the user
 	UpdateUser(ctx context.Context, user *entity.User) error
 	// ActivateDeactivateUser activates or deactivates a user.
-	ActivateDeactivateUser(ctx context.Context, id uuid.UUID) error
+	// ActivateDeactivateUser(ctx context.Context, id uuid.UUID) error
 	// UpdateAdmin updates an admin.
 	UpdateAdmin(ctx context.Context, user *entity.User, roleID uuid.UUID) error
 	// UpdateRole updates a role
-	UpdateRole(ctx context.Context, id uuid.UUID, name string, permissionIDs []uuid.UUID) error
+	// UpdateRole(ctx context.Context, id uuid.UUID, name string, permissionIDs []uuid.UUID) error
 	// UpdatePermission updates a permission
-	UpdatePermission(ctx context.Context, id uuid.UUID, name, label string) error
+	// UpdatePermission(ctx context.Context, id uuid.UUID, name, label string) error
 	// UpdateUserRoles updates user roles
 	UpdateUserRoles(ctx context.Context, userRole *entity.UserRole) error
 	// HandledPinjaman updates pinjaman
-	HandledPinjaman(ctx context.Context, pinjaman *entity.Pinjaman) error
+	// HandledPinjaman(ctx context.Context, pinjaman *entity.Pinjaman) error
 }
 
 // NewUserUpdater is a function that creates a new UserUpdater
@@ -59,82 +59,82 @@ func NewUserUpdater(
 	cfg config.Config,
 	userRepo repository.UserRepositoryUseCase,
 	userRoleRepo repository.UserRoleRepositoryUseCase,
-	roleRepo repository.RoleRepositoryUseCase,
-	pinjamanRepo repository.PinjamanRepositoryUseCase,
-	permissionRepo repository.PermissionRepositoryUseCase,
+	// roleRepo repository.RoleRepositoryUseCase,
+	// pinjamanRepo repository.PinjamanRepositoryUseCase,
+	// permissionRepo repository.PermissionRepositoryUseCase,
 ) *UserUpdater {
 	return &UserUpdater{
 		cfg:            cfg,
 		userRepo:       userRepo,
 		userRoleRepo:   userRoleRepo,
-		roleRepo:       roleRepo,
-		pinjamanRepo:   pinjamanRepo,
-		permissionRepo: permissionRepo,
+		// roleRepo:       roleRepo,
+		// pinjamanRepo:   pinjamanRepo,
+		// permissionRepo: permissionRepo,
 	}
 }
 
 // VerifyOTP is a function that verifies the OTP
-func (uu *UserUpdater) VerifyOTP(ctx context.Context, userID uuid.UUID, otp string) (bool, error) {
-	user, err := uu.userRepo.GetUserByID(ctx, userID)
+// func (uu *UserUpdater) VerifyOTP(ctx context.Context, userID uuid.UUID, otp string) (bool, error) {
+// 	user, err := uu.userRepo.GetUserByID(ctx, userID)
+// 
+// 	if err != nil {
+// 		return false, errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	if user == nil {
+// 		return false, errors.ErrRecordNotFound.Error()
+// 	}
+// 
+// 	// if user.OTP.Valid && (user.OTP.String != otp) {
+// 	// 	return false, nil
+// 	// }
+// 
+// 	if err := uu.userRepo.UpdateOTP(ctx, user, ""); err != nil {
+// 		return false, err
+// 	}
+// 
+// 	return true, nil
+// }
 
-	if err != nil {
-		return false, errors.ErrInternalServerError.Error()
-	}
-
-	if user == nil {
-		return false, errors.ErrRecordNotFound.Error()
-	}
-
-	// if user.OTP.Valid && (user.OTP.String != otp) {
-	// 	return false, nil
-	// }
-
-	if err := uu.userRepo.UpdateOTP(ctx, user, ""); err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
-
-// ResendOTP is a function that resends the OTP
-func (uu *UserUpdater) ResendOTP(ctx context.Context, userID uuid.UUID) error {
-	user, err := uu.userRepo.GetUserByID(ctx, userID)
-
-	if err != nil {
-		return errors.ErrInternalServerError.Error()
-	}
-
-	if user == nil {
-		return errors.ErrRecordNotFound.Error()
-	}
-
-	otp := utils.GenerateOTP(constant.Four)
-
-	if err := uu.userRepo.UpdateOTP(ctx, user, otp); err != nil {
-		return err
-	}
-
-	t, err := template.ParseFiles("./template/email/send_otp.html")
-	if err != nil {
-		log.Println(fmt.Errorf("failed to load email template: %w", err))
-		return errors.ErrInternalServerError.Error()
-	}
-
-	var body bytes.Buffer
-
-	err = t.Execute(&body, struct {
-		Name string
-		OTP  string
-	}{
-		Name: user.Name,
-		OTP:  otp,
-	})
-	if err != nil {
-		log.Println(fmt.Errorf("failed to exeuute email data: %w", err))
-	}
-
-	return nil
-}
+// // ResendOTP is a function that resends the OTP
+// func (uu *UserUpdater) ResendOTP(ctx context.Context, userID uuid.UUID) error {
+// 	user, err := uu.userRepo.GetUserByID(ctx, userID)
+// 
+// 	if err != nil {
+// 		return errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	if user == nil {
+// 		return errors.ErrRecordNotFound.Error()
+// 	}
+// 
+// 	otp := utils.GenerateOTP(constant.Four)
+// 
+// 	if err := uu.userRepo.UpdateOTP(ctx, user, otp); err != nil {
+// 		return err
+// 	}
+// 
+// 	t, err := template.ParseFiles("./template/email/send_otp.html")
+// 	if err != nil {
+// 		log.Println(fmt.Errorf("failed to load email template: %w", err))
+// 		return errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	var body bytes.Buffer
+// 
+// 	err = t.Execute(&body, struct {
+// 		Name string
+// 		OTP  string
+// 	}{
+// 		Name: user.Name,
+// 		OTP:  otp,
+// 	})
+// 	if err != nil {
+// 		log.Println(fmt.Errorf("failed to exeuute email data: %w", err))
+// 	}
+// 
+// 	return nil
+// }
 
 // ChangePassword is a function that changes the password
 func (uu *UserUpdater) ChangePassword(ctx context.Context, userID uuid.UUID, oldPassword, newPassword string) error {
@@ -246,29 +246,29 @@ func (uu *UserUpdater) UpdateUser(ctx context.Context, user *entity.User) error 
 }
 
 // ActivateDeactivateUser activates or deactivates a user.
-func (uu *UserUpdater) ActivateDeactivateUser(ctx context.Context, id uuid.UUID) error {
-	user, err := uu.userRepo.GetUserByID(ctx, id)
-
-	if err != nil {
-		return errors.ErrInternalServerError.Error()
-	}
-
-	if user == nil {
-		return errors.ErrRecordNotFound.Error()
-	}
-
-	// if user.Status == "DEACTIVATED" {
-	// 	if err := uu.userRepo.UpdateUserStatus(ctx, id, "ACTIVATED"); err != nil {
-	// 		return errors.ErrInternalServerError.Error()
-	// 	}
-	// } else if user.Status == "ACTIVATED" {
-	// 	if err := uu.userRepo.UpdateUserStatus(ctx, id, "DEACTIVATED"); err != nil {
-	// 		return errors.ErrInternalServerError.Error()
-	// 	}
-	// }
-
-	return nil
-}
+// func (uu *UserUpdater) ActivateDeactivateUser(ctx context.Context, id uuid.UUID) error {
+// 	user, err := uu.userRepo.GetUserByID(ctx, id)
+// 
+// 	if err != nil {
+// 		return errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	if user == nil {
+// 		return errors.ErrRecordNotFound.Error()
+// 	}
+// 
+// 	// if user.Status == "DEACTIVATED" {
+// 	// 	if err := uu.userRepo.UpdateUserStatus(ctx, id, "ACTIVATED"); err != nil {
+// 	// 		return errors.ErrInternalServerError.Error()
+// 	// 	}
+// 	// } else if user.Status == "ACTIVATED" {
+// 	// 	if err := uu.userRepo.UpdateUserStatus(ctx, id, "DEACTIVATED"); err != nil {
+// 	// 		return errors.ErrInternalServerError.Error()
+// 	// 	}
+// 	// }
+// 
+// 	return nil
+// }
 
 // UpdateUserRoles updates user roles
 func (uu *UserUpdater) UpdateUserRoles(ctx context.Context, userRole *entity.UserRole) error {
@@ -300,61 +300,61 @@ func (uu *UserUpdater) UpdateAdmin(ctx context.Context, user *entity.User, roleI
 }
 
 // UpdateRole updates a role
-func (uu *UserUpdater) UpdateRole(ctx context.Context, id uuid.UUID, name string, permissionIDs []uuid.UUID) error {
-	role, err := uu.roleRepo.FindByID(ctx, id)
-
-	if err != nil {
-		return errors.ErrInternalServerError.Error()
-	}
-
-	if role == nil {
-		return errors.ErrRecordNotFound.Error()
-	}
-
-	roleRequest := entity.NewRole(role.ID, name, "system")
-
-	newPermissions := make([]*entity.RolePermission, 0)
-	for _, pid := range permissionIDs {
-		newPermissions = append(newPermissions, entity.NewRolePermission(
-			uuid.New(),
-			role.ID,
-			pid,
-			role.CreatedBy.String,
-		))
-	}
-
-	if err := uu.roleRepo.Update(ctx, roleRequest, newPermissions); err != nil {
-		return errors.ErrInternalServerError.Error()
-	}
-
-	return nil
-}
+// func (uu *UserUpdater) UpdateRole(ctx context.Context, id uuid.UUID, name string, permissionIDs []uuid.UUID) error {
+// 	role, err := uu.roleRepo.FindByID(ctx, id)
+// 
+// 	if err != nil {
+// 		return errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	if role == nil {
+// 		return errors.ErrRecordNotFound.Error()
+// 	}
+// 
+// 	roleRequest := entity.NewRole(role.ID, name, "system")
+// 
+// 	newPermissions := make([]*entity.RolePermission, 0)
+// 	for _, pid := range permissionIDs {
+// 		newPermissions = append(newPermissions, entity.NewRolePermission(
+// 			uuid.New(),
+// 			role.ID,
+// 			pid,
+// 			role.CreatedBy.String,
+// 		))
+// 	}
+// 
+// 	if err := uu.roleRepo.Update(ctx, roleRequest, newPermissions); err != nil {
+// 		return errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	return nil
+// }
 
 // UpdatePermission updates a permission
-func (uu *UserUpdater) UpdatePermission(ctx context.Context, id uuid.UUID, name, label string) error {
-	permission, err := uu.permissionRepo.FindByID(ctx, id)
+// func (uu *UserUpdater) UpdatePermission(ctx context.Context, id uuid.UUID, name, label string) error {
+// 	permission, err := uu.permissionRepo.FindByID(ctx, id)
+// 
+// 	if err != nil {
+// 		return errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	if permission == nil {
+// 		return errors.ErrRecordNotFound.Error()
+// 	}
+// 
+// 	newPermission := entity.NewPermission(id, name, label, permission.CreatedBy.String)
+// 
+// 	if err := uu.permissionRepo.Update(ctx, newPermission); err != nil {
+// 		return errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	return nil
+// }
 
-	if err != nil {
-		return errors.ErrInternalServerError.Error()
-	}
-
-	if permission == nil {
-		return errors.ErrRecordNotFound.Error()
-	}
-
-	newPermission := entity.NewPermission(id, name, label, permission.CreatedBy.String)
-
-	if err := uu.permissionRepo.Update(ctx, newPermission); err != nil {
-		return errors.ErrInternalServerError.Error()
-	}
-
-	return nil
-}
-
-func (uu *UserUpdater) HandledPinjaman(ctx context.Context, pinjaman *entity.Pinjaman) error {
-	if err := uu.pinjamanRepo.HandledPinjaman(ctx, pinjaman); err != nil {
-		return errors.ErrInternalServerError.Error()
-	}
-
-	return nil
-}
+// func (uu *UserUpdater) HandledPinjaman(ctx context.Context, pinjaman *entity.Pinjaman) error {
+// 	if err := uu.pinjamanRepo.HandledPinjaman(ctx, pinjaman); err != nil {
+// 		return errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	return nil
+// }

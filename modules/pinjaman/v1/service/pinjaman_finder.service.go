@@ -13,11 +13,11 @@ import (
 // UserFinder is a service for user
 type PinjamanFinder struct {
 	ufg            config.Config
-	pinjamanRepo   repository.PinjamanRepositoryUseCase
+	pinjamanRepo   repository.FinderPinjamanRepositoryUseCase
 }
 
 // UserFinderUseCase is a usecase for user
-type PinjamanFinderUseCase interface {
+type FinderPinjamanFinderUseCase interface {
 	// GetPinjamanList gets all pinjaman
 	GetPinjamanList(ctx context.Context, search, filter, order, sort string, limit, page int) ([]*entity.Pinjaman, int64, error)
 	// GetPinjamanByID gets a pinjaman by ID
@@ -27,7 +27,7 @@ type PinjamanFinderUseCase interface {
 // NewUserFinder creates a new UserFinder
 func NewPinjamanFinder(
 	ufg config.Config,
-	pinjamanRepo repository.PinjamanRepositoryUseCase,
+	pinjamanRepo repository.FinderPinjamanRepositoryUseCase,
 ) *PinjamanFinder {
 	return &PinjamanFinder{
 		ufg:            ufg,

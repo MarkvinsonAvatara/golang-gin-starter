@@ -14,12 +14,12 @@ import (
 
 // UserFinderHandler is a handler for user finder
 type PinjamanFinderHandler struct {
-	pinjamanFinder service.PinjamanFinderUseCase
+	pinjamanFinder service.FinderPinjamanFinderUseCase
 }
 
 // NewUserFinderHandler is a constructor for UserFinderHandler
 func NewPinjamanFinderHandler(
-	pinjamanFinder service.PinjamanFinderUseCase,
+	pinjamanFinder service.FinderPinjamanFinderUseCase,
 ) *PinjamanFinderHandler {
 	return &PinjamanFinderHandler{
 		pinjamanFinder: pinjamanFinder,

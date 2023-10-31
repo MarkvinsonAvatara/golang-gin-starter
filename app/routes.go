@@ -182,8 +182,8 @@ func UserFinderHTTPHandler(cfg config.Config, router *gin.Engine, cf userservice
 		v1.GET("/cms/admin/detail/:id", hnd.GetAdminUserByID)
 		v1.GET("/cms/user/list", hnd.GetUsers)
 		v1.GET("/cms/user/detail/:id", hnd.GetUserByID)
-		v1.GET("/cms/permission", hnd.GetPermissions)
-		v1.GET("/cms/user/permission", hnd.GetUserPermissions)
+		// v1.GET("/cms/permission", hnd.GetPermissions)
+		// v1.GET("/cms/user/permission", hnd.GetUserPermissions)
 		v1.GET("/cms/role", hnd.GetUserRoles)
 		v1.GET("/cms/user/role/:id", hnd.GetUserRoleByID)
 		// v1.GET("/cms/pinjaman/list", hnd.GetPinjamanList)
@@ -237,8 +237,8 @@ func UserUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, uu userservic
 		v1.PUT("/cms/profile/:id", hnd.UpdateUser)
 		v1.PUT("/cms/admin/:id", hnd.UpdateAdmin)
 		v1.PUT("/cms/role/:id", hnd.UpdateUserRole)
-		v1.PUT("/cms/user/activate/:id", hnd.ActivateDeactivateUser)
-		v1.PUT("/cms/permission/:id", hnd.UpdatePermission)
+		// v1.PUT("/cms/user/activate/:id", hnd.ActivateDeactivateUser)
+		// v1.PUT("/cms/permission/:id", hnd.UpdatePermission)
 		// v1.PUT("/cms/pinjaman/:id", hnd.HandledPinjaman)
 	}
 }
@@ -256,6 +256,53 @@ func UserDeleterHTTPHandler(cfg config.Config, router *gin.Engine, ud userservic
 		v1.DELETE("/cms/role/:id", hnd.DeleteUserRole)
 	}
 }
+
+func UserRoleFinderHTTPHandler(cfg config.Config, router *gin.Engine, userRoleFinder userservicev1.UserRoleFinderUseCase) {
+	hnd := userhandlerv1.NewUserRoleFinderHandler(userRoleFinder)
+	v1 := router.Group("/v1")
+
+	v1.Use(middleware.Auth(cfg))
+	v1.Use(middleware.Admin(cfg))
+	{
+		v1.GET("/cms/role", hnd.GetUserRoles)
+		v1.GET("/cms/role/:id", hnd.GetUserRoleByID)
+	}
+}
+
+func UserRoleCreatorHTTPHandler(cfg config.Config, router *gin.Engine, userRoleCreate userservicev1.UserRoleCreatorUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+	hnd := userhandlerv1.NewUserRoleCreatorHandler(userRoleCreate, cloudStorage)
+	v1 := router.Group("/v1")
+
+	v1.Use(middleware.Auth(cfg))
+	v1.Use(middleware.Admin(cfg))
+	{
+		v1.POST("/cms/role", hnd.CreateUserRole)
+	}
+}
+
+func UserRoleUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, userRoleUpdate userservicev1.UserRoleUpdaterUseCase, userRoleFinder userservicev1.UserRoleFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+	hnd := userhandlerv1.NewUserRoleUpdaterHandler(userRoleUpdate, userRoleFinder, cloudStorage)
+	v1 := router.Group("/v1")
+
+	v1.Use(middleware.Auth(cfg))
+	v1.Use(middleware.Admin(cfg))
+	{
+		v1.PUT("/cms/role/:id", hnd.UpdateUserRole)
+	}
+}
+
+func UserRoleDeleterHTTPHandler(cfg config.Config, router *gin.Engine, userRoleDelete userservicev1.UserRoleDeleterUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+	hnd := userhandlerv1.NewUserRoleDeleterHandler(userRoleDelete, cloudStorage)
+	v1 := router.Group("/v1")
+
+	v1.Use(middleware.Auth(cfg))
+	v1.Use(middleware.Admin(cfg))
+	{
+		v1.DELETE("/cms/role/:id", hnd.DeleteUserRole)
+	}
+}
+
+
 
 // func UserRoleFinderHTTPHandler(cfg config.Config, router *gin.Engine,userRoleFinder userRoleservicev1.UserFinderUseCase) {
 // 	hnd := userRolehandlerv1.NewUserFinderHandler(userRoleFinder)
@@ -302,7 +349,7 @@ func UserDeleterHTTPHandler(cfg config.Config, router *gin.Engine, ud userservic
 // 	}
 // }
 
-func PinjamanFinderHTTPHandler(cfg config.Config, router *gin.Engine, pinjamanFinder pinjamanService1.PinjamanFinderUseCase) {
+func PinjamanFinderHTTPHandler(cfg config.Config, router *gin.Engine, pinjamanFinder pinjamanService1.FinderPinjamanFinderUseCase) {
 	hnd := pinjamanHandler1.NewPinjamanFinderHandler(pinjamanFinder)
 	v1 := router.Group("/v1")
 
@@ -313,7 +360,7 @@ func PinjamanFinderHTTPHandler(cfg config.Config, router *gin.Engine, pinjamanFi
 	}
 }
 
-func PinjamanCreatorHTTPHandler(cfg config.Config, router *gin.Engine, pinjamanCreate pinjamanService1.PinjamanCreatorUseCase, cf userservicev1.UserFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+func PinjamanCreatorHTTPHandler(cfg config.Config, router *gin.Engine, pinjamanCreate pinjamanService1.CreatePinjamanCreatorUseCase, cf userservicev1.UserFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
 	hnd := pinjamanHandler1.NewPinjamanCreatorHandler(pinjamanCreate, cf, cloudStorage)
 	v1 := router.Group("/v1")
 
@@ -323,7 +370,7 @@ func PinjamanCreatorHTTPHandler(cfg config.Config, router *gin.Engine, pinjamanC
 	}
 }
 
-func PinjamanUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, pinjamanUpdate pinjamanService1.PinjamanUpdaterUseCase, pinjamanFinder pinjamanService1.PinjamanFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
+func PinjamanUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, pinjamanUpdate pinjamanService1.PinjamanUpdaterUseCase, pinjamanFinder pinjamanService1.FinderPinjamanFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {
 	hnd := pinjamanHandler1.NewPinjamanUpdaterHandler(pinjamanUpdate, pinjamanFinder, cloudStorage)
 	v1 := router.Group("/v1")
 

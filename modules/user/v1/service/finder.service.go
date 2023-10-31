@@ -15,9 +15,9 @@ type UserFinder struct {
 	ufg            config.Config
 	userRepo       repository.UserRepositoryUseCase
 	userRoleRepo   repository.UserRoleRepositoryUseCase
-	pinjamanRepo   repository.PinjamanRepositoryUseCase
-	roleRepo       repository.RoleRepositoryUseCase
-	permissionRepo repository.PermissionRepositoryUseCase
+	// finderPinjamanRepo   repository.PinjamanRepositoryUseCase
+	// roleRepo       repository.RoleRepositoryUseCase
+	// permissionRepo repository.PermissionRepositoryUseCase
 }
 
 // UserFinderUseCase is a usecase for user
@@ -35,19 +35,19 @@ type UserFinderUseCase interface {
 	// GetUserByForgotPasswordToken gets user by forgot password token
 	GetUserByForgotPasswordToken(ctx context.Context, token string) (*entity.User, error)
 	// GetRoles gets all roles
-	GetRoles(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.Role, error)
+	// GetRoles(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.Role, error)
 	// GetPermissions gets all permissions
-	GetPermissions(ctx context.Context) ([]*entity.Permission, error)
+	// GetPermissions(ctx context.Context) ([]*entity.Permission, error)
 	// GetUserPermissions gets all user permissions
-	GetUserPermissions(ctx context.Context, userID uuid.UUID) ([]*entity.Permission, error)
+	// GetUserPermissions(ctx context.Context, userID uuid.UUID) ([]*entity.Permission, error)
 	// GetUserRoles gets all user roles
 	GetUserRoles(ctx context.Context, search, order, sort string, limit, offset int) ([]*entity.UserRole, int64, error)
 	// GetUserRolesByIDs gets all user roles by ids
 	GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entity.UserRole, error)
 	// GetPinjamanList gets all pinjaman
-	GetPinjamanList(ctx context.Context, search, filter, order, sort string, limit, page int) ([]*entity.Pinjaman, int64, error)
-	// GetPinjamanByID gets a pinjaman by ID
-	GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error)
+	// GetPinjamanList(ctx context.Context, search, filter, order, sort string, limit, page int) ([]*entity.Pinjaman, int64, error)
+	// // GetPinjamanByID gets a pinjaman by ID
+	// GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error)
 }
 
 // NewUserFinder creates a new UserFinder
@@ -55,17 +55,15 @@ func NewUserFinder(
 	ufg config.Config,
 	userRepo repository.UserRepositoryUseCase,
 	userRoleRepo repository.UserRoleRepositoryUseCase,
-	pinjamanRepo repository.PinjamanRepositoryUseCase,
-	roleRepo repository.RoleRepositoryUseCase,
-	permissionRepo repository.PermissionRepositoryUseCase,
+	// pinjamanRepo repository.PinjamanRepositoryUseCase,
+	// permissionRepo repository.PermissionRepositoryUseCase,
 ) *UserFinder {
 	return &UserFinder{
 		ufg:            ufg,
 		userRepo:       userRepo,
 		userRoleRepo:   userRoleRepo,
-		roleRepo:       roleRepo,
-		pinjamanRepo:   pinjamanRepo,
-		permissionRepo: permissionRepo,
+		// roleRepo:       roleRepo,
+		// permissionRepo: permissionRepo,
 	}
 }
 
@@ -144,57 +142,57 @@ func (uf *UserFinder) GetUserByForgotPasswordToken(ctx context.Context, token st
 }
 
 // GetRoles gets all roles
-func (uf *UserFinder) GetRoles(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.Role, error) {
-	roles, err := uf.roleRepo.FindAll(ctx, search, sort, order, limit, offset)
-
-	if err != nil {
-		return nil, errors.ErrInternalServerError.Error()
-	}
-
-	return roles, nil
-}
+// func (uf *UserFinder) GetRoles(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.Role, error) {
+// 	roles, err := uf.roleRepo.FindAll(ctx, search, sort, order, limit, offset)
+// 
+// 	if err != nil {
+// 		return nil, errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	return roles, nil
+// }
 
 // GetPermissions get permissions
-func (uf *UserFinder) GetPermissions(ctx context.Context) ([]*entity.Permission, error) {
-	permissions, err := uf.permissionRepo.FindAll(ctx)
-	if err != nil {
-		return nil, errors.ErrInternalServerError.Error()
-	}
-
-	if permissions == nil {
-		return nil, errors.ErrRecordNotFound.Error()
-	}
-
-	return permissions, err
-}
+// func (uf *UserFinder) GetPermissions(ctx context.Context) ([]*entity.Permission, error) {
+// 	permissions, err := uf.permissionRepo.FindAll(ctx)
+// 	if err != nil {
+// 		return nil, errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	if permissions == nil {
+// 		return nil, errors.ErrRecordNotFound.Error()
+// 	}
+// 
+// 	return permissions, err
+// }
 
 // GetUserPermissions get list permission of user
-func (uf *UserFinder) GetUserPermissions(ctx context.Context, userID uuid.UUID) ([]*entity.Permission, error) {
-	userRole, err := uf.userRoleRepo.GetUserRoleByID(ctx, userID)
-	if err != nil {
-		return nil, errors.ErrInternalServerError.Error()
-	}
-
-	if userRole == nil {
-		return nil, errors.ErrRecordNotFound.Error()
-	}
-
-	role, err := uf.roleRepo.FindByID(ctx, userRole.ID)
-	if err != nil {
-		return nil, errors.ErrInternalServerError.Error()
-	}
-
-	if role == nil {
-		return nil, errors.ErrRecordNotFound.Error()
-	}
-
-	permissions := make([]*entity.Permission, 0)
-	for _, p := range role.RolePermissions {
-		permissions = append(permissions, p.Permission)
-	}
-
-	return permissions, nil
-}
+// func (uf *UserFinder) GetUserPermissions(ctx context.Context, userID uuid.UUID) ([]*entity.Permission, error) {
+// 	userRole, err := uf.userRoleRepo.GetUserRoleByID(ctx, userID)
+// 	if err != nil {
+// 		return nil, errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	if userRole == nil {
+// 		return nil, errors.ErrRecordNotFound.Error()
+// 	}
+// 
+// 	role, err := uf.roleRepo.FindByID(ctx, userRole.ID)
+// 	if err != nil {
+// 		return nil, errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	if role == nil {
+// 		return nil, errors.ErrRecordNotFound.Error()
+// 	}
+// 
+// 	permissions := make([]*entity.Permission, 0)
+// 	for _, p := range role.RolePermissions {
+// 		permissions = append(permissions, p.Permission)
+// 	}
+// 
+// 	return permissions, nil
+// }
 
 // GetUsers Roles gets all User Roles
 func (uf *UserFinder) GetUserRoles(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.UserRole, int64, error) {
@@ -221,27 +219,27 @@ func (uf *UserFinder) GetUserRoleByID(ctx context.Context, id uuid.UUID) (*entit
 	return userRole, nil
 }
 
-// GetPinjamanList gets all pinjaman
-func (uf *UserFinder) GetPinjamanList(ctx context.Context, search, filter, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error) {
-	pinjaman, total, err := uf.pinjamanRepo.GetPinjamanList(ctx, search, filter, sort, order, limit, page)
-	if err != nil {
-		return nil, 0, errors.ErrInternalServerError.Error()
-	}
-	return pinjaman, total, nil
-
-}
-
-// GetPinjamanByID gets a pinjaman by ID
-func (uf *UserFinder) GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error) {
-	pinjaman, err := uf.pinjamanRepo.GetPinjamanByID(ctx, id)
-
-	if err != nil {
-		return pinjaman, errors.ErrInternalServerError.Error()
-	}
-
-	if pinjaman == nil {
-		return nil, errors.ErrRecordNotFound.Error()
-	}
-
-	return pinjaman, nil
-}
+// // GetPinjamanList gets all pinjaman
+// func (uf *UserFinder) GetPinjamanList(ctx context.Context, search, filter, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error) {
+// 	pinjaman, total, err := uf.pinjamanRepo.GetPinjamanList(ctx, search, filter, sort, order, limit, page)
+// 	if err != nil {
+// 		return nil, 0, errors.ErrInternalServerError.Error()
+// 	}
+// 	return pinjaman, total, nil
+// 
+// }
+// 
+// // GetPinjamanByID gets a pinjaman by ID
+// func (uf *UserFinder) GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error) {
+// 	pinjaman, err := uf.pinjamanRepo.GetPinjamanByID(ctx, id)
+// 
+// 	if err != nil {
+// 		return pinjaman, errors.ErrInternalServerError.Error()
+// 	}
+// 
+// 	if pinjaman == nil {
+// 		return nil, errors.ErrRecordNotFound.Error()
+// 	}
+// 
+// 	return pinjaman, nil
+// }

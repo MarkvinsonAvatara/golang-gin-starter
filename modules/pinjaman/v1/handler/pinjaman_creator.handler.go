@@ -15,13 +15,13 @@ import (
 )
 
 type PinjamanCreatorHandler struct {
-	userCreator  service.PinjamanCreatorUseCase
+	userCreator  service.CreatePinjamanCreatorUseCase
 	userFinder  serviceUser.UserFinderUseCase
 	cloudStorage interfaces.CloudStorageUseCase
 }
 
 func NewPinjamanCreatorHandler(
-	userCreator service.PinjamanCreatorUseCase,
+	userCreator service.CreatePinjamanCreatorUseCase,
 	userFinder serviceUser.UserFinderUseCase,
 	cloudStorage interfaces.CloudStorageUseCase,
 ) *PinjamanCreatorHandler {

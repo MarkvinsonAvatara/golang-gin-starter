@@ -185,7 +185,7 @@ func (nc *UserRoleRepository) UpdateUserRole(ctx context.Context, UserRole *enti
 func (nc *UserRoleRepository) Update(ctx context.Context, userRole *entity.UserRole) error {
 	oldTime := userRole.UpdatedAt
 	userRole.UpdatedAt = time.Now()
-	if err := nc.db.
+	if err := nc.db.	
 		WithContext(ctx).
 		Transaction(func(tx *gorm.DB) error {
 			sourceModel := new(entity.UserRole)

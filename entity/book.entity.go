@@ -19,6 +19,19 @@ type Book struct {
 	Edition     int64     `json:"edition"`
 	Description string    `json:"description"`
 	Auditable
+	Status int64 `json:"status"`
+}
+
+type BookPinjaman struct {
+	ID          uuid.UUID `json:"id"`
+	ISBN        int64     `json:"isbn"`
+	Title       string    `json:"title"`
+	Genre       string    `json:"genre"`
+	Author      string    `json:"author"`
+	Publisher   string    `json:"publisher"`
+	Edition     int64     `json:"edition"`
+	Description string    `json:"description"`
+	Status      int64     `json:"status"`
 }
 
 func (u *Book) TableName() string {

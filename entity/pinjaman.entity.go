@@ -14,9 +14,29 @@ const (
 // Pinjaman define for table pinjaman
 
 type Pinjaman struct {
-	ID         uuid.UUID    `json:"id"`
-	UserID     string       `gorm:"foreignKey:id" json:"userid"`
-	BukuID     string       `gorm:"foreignKey:id" json:"bukuid"`
+	ID                uuid.UUID    `json:"id"`
+	UserID            string       `gorm:"foreignKey:id" json:"userid"`
+	BukuID            string       `gorm:"foreignKey:id" json:"bukuid"`
+	Tglpinjam         sql.NullTime `json:"tglpinjam"`
+	Tglkembali        sql.NullTime `json:"tglkembali"`
+	AuditablePinjaman
+	Status int64 `json:"status"`
+}
+
+type PinjamanDetail struct {
+	ID     uuid.UUID `json:"id"`
+	UserID string    `gorm:"foreignKey:id" json:"userid"`
+	// UserDetail UserPinjaman `gorm:"foreignKey:id" json:"userdetail"`
+	Name   string       `json:"name"`
+	DOB    sql.NullTime `json:"dob"`
+	BukuID string       `gorm:"foreignKey:id" json:"bukuid"`
+	// BukuDetail BookPinjaman `gorm:"foreignKey:id" json:"bukudetail"`
+	Title      string       `json:"title"`
+	ISBN       int64        `json:"isbn"`
+	Genre      string       `json:"genre"`
+	Author     string       `json:"author"`
+	Publisher  string       `json:"publisher"`
+	Edition    int64        `json:"edition"`
 	Tglpinjam  sql.NullTime `json:"tglpinjam"`
 	Tglkembali sql.NullTime `json:"tglkembali"`
 	Status     int64        `json:"status"`
@@ -36,6 +56,7 @@ func NewPinjaman(
 	tglpinjam sql.NullTime,
 	tglkembali sql.NullTime,
 	requestedBy string,
+	status int64,
 ) *Pinjaman {
 	return &Pinjaman{
 		ID:                id,
@@ -44,6 +65,7 @@ func NewPinjaman(
 		Tglpinjam:         tglpinjam,
 		Tglkembali:        tglkembali,
 		AuditablePinjaman: NewUditablePinjaman(requestedBy),
+		Status:            status,
 	}
 }
 

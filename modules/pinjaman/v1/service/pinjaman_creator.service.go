@@ -24,7 +24,7 @@ type PinjamanCreator struct {
 // UserCreatorUseCase is a use case for the User creator
 type CreatePinjamanCreatorUseCase interface {
 	// Create Pinjaman Request
-	CreatePinjamanRequest(ctx context.Context, userid string, bookid string, tglpinjaman time.Time, tglkembali time.Time, requestedBy string) (*entity.Pinjaman, error)
+	CreatePinjamanRequest(ctx context.Context, userid string, bookid string, tglpinjaman time.Time, tglkembali time.Time, requestedBy string, status int64) (*entity.Pinjaman, error)
 }
 
 // NewUserCreator is a constructor for the User creator
@@ -41,7 +41,7 @@ func NewPinjamanCreator(
 }
 
 // Create Pinjaman Request
-func (uc *PinjamanCreator) CreatePinjamanRequest(ctx context.Context, userid string, bookid string, tglpinjaman time.Time, tglkembali time.Time, requestedBy string) (*entity.Pinjaman, error) {
+func (uc *PinjamanCreator) CreatePinjamanRequest(ctx context.Context, userid string, bookid string, tglpinjaman time.Time, tglkembali time.Time, requestedBy string, status int64) (*entity.Pinjaman, error) {
 	pinjaman := entity.NewPinjaman(
 		uuid.New(),
 		userid,
@@ -49,6 +49,7 @@ func (uc *PinjamanCreator) CreatePinjamanRequest(ctx context.Context, userid str
 		utils.TimeToNullTime(tglpinjaman),
 		utils.TimeToNullTime(tglkembali),
 		requestedBy,
+		2,
 	)
 	if err := uc.pinjamanRepo.CreatePinjamanRequest(ctx, pinjaman); err != nil {
 		return nil, err

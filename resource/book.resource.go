@@ -2,6 +2,7 @@ package resource
 
 import (
 	"gin-starter/entity"
+
 )
 
 type BookDetail struct {
@@ -15,6 +16,7 @@ type BookDetail struct {
 	Description string `json:"description"`
 	CreatedAt   string `json:"created_at"`
 	UpdatedAt   string `json:"updated_at"`
+	Status      int64  `json:"status"`
 }
 
 type GetBookByIDRequest struct {
@@ -80,6 +82,7 @@ func NewBookResponse(book *entity.Book) *BookDetail {
 		Publisher:   book.Publisher,
 		Edition:     book.Edition,
 		Description: book.Description,
+		Status:      book.Status,
 		CreatedAt:   book.CreatedAt.Format(timeFormat),
 		UpdatedAt:   book.UpdatedAt.Format(timeFormat),
 	}

@@ -19,8 +19,14 @@ type User struct {
 	Email    string       `json:"email"`
 	Password string       `json:"password"`
 	DOB      sql.NullTime `json:"dob"`
-	Roleid   string    `gorm:"foreignKey:id" json:"roleid"`
+	Roleid   string       `gorm:"foreignKey:id" json:"roleid"`
 	Auditable
+}
+
+type UserPinjaman struct {
+	ID   uuid.UUID    `json:"id"`
+	Name string       `json:"name"`
+	DOB  sql.NullTime `json:"dob"`
 }
 
 // TableName specifies table name

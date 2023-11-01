@@ -33,7 +33,7 @@ func (uf *PinjamanFinderHandler) GetPinjamanList(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	pinjaman, total, err := uf.pinjamanFinder.GetPinjamanList(c, request.Search, request.Filter,request.Sort, request.Order, request.Limit, request.Page)
+	pinjaman, total, err := uf.pinjamanFinder.GetPinjamanList(c, request.Search, request.Filter, request.Sort, request.Order, request.Limit, request.Page)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 		c.Abort()
@@ -49,11 +49,11 @@ func (uf *PinjamanFinderHandler) GetPinjamanList(c *gin.Context) {
 		Total_Data:   total,
 		Per_Page:     request.Limit,
 		Current_Page: request.Page,
-		Total_Page:    total / int64(request.Limit),
+		Total_Page:   total / int64(request.Limit),
 	}
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.GetPinjamanListResponse{
-		List:  res,
+		List: res,
 		Meta: meta,
 	}))
 }
@@ -83,4 +83,24 @@ func (uf *PinjamanFinderHandler) GetPinjamanByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewPinjamanResponse(pinjaman)))
+}
+
+func (uf *PinjamanFinderHandler) GetAllList(c *gin.Context) {
+	totalAvalaible, totalNotAvalaible, totalUser, totalUserPinjaman, err := uf.pinjamanFinder.GetAllList(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+
+	meta:= &resource.DashboardMeta{
+		Total_Buku_Tersedia: totalAvalaible,
+		Total_Buku_Dipinjam: totalNotAvalaible,
+		Total_User:          totalUser,
+		Total_User_pinjam:   totalUserPinjaman,
+	}
+
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.GetDashboardListResponse{
+		Meta: meta,
+	}))
 }

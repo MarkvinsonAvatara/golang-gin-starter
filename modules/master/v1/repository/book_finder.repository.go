@@ -24,6 +24,7 @@ type FinderBookRepositoryUseCase interface {
 	GetBookByID(ctx context.Context, id uuid.UUID) (*entity.Book, error)
 	// FindBookByTitle returns a book by its title
 	FindBookByTitle(ctx context.Context, title string) (int, error)
+	GetBookAvalaibily(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.Book, int64, error)
 }
 
 // NewBookRepository creates a new Book repository
@@ -33,13 +34,15 @@ func FinderNewBookRepository(db *gorm.DB) *FinderBookRepository {
 }
 
 // GetBooks returns a list of books
-func (bookRepository *FinderBookRepository) GetBooks(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.Book, int64, error) {
+func (bookRepository *FinderBookRepository) GetBooks(ctx context.Context,search, sort, order string, limit, page int) ([]*entity.Book, int64, error) {
 	var buku []*entity.Book
 	var total int64
 	offsetBook := ((page - 1) * limit)
 	var gormDB = bookRepository.db.
 		WithContext(ctx).
 		Model(&entity.Book{}).
+		Select("public.book.*, public.pinjaman.status").
+		Joins("LEFT JOIN public.pinjaman ON public.book.id = public.pinjaman.buku_id").
 		Count(&total).
 		Limit(limit).
 		Offset(offsetBook)
@@ -54,6 +57,12 @@ func (bookRepository *FinderBookRepository) GetBooks(ctx context.Context, search
 			Or("CAST(edition AS TEXT) ILIKE ?", "%"+search+"%")
 
 	}
+
+	// if filter!= "" {
+	// 	gormDB = gormDB.Joins("LEFT JOIN public.pinjaman ON public.book.id = public.pinjaman.buku_id").
+	// 	Where("public.pinjaman.status IS NULL").
+	// 	Or ("public.pinjaman.status = ?", filter)
+	// }
 
 	if order != constant.Ascending && order != constant.Descending {
 		order = constant.Descending
@@ -103,4 +112,51 @@ func (bookRepository *FinderBookRepository) FindBookByTitle(ctx context.Context,
 		return 0, errors.Wrap(err, "[BookRepository-FindBookByTitle]")
 	}
 	return len(models), nil
+}
+
+func (bookRepository *FinderBookRepository) GetBookAvalaibily(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.Book, int64, error) {
+	var buku []*entity.Book
+	var total int64
+	offsetBook := ((page - 1) * limit)
+	var gormDB = bookRepository.db.
+		WithContext(ctx).
+		Model(&entity.Book{}).
+		Limit(limit).
+		Select("public.book.*, public.pinjaman.status").
+		Joins("LEFT JOIN public.pinjaman ON public.book.id = public.pinjaman.buku_id").
+		Where("public.pinjaman.status IS NULL").
+		Count(&total).
+		Offset(offsetBook)
+
+
+
+	if search != "" {
+		gormDB = gormDB.
+			Where("CAST(isbn AS TEXT)ILIKE ?", "%"+search+"%").
+			Or("title ILIKE ?", "%"+search+"%").
+			Or("genre ILIKE ?", "%"+search+"%").
+			Or("author ILIKE ?", "%"+search+"%").
+			Or("publisher ILIKE ?", "%"+search+"%").
+			Or("CAST(edition AS TEXT) ILIKE ?", "%"+search+"%")
+
+	}
+
+	if order != constant.Ascending && order != constant.Descending {
+		order = constant.Descending
+	}
+
+	if sort == "" {
+		sort = "created_at"
+	}
+
+	gormDB = gormDB.Order(fmt.Sprintf("%s %s", sort, order))
+
+	if err := gormDB.Find(&buku).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, 0, nil
+		}
+		return nil, 0, errors.Wrap(err, "[BookRepository-GetBooks]")
+	}
+
+	return buku, total, nil
 }

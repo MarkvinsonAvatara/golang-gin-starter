@@ -106,7 +106,6 @@ func DistrictFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masters
 	}
 }
 
-
 func VillageFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterservicev1.VillageMasterFinderUseCase) {
 	hnd := masterhandlerv1.VillageNewMasterFinderHandler(mf)
 	v1 := router.Group("/v1")
@@ -120,6 +119,12 @@ func VillageFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterse
 func BookMasterFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterservicev1.BookMasterFinderUseCase) {
 	hnd := masterhandlerv1.NewMasterFinderHandler(mf)
 	v1 := router.Group("/v1")
+
+	v1.Use(middleware.Auth(cfg))
+	{
+		v1.GET("/avalabebook", hnd.GetBookAvalaibily)
+	}
+
 	{
 		// v1.GET("/regencies/:province_id", hnd.GetRegenciesByProvinceID)
 		// v1.GET("/districts/:regency_id", hnd.GetDistrictsByRegencyID)
@@ -137,6 +142,7 @@ func BookMasterCreatorHTTPHandler(cfg config.Config, router *gin.Engine, mc mast
 	v1.Use(middleware.Admin(cfg))
 	{
 		v1.POST("/book", hnd.CreateBook)
+
 	}
 }
 
@@ -302,8 +308,6 @@ func UserRoleDeleterHTTPHandler(cfg config.Config, router *gin.Engine, userRoleD
 	}
 }
 
-
-
 // func UserRoleFinderHTTPHandler(cfg config.Config, router *gin.Engine,userRoleFinder userRoleservicev1.UserFinderUseCase) {
 // 	hnd := userRolehandlerv1.NewUserFinderHandler(userRoleFinder)
 // 	v1 := router.Group("/v1")
@@ -353,11 +357,17 @@ func PinjamanFinderHTTPHandler(cfg config.Config, router *gin.Engine, pinjamanFi
 	hnd := pinjamanHandler1.NewPinjamanFinderHandler(pinjamanFinder)
 	v1 := router.Group("/v1")
 
-	v1.Use(middleware.Admin(cfg))
+	v1.Use(middleware.Auth(cfg))
 	{
 		v1.GET("/cms/pinjaman/list", hnd.GetPinjamanList)
 		v1.GET("/cms/pinjaman/detail/:id", hnd.GetPinjamanByID)
 	}
+
+	v1.Use(middleware.Admin(cfg))
+	{
+		v1.GET("/cms/pinjaman/all", hnd.GetAllList)
+	}
+
 }
 
 func PinjamanCreatorHTTPHandler(cfg config.Config, router *gin.Engine, pinjamanCreate pinjamanService1.CreatePinjamanCreatorUseCase, cf userservicev1.UserFinderUseCase, cloudStorage interfaces.CloudStorageUseCase) {

@@ -56,6 +56,8 @@ func (uc *PinjamanCreatorHandler) CreatePinjamanRequest(c *gin.Context) {
 		TglPinjam,
 		TglKembali,
 		"User",
+		2,
+
 	)
 
 	if err != nil {
@@ -64,6 +66,6 @@ func (uc *PinjamanCreatorHandler) CreatePinjamanRequest(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "Pinjaman Sukses direquest", resource.NewPinjamanResponse(pinjaman)))
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "Pinjaman Sukses direquest", resource.CreateNewPinjamanResponse(pinjaman)))
 
 }

@@ -173,3 +173,41 @@ func (mf *BookMasterFinderHandler) GetBookByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewBookResponse(book)))
 }
+
+// GetBookAvalaibily is a handler for getting book by id
+func (mf *BookMasterFinderHandler) GetBookAvalaibily(c *gin.Context) {
+	var request resource.GetBookRequest
+
+	if err := c.ShouldBindQuery(&request); err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+
+	books, total, err := mf.bookMasterFinder.GetBookAvalaibily(c, request.Search, request.Sort, request.Order, request.Limit, request.Page)
+	if err != nil {
+		c.JSON(errors.ErrInternalServerError.Code, response.ErrorAPIResponse(errors.ErrInternalServerError.Code, err.Error()))
+		c.Abort()
+		return
+	}
+
+	res := make([]*resource.BookDetail, 0)
+
+	for _, book := range books {
+		res = append(res, resource.NewBookResponse(book))
+	}
+
+	// offset := (request.Page - 1) * request.Limit
+
+	meta := &resource.Meta{
+		Total_Data:   total,
+		Per_Page:     request.Limit,
+		Current_Page: request.Page,
+		Total_Page:    total / int64(request.Limit),
+	}
+
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", &resource.GetBookListResponse{
+		List: res,
+		Meta: meta,
+	}))
+}

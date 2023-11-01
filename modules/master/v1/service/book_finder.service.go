@@ -30,6 +30,7 @@ type BookMasterFinderUseCase interface {
 	GetBooks(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.Book, int64, error)
 	// GetBookByID returns a book by its ID
 	GetBookByID(ctx context.Context, id uuid.UUID) (*entity.Book, error)
+	GetBookAvalaibily(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.Book, int64, error)
 }
 
 // NewMasterFinder creates a new MasterFinder
@@ -104,3 +105,14 @@ func (masterFinder *BookMasterFinder) GetBookByID(ctx context.Context, id uuid.U
 
 	return book, nil
 }
+
+func (masterFinder *BookMasterFinder) GetBookAvalaibily(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.Book, int64, error) {
+	books, total, err := masterFinder.finderBookRepository.GetBookAvalaibily(ctx, search, sort, order, limit, page)
+
+	if err != nil {
+		return nil, 0, errors.ErrInternalServerError.Error()
+	}
+
+	return books, total, nil
+}
+

@@ -20,3 +20,10 @@ type Meta struct {
 	Current_Page int   `json:"current_page"`
 	Total_Page   int64 `json:"total_page"`
 }
+
+type DashboardMeta struct {
+	Total_Buku_Tersedia int64 `json:"total_buku_tersedia"`
+	Total_Buku_Dipinjam int64 `json:"total_buku_dipinjam"`
+	Total_User          int64 `json:"total_user"`
+	Total_User_pinjam   int64 `json:"total_user_pinjam"`
+}

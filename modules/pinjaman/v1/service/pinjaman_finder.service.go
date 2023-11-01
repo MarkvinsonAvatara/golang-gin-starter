@@ -19,9 +19,10 @@ type PinjamanFinder struct {
 // UserFinderUseCase is a usecase for user
 type FinderPinjamanFinderUseCase interface {
 	// GetPinjamanList gets all pinjaman
-	GetPinjamanList(ctx context.Context, search, filter, order, sort string, limit, page int) ([]*entity.Pinjaman, int64, error)
+	GetPinjamanList(ctx context.Context, search, filter, order, sort string, limit, page int) ([]*entity.PinjamanDetail, int64, error)
 	// GetPinjamanByID gets a pinjaman by ID
-	GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error)
+	GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.PinjamanDetail, error)
+	GetAllList(ctx context.Context) (int64, int64, int64, int64,error)
 }
 
 // NewUserFinder creates a new UserFinder
@@ -36,7 +37,7 @@ func NewPinjamanFinder(
 }
 
 // GetPinjamanList gets all pinjaman
-func (uf *PinjamanFinder) GetPinjamanList(ctx context.Context, search, filter, sort, order string, limit, page int) ([]*entity.Pinjaman, int64, error) {
+func (uf *PinjamanFinder) GetPinjamanList(ctx context.Context, search, filter, sort, order string, limit, page int) ([]*entity.PinjamanDetail, int64, error) {
 	pinjaman, total, err := uf.pinjamanRepo.GetPinjamanList(ctx, search, filter, sort, order, limit, page)
 	if err != nil {
 		return nil, 0, errors.ErrInternalServerError.Error()
@@ -46,7 +47,7 @@ func (uf *PinjamanFinder) GetPinjamanList(ctx context.Context, search, filter, s
 }
 
 // GetPinjamanByID gets a pinjaman by ID
-func (uf *PinjamanFinder) GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.Pinjaman, error) {
+func (uf *PinjamanFinder) GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.PinjamanDetail, error) {
 	pinjaman, err := uf.pinjamanRepo.GetPinjamanByID(ctx, id)
 
 	if err != nil {
@@ -59,3 +60,14 @@ func (uf *PinjamanFinder) GetPinjamanByID(ctx context.Context, id uuid.UUID) (*e
 
 	return pinjaman, nil
 }
+
+func (uf *PinjamanFinder) GetAllList(ctx context.Context) (int64, int64, int64, int64,error) {
+	totalAvalaible, totalNotAvalaible, totalUser, totalUserPinjaman, err := uf.pinjamanRepo.GetAllList(ctx)
+	if err != nil {
+		return 0, 0, 0, 0, errors.ErrInternalServerError.Error()
+	}
+	return totalAvalaible, totalNotAvalaible, totalUser, totalUserPinjaman, nil
+
+}
+
+

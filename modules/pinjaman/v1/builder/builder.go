@@ -26,7 +26,7 @@ func BuildPinjamanHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, re
 
 	// Repository
 	// ur := userRepo.NewUserRepository(db)
-	ur := userRepo.NewUserRepository(db)
+	ur := userRepo.FinderNewUserRepository(db)
 	// rr := userRepo.NewRoleRepository(db, cache)
 	// urr := userRepo.FinderNewUserRoleRepository(db, cache)
 	// pr := userRepo.NewPermissionRepository(db, cache)
@@ -39,7 +39,7 @@ func BuildPinjamanHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, re
 	// cloudStorage := aws.NewS3Bucket(cfg, awsSession)
 
 	// Service
-	userService := userService.NewUserFinder(cfg, ur,)
+	userService := userService.NewUserFinder(cfg, ur)
 	pinjamanFinder := service.NewPinjamanFinder(cfg, finderPinjamanRepo)
 	pinjamanCreator := service.NewPinjamanCreator(cfg, createPinjamanRepo, cloudStorage)
 	pinjamanUpdater := service.NewPinjamanUpdater(cfg, pinjamanRepository)

@@ -44,7 +44,7 @@ func (uc *UserRoleCreatorHandler) CreateUserRole(c *gin.Context) {
 		return
 	}
 
-	if strings.ToLower(request.Name) == "super admin" {
+	if strings.ToLower(request.Name) == "admin" {
 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, "super admin hanya boleh satu!"))
 		c.Abort()
 		return
@@ -55,7 +55,7 @@ func (uc *UserRoleCreatorHandler) CreateUserRole(c *gin.Context) {
 		c,
 		request.Name,
 		request.Description,
-		"Super Admin",
+		"Admin",
 	)
 	if err != nil {
 		parseError := errors.ParseError(err)

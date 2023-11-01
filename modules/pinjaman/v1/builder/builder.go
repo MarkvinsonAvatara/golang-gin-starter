@@ -10,7 +10,7 @@ import (
 	userRepo "gin-starter/modules/user/v1/repository"
 	userService "gin-starter/modules/user/v1/service"
 	"gin-starter/sdk/gcs"
-	"gin-starter/utils"
+	// "gin-starter/utils"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gin-gonic/gin"
@@ -22,13 +22,13 @@ import (
 // starting from handler down to repository or tool.
 func BuildPinjamanHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redisPool *redis.Pool, awsSession *session.Session) {
 	// Cache
-	cache := utils.NewClient(redisPool)
+	// cache := utils.NewClient(redisPool)
 
 	// Repository
 	// ur := userRepo.NewUserRepository(db)
 	ur := userRepo.NewUserRepository(db)
 	// rr := userRepo.NewRoleRepository(db, cache)
-	urr := userRepo.NewUserRoleRepository(db, cache)
+	// urr := userRepo.FinderNewUserRoleRepository(db, cache)
 	// pr := userRepo.NewPermissionRepository(db, cache)
 	createPinjamanRepo:= pinjamanRepo.CreateNewPinjamanRepository(db)
 	finderPinjamanRepo:= pinjamanRepo.FinderNewPinjamanRepository(db)
@@ -39,7 +39,7 @@ func BuildPinjamanHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, re
 	// cloudStorage := aws.NewS3Bucket(cfg, awsSession)
 
 	// Service
-	userService := userService.NewUserFinder(cfg, ur, urr)
+	userService := userService.NewUserFinder(cfg, ur,)
 	pinjamanFinder := service.NewPinjamanFinder(cfg, finderPinjamanRepo)
 	pinjamanCreator := service.NewPinjamanCreator(cfg, createPinjamanRepo, cloudStorage)
 	pinjamanUpdater := service.NewPinjamanUpdater(cfg, pinjamanRepository)

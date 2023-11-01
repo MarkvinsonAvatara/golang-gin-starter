@@ -73,7 +73,7 @@ func createAdminUser(db *gorm.DB) {
 		Model(&entity.UserRole{}).
 		Create(entity.NewUserRole(
 			roleID,
-			"Super Admin",
+			"Admin",
 			"Have All Access",
 			"system",
 		)).

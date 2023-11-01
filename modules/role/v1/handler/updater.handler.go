@@ -59,7 +59,7 @@ func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context){
 		userRoleID,
 		request.Name,
 		request.Description,
-		"Super Admin",
+		"Admin",
 	)
 
 	if err := uu.userUpdater.UpdateUserRoles(c, userRole); err != nil {

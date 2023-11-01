@@ -17,8 +17,8 @@ import (
 // UserCreator is a struct that contains all the dependencies for the User creator
 type UserCreator struct {
 	cfg            config.Config
-	userRepo       repository.UserRepositoryUseCase
-	userRoleRepo   repository.UserRoleRepositoryUseCase
+	userRepo       repository.CreateUserRepositoryUseCase
+	// userRoleRepo   repository.CreateUserRoleRepositoryUseCase
 	// roleRepo       repository.RoleRepositoryUseCase
 	// permissionRepo repository.PermissionRepositoryUseCase
 	// pinjamanRepo  repository.PinjamanRepositoryUseCase
@@ -34,7 +34,7 @@ type UserCreatorUseCase interface {
 	// CreatePermission creates a permission
 	// CreatePermission(ctx context.Context, name, label string) (*entity.Permission, error)
 	// CreateRole creates a role
-	CreateUserRole(ctx context.Context, name string, description string,createdBy string) (*entity.UserRole, error)
+	// CreateUserRole(ctx context.Context, name string, description string,createdBy string) (*entity.UserRole, error)
 	// Create Pinjaman Request
 	// CreatePinjamanRequest(ctx context.Context, userid string, bookid string, tglpinjaman time.Time, tglkembali time.Time, requestedBy string)(*entity.Pinjaman, error)
 
@@ -44,8 +44,8 @@ type UserCreatorUseCase interface {
 // NewUserCreator is a constructor for the User creator
 func NewUserCreator(
 	cfg config.Config,
-	userRepo repository.UserRepositoryUseCase,
-	userRoleRepo repository.UserRoleRepositoryUseCase,
+	userRepo repository.CreateUserRepositoryUseCase,
+	// userRoleRepo repository.CreateUserRoleRepositoryUseCase,
 	// roleRepo repository.RoleRepositoryUseCase,
 	// pinjamanRepo repository.PinjamanRepositoryUseCase,
 	// permissionRepo repository.PermissionRepositoryUseCase,
@@ -54,7 +54,7 @@ func NewUserCreator(
 	return &UserCreator{
 		cfg:            cfg,
 		userRepo:       userRepo,
-		userRoleRepo:   userRoleRepo,
+		// userRoleRepo:   userRoleRepo,
 		// roleRepo:       roleRepo,
 		// pinjamanRepo:  pinjamanRepo,
 		// permissionRepo: permissionRepo,
@@ -124,15 +124,15 @@ func (uc *UserCreator) CreateAdmin(ctx context.Context, name string, email strin
 // }
 
 // CreateRole creates a role
-func (uc *UserCreator) CreateUserRole(ctx context.Context, name string,description string,  createdBy string) (*entity.UserRole, error) {
-	role := entity.NewUserRole(uuid.New(), name, description, createdBy)
-	if err := uc.userRoleRepo.CreateUserRole(ctx, role,); err != nil {
-		return nil, err
-	}
-
-	return role, nil
-}
-
+// func (uc *UserCreator) CreateUserRole(ctx context.Context, name string,description string,  createdBy string) (*entity.UserRole, error) {
+// 	role := entity.NewUserRole(uuid.New(), name, description, createdBy)
+// 	if err := uc.userRoleRepo.CreateUserRole(ctx, role,); err != nil {
+// 		return nil, err
+// 	}
+// 
+// 	return role, nil
+// }
+// 
 // Create Pinjaman Request
 // func (uc *UserCreator) CreatePinjamanRequest(ctx context.Context, userid string, bookid string, tglpinjaman time.Time, tglkembali time.Time, requestedBy string) (*entity.Pinjaman, error) {
 // 	pinjaman := entity.NewPinjaman(

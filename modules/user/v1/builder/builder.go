@@ -23,9 +23,12 @@ func BuildUserHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redisP
 	cache := utils.NewClient(redisPool)
 
 	// Repository
-	ur := userRepo.NewUserRepository(db)
+	userCreator := userRepo.CreateNewUserRepository(db)
+	userFinder := userRepo.FinderNewUserRepository(db)
+	userUpdater := userRepo.UpdaterNewUserRepository(db)
+	userDeleter := userRepo.DeleteNewUserRepository(db)
 	// rr := userRepo.NewRoleRepository(db, cache)
-	urr := userRepo.NewUserRoleRepository(db, cache)
+	// urr := userRepo.NewUserRoleRepository(db, cache)
 	userRoleCreateRepo := userRepo.CreateNewUserRoleRepository(db, cache)
 	userRoleDeleteRepo := userRepo.DeleteNewUserRoleRepository(db, cache)
 	userRoleFinderRepo := userRepo.FinderNewUserRoleRepository(db, cache)
@@ -47,10 +50,10 @@ func BuildUserHandler(cfg config.Config, router *gin.Engine, db *gorm.DB, redisP
 	userRoleUpdater := service.NewUserRoleUpdater(cfg, userRoleUpdateRepo)
 	userRoleDeleter := service.NewUserRoleDeleter(cfg, userRoleDeleteRepo)
 
-	uc := service.NewUserCreator(cfg, ur, urr,  cloudStorage)
-	uf := service.NewUserFinder(cfg, ur, urr, )
-	uu := service.NewUserUpdater(cfg, ur, urr,)
-	ud := service.NewUserDeleter(cfg, ur, urr)
+	uc := service.NewUserCreator(cfg, userCreator,  cloudStorage)
+	uf := service.NewUserFinder(cfg, userFinder)
+	uu := service.NewUserUpdater(cfg, userUpdater,userFinder)
+	ud := service.NewUserDeleter(cfg, userDeleter)
 	
 
 	// Handler

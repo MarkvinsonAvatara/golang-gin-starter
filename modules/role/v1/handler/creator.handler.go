@@ -7,7 +7,7 @@ import (
 	"gin-starter/resource"
 	"gin-starter/response"
 	"net/http"
-	"strings"
+	// "strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,17 +38,17 @@ func (uc *UserCreatorHandler) CreateUserRole(c *gin.Context) {
 		return
 	}
 
-	if strings.ToLower(request.Name) == "super admin" {
-		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, "super admin hanya boleh satu!"))
-		c.Abort()
-		return
-	}
+	// if strings.ToLower(request.Name) == "super admin" {
+	// 	c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, "super admin hanya boleh satu!"))
+	// 	c.Abort()
+	// 	return
+	// }
 
 	role, err := uc.userCreator.CreateUserRole(
 		c,
 		request.Name,
 		request.Description,
-		"Super Admin",
+		"Admin",
 	)
 	if err != nil {
 		parseError := errors.ParseError(err)

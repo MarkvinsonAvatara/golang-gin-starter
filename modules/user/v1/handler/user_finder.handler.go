@@ -41,26 +41,26 @@ func (uf *UserFinderHandler) GetUserProfile(c *gin.Context) {
 }
 
 // GetUserByForgotPasswordToken is a handler for getting user by forgot password token
-func (uf *UserFinderHandler) GetUserByForgotPasswordToken(c *gin.Context) {
-	var request resource.GetUserByForgotPasswordTokenRequest
+// func (uf *UserFinderHandler) GetUserByForgotPasswordToken(c *gin.Context) {
+// 	var request resource.GetUserByForgotPasswordTokenRequest
+// 
+// 	if err := c.ShouldBind(&request); err != nil {
+// 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	res, err := uf.userFinder.GetUserByForgotPasswordToken(c, request.Token)
+// 
+// 	if err != nil {
+// 		parseError := errors.ParseError(err)
+// 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+// 		c.Abort()
+// 		return
+// 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
-		c.Abort()
-		return
-	}
-
-	res, err := uf.userFinder.GetUserByForgotPasswordToken(c, request.Token)
-
-	if err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
-
-	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserProfile(res)))
-}
+// 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserProfile(res)))
+// }
 
 // GetAdminProfile is a handler for getting admin profile
 func (uf *UserFinderHandler) GetAdminProfile(c *gin.Context) {
@@ -293,71 +293,71 @@ func (uf *UserFinderHandler) GetAdminUserByID(c *gin.Context) {
 // }
 
 // GetUser Role is a hand for get list role of user
-func (uf *UserFinderHandler) GetUserRoles(c *gin.Context) {
-	var request resource.GetUserRoleRequest
+// func (uf *UserFinderHandler) GetUserRoles(c *gin.Context) {
+// 	var request resource.GetUserRoleRequest
+// 
+// 	if err := c.ShouldBind(&request); err != nil {
+// 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	userRoles, total, err := uf.userFinder.GetUserRoles(c, request.Search, request.Sort, request.Order, request.Limit, request.Page)
+// 
+// 	if err != nil {
+// 		parseError := errors.ParseError(err)
+// 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	res := make([]*resource.UserRole, 0)
+// 
+// 	for _, u := range userRoles {
+// 		res = append(res, resource.NewUserRole(u))
+// 	}
+// 
+// 	meta := &resource.Meta{
+// 		Total_Data:   total,
+// 		Per_Page:     request.Limit,
+// 		Current_Page: request.Page,
+// 		Total_Page:    total / int64(request.Limit),
+// 	}
+// 
+// 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", &resource.GetUserRoleRespone{
+// 		List:  res,
+// 		Meta: meta,
+// 	}))
+// }
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
-		c.Abort()
-		return
-	}
-
-	userRoles, total, err := uf.userFinder.GetUserRoles(c, request.Search, request.Sort, request.Order, request.Limit, request.Page)
-
-	if err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
-
-	res := make([]*resource.UserRole, 0)
-
-	for _, u := range userRoles {
-		res = append(res, resource.NewUserRole(u))
-	}
-
-	meta := &resource.Meta{
-		Total_Data:   total,
-		Per_Page:     request.Limit,
-		Current_Page: request.Page,
-		Total_Page:    total / int64(request.Limit),
-	}
-
-	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", &resource.GetUserRoleRespone{
-		List:  res,
-		Meta: meta,
-	}))
-}
-
-func (uf *UserFinderHandler) GetUserRoleByID(c *gin.Context) {
-	var request resource.GetUserRoleByID
-
-	if err := c.ShouldBindUri(&request); err != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
-		c.Abort()
-		return
-	}
-
-	roleID, err := uuid.Parse(request.ID)
-
-	if err != nil {
-		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
-		c.Abort()
-		return
-	}
-
-	userRole, err := uf.userFinder.GetUserRoleByID(c, roleID)
-
-	if err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
-
-	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserRole(userRole)))
-}
+// func (uf *UserFinderHandler) GetUserRoleByID(c *gin.Context) {
+// 	var request resource.GetUserRoleByID
+// 
+// 	if err := c.ShouldBindUri(&request); err != nil {
+// 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	roleID, err := uuid.Parse(request.ID)
+// 
+// 	if err != nil {
+// 		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	userRole, err := uf.userFinder.GetUserRoleByID(c, roleID)
+// 
+// 	if err != nil {
+// 		parseError := errors.ParseError(err)
+// 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserRole(userRole)))
+// }
 
 // func (uf *UserFinderHandler) GetPinjamanList(c *gin.Context) {
 // 	var request resource.GetPinjamanRequest
@@ -372,19 +372,19 @@ func (uf *UserFinderHandler) GetUserRoleByID(c *gin.Context) {
 // 		c.Abort()
 // 		return
 // 	}
-
+// 
 // 	res := make([]*resource.PinjamanDetail, 0)
 // 	for _, p := range pinjaman {
 // 		res = append(res, resource.NewPinjamanResponse(p))
 // 	}
-
+// 
 // 	meta := &resource.Meta{
 // 		Total_Data:   total,
 // 		Per_Page:     request.Limit,
 // 		Current_Page: request.Page,
 // 		Total_Page:    total / int64(request.Limit),
 // 	}
-
+// 
 // 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.GetPinjamanListResponse{
 // 		List:  res,
 // 		Meta: meta,
@@ -393,27 +393,27 @@ func (uf *UserFinderHandler) GetUserRoleByID(c *gin.Context) {
 
 // func (uf *UserFinderHandler) GetPinjamanByID(c *gin.Context) {
 // 	var request resource.GetPinjamanByIDRequest
-
+// 
 // 	if err := c.ShouldBindUri(&request); err != nil {
 // 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 // 		c.Abort()
 // 		return
 // 	}
 // 	reqID, err := uuid.Parse(request.ID)
-
+// 
 // 	if err != nil {
 // 		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
 // 		c.Abort()
 // 		return
 // 	}
-
+// 
 // 	pinjaman, err := uf.userFinder.GetPinjamanByID(c, reqID)
-
+// 
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
 // 		c.Abort()
 // 		return
 // 	}
-
+// 
 // 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewPinjamanResponse(pinjaman)))
 // }

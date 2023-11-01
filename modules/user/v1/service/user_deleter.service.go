@@ -12,16 +12,16 @@ import (
 // UserDeleter is a service for user
 type UserDeleter struct {
 	cfg      config.Config
-	userRepo repository.UserRepositoryUseCase
+	userRepo repository.DeleteUserRepositoryUseCase
 	// roleRepo repository.RoleRepositoryUseCase
-	userRoleRepo repository.UserRoleRepositoryUseCase
+	// userRoleRepo repository.UserRoleRepositoryUseCase
 
 }
 
-// DeleteUser implements UserDeleterUseCase.
-func (*UserDeleter) DeleteUser(ctx context.Context, id uuid.UUID) error {
-	panic("unimplemented")
-}
+// // DeleteUser implements UserDeleterUseCase.
+// func (*UserDeleter) DeleteUser(ctx context.Context, id uuid.UUID) error {
+// 	panic("unimplemented")
+// }
 
 // UserDeleterUseCase is a use case for user
 type UserDeleterUseCase interface {
@@ -32,22 +32,22 @@ type UserDeleterUseCase interface {
 	// DeleteRole deletes role
 	// DeleteRole(ctx context.Context, id uuid.UUID, deletedBy string) error
 	// DeleteUser deletes user role
-	DeleteUserRole(ctx context.Context, id uuid.UUID) error
+	// DeleteUserRole(ctx context.Context, id uuid.UUID) error
 }
 
 // NewUserDeleter creates a new UserDeleter
 func NewUserDeleter(
 	cfg config.Config,
-	userRepo repository.UserRepositoryUseCase,
+	userRepo repository.DeleteUserRepositoryUseCase,
 	// roleRepo repository.RoleRepositoryUseCase,
-	userRoleRepo repository.UserRoleRepositoryUseCase,
+	// userRoleRepo repository.UserRoleRepositoryUseCase,
 
 ) *UserDeleter {
 	return &UserDeleter{
 		cfg:      cfg,
 		userRepo: userRepo,
 		// roleRepo: roleRepo,
-		userRoleRepo: userRoleRepo,
+		// userRoleRepo: userRoleRepo,
 	}
 }
 
@@ -78,10 +78,10 @@ func (ud *UserDeleter) DeleteUsers(ctx context.Context, id uuid.UUID) error {
 // }
 
 // DeleteUserRole deletes user role
-func (ud *UserDeleter) DeleteUserRole(ctx context.Context, id uuid.UUID) error {
-	if err := ud.userRoleRepo.DeleteUserRole(ctx, id); err != nil {
-		return errors.ErrInternalServerError.Error()
-	}
-
-	return nil
-}
+// func (ud *UserDeleter) DeleteUserRole(ctx context.Context, id uuid.UUID) error {
+// 	if err := ud.userRoleRepo.DeleteUserRole(ctx, id); err != nil {
+// 		return errors.ErrInternalServerError.Error()
+// 	}
+// // 
+// 	return nil
+// }

@@ -79,27 +79,27 @@ func (uu *UserUpdaterHandler) ChangePassword(c *gin.Context) {
 }
 
 // ForgotPasswordRequest is a handler for forgot password request
-func (uu *UserUpdaterHandler) ForgotPasswordRequest(c *gin.Context) {
-	var request resource.ForgotPasswordRequest
-
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
-		c.Abort()
-		return
-	}
-
-	if err := uu.userUpdater.ForgotPasswordRequest(
-		c,
-		request.Email,
-	); err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
-
-	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", nil))
-}
+// func (uu *UserUpdaterHandler) ForgotPasswordRequest(c *gin.Context) {
+// 	var request resource.ForgotPasswordRequest
+// 
+// 	if err := c.ShouldBind(&request); err != nil {
+// 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	if err := uu.userUpdater.ForgotPasswordRequest(
+// 		c,
+// 		request.Email,
+// 	); err != nil {
+// 		parseError := errors.ParseError(err)
+// 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", nil))
+// }
 
 // VerifyOTP is a handler for verifying OTP
 // func (uu *UserUpdaterHandler) VerifyOTP(c *gin.Context) {
@@ -147,45 +147,45 @@ func (uu *UserUpdaterHandler) ForgotPasswordRequest(c *gin.Context) {
 
 // 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", nil))
 // }
-
+// 
 // ForgotPassword is a handler for forgot password
-func (uu *UserUpdaterHandler) ForgotPassword(c *gin.Context) {
-	var request resource.ForgotPasswordChangeRequest
-
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
-		c.Abort()
-		return
-	}
-
-	if request.NewPassword != request.NewPasswordConfirmation {
-		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, errors.ErrWrongPasswordConfirmation.Message))
-		c.Abort()
-		return
-	}
-
-	res, err := uu.userFinder.GetUserByForgotPasswordToken(c, request.Token)
-
-	if err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
-
-	if err := uu.userUpdater.ForgotPassword(
-		c,
-		res.ID,
-		request.NewPassword,
-	); err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
-
-	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", nil))
-}
+// func (uu *UserUpdaterHandler) ForgotPassword(c *gin.Context) {
+// 	var request resource.ForgotPasswordChangeRequest
+// 
+// 	if err := c.ShouldBind(&request); err != nil {
+// 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	if request.NewPassword != request.NewPasswordConfirmation {
+// 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, errors.ErrWrongPasswordConfirmation.Message))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	res, err := uu.userFinder.GetUserByForgotPasswordToken(c, request.Token)
+// 
+// 	if err != nil {
+// 		parseError := errors.ParseError(err)
+// 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	if err := uu.userUpdater.ForgotPassword(
+// 		c,
+// 		res.ID,
+// 		request.NewPassword,
+// 	); err != nil {
+// 		parseError := errors.ParseError(err)
+// 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", nil))
+// }
 
 // / UpdateUser is a handler for updating user
 func (uu *UserUpdaterHandler) UpdateUser(c *gin.Context) {
@@ -420,44 +420,44 @@ func (uu *UserUpdaterHandler) UpdateAdmin(c *gin.Context) {
 // 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", nil))
 // }
 
-func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context) {
-	var request resource.UpdateUserRoleRequest
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
-		c.Abort()
-		return
-	}
-	userRoleIDstr := c.Param("id")
-	userRoleID, err := uuid.Parse(userRoleIDstr)
-	if err != nil {
-		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
-		c.Abort()
-		return
-	}
-
-	_, err = uu.userFinder.GetUserRoleByID(c, userRoleID)
-
-	if err != nil {
-		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
-		c.Abort()
-		return
-	}
-	userRole := entity.UpdateUserRole(
-		userRoleID,
-		request.Name,
-		request.Description,
-		"Super Admin",
-	)
-
-	if err := uu.userUpdater.UpdateUserRoles(c, userRole); err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
-	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "Update Success", nil))
-
-}
+// func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context) {
+// 	var request resource.UpdateUserRoleRequest
+// 	if err := c.ShouldBind(&request); err != nil {
+// 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+// 		c.Abort()
+// 		return
+// 	}
+// 	userRoleIDstr := c.Param("id")
+// 	userRoleID, err := uuid.Parse(userRoleIDstr)
+// 	if err != nil {
+// 		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	_, err = uu.userFinder.GetUserRoleByID(c, userRoleID)
+// 
+// 	if err != nil {
+// 		c.JSON(errors.ErrInvalidArgument.Code, response.ErrorAPIResponse(errors.ErrInvalidArgument.Code, errors.ErrInvalidArgument.Message))
+// 		c.Abort()
+// 		return
+// 	}
+// 	userRole := entity.UpdateUserRole(
+// 		userRoleID,
+// 		request.Name,
+// 		request.Description,
+// 		"Super Admin",
+// 	)
+// 
+// 	if err := uu.userUpdater.UpdateUserRoles(c, userRole); err != nil {
+// 		parseError := errors.ParseError(err)
+// 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+// 		c.Abort()
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "Update Success", nil))
+// 
+// }
 
 // func (uu *UserUpdaterHandler) HandledPinjaman(c *gin.Context) {
 // 	var request resource.HandledRequest
@@ -479,20 +479,20 @@ func (uu *UserUpdaterHandler) UpdateUserRole(c *gin.Context) {
 // 		c.Abort()
 // 		return
 // 	}
-
+// 
 // 	pinjaman := entity.HandledPinjaman(
 // 		pinjamanID,
 // 		"admin",
 // 		request.Status,
-
+// 
 // 	)
-
+// 
 // 	if err := uu.userUpdater.HandledPinjaman(c, pinjaman); err != nil {
 // 		parseError := errors.ParseError(err)
 // 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
 // 		c.Abort()
 // 		return
 // 	}
-
+// 
 // 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "Penangan Pinjaman Success", nil))
 // }

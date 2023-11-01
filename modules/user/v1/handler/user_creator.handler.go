@@ -10,7 +10,7 @@ import (
 	"gin-starter/utils"
 	"log"
 	"net/http"
-	"strings"
+	// "strings"
 	"github.com/gin-gonic/gin"
 	// "github.com/google/uuid"
 )
@@ -172,49 +172,49 @@ func (uc *UserCreatorHandler) CreateAdmin(c *gin.Context) {
 // }
 
 // CreateRole is a handler for creating role data
-func (uc *UserCreatorHandler) CreateUserRole(c *gin.Context) {
-	var request resource.CreateUserRoleRequest
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
-		c.Abort()
-		return
-	}
-
-	if strings.ToLower(request.Name) == "super admin" {
-		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, "super admin hanya boleh satu!"))
-		c.Abort()
-		return
-	}
-
-	// var permissionIDs []uuid.UUID
-	// if len(request.PermissionIDs) > 0 {
-	// 	for _, permissionID := range request.PermissionIDs {
-	// 		valid, err := uuid.Parse(permissionID)
-	// 		if err != nil {
-	// 			parseError := errors.ParseError(err)
-	// 			c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-	// 			c.Abort()
-	// 			return
-	// 		}
-	// 		permissionIDs = append(permissionIDs, valid)
-	// 	}
-	// }
-
-	role, err := uc.userCreator.CreateUserRole(
-		c,
-		request.Name,
-		request.Description,
-		"Super Admin",
-	)
-	if err != nil {
-		parseError := errors.ParseError(err)
-		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
-		c.Abort()
-		return
-	}
-
-	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserRole(role)))
-}
+// func (uc *UserCreatorHandler) CreateUserRole(c *gin.Context) {
+// 	var request resource.CreateUserRoleRequest
+// 	if err := c.ShouldBind(&request); err != nil {
+// 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	if strings.ToLower(request.Name) == "super admin" {
+// 		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, "super admin hanya boleh satu!"))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	// var permissionIDs []uuid.UUID
+// 	// if len(request.PermissionIDs) > 0 {
+// 	// 	for _, permissionID := range request.PermissionIDs {
+// 	// 		valid, err := uuid.Parse(permissionID)
+// 	// 		if err != nil {
+// 	// 			parseError := errors.ParseError(err)
+// 	// 			c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+// 	// 			c.Abort()
+// 	// 			return
+// 	// 		}
+// 	// 		permissionIDs = append(permissionIDs, valid)
+// 	// 	}
+// 	// }
+// 
+// 	role, err := uc.userCreator.CreateUserRole(
+// 		c,
+// 		request.Name,
+// 		request.Description,
+// 		"Super Admin",
+// 	)
+// 	if err != nil {
+// 		parseError := errors.ParseError(err)
+// 		c.JSON(parseError.Code, response.ErrorAPIResponse(parseError.Code, parseError.Message))
+// 		c.Abort()
+// 		return
+// 	}
+// 
+// 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewUserRole(role)))
+// }
 
 func (uc *UserCreatorHandler) RegisterUser(c *gin.Context) {
 	var request resource.CreateUserRequest

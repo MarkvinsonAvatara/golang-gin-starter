@@ -84,7 +84,7 @@ func ProvinceFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masters
 	v1 := router.Group("/v1")
 	{
 		v1.GET("/provinces", hnd.GetProvinces)
-		v1.GET("/province/:id", hnd.GetProvinceByID)
+		// v1.GET("/province/:id", hnd.GetProvinceByID)
 	}
 }
 
@@ -93,7 +93,7 @@ func RegencyFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterse
 	v1 := router.Group("/v1")
 	{
 		v1.GET("/regencies", hnd.GetRegency)
-		v1.GET("/regency/:id", hnd.GetRegencyByID)
+		// v1.GET("/regency/:id", hnd.GetRegencyByID)
 	}
 }
 
@@ -102,7 +102,7 @@ func DistrictFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masters
 	v1 := router.Group("/v1")
 	{
 		v1.GET("/districts", hnd.GetDistrict)
-		v1.GET("/district/:id", hnd.GetDistrictByID)
+		// v1.GET("/district/:id", hnd.GetDistrictByID)
 	}
 }
 
@@ -112,7 +112,7 @@ func VillageFinderHTTPHandler(cfg config.Config, router *gin.Engine, mf masterse
 	v1 := router.Group("/v1")
 	{
 		v1.GET("/villages", hnd.GetVillage)
-		v1.GET("/village/:id", hnd.GetVillageByID)
+		// v1.GET("/village/:id", hnd.GetVillageByID)
 	}
 }
 
@@ -167,7 +167,7 @@ func UserFinderHTTPHandler(cfg config.Config, router *gin.Engine, cf userservice
 	hnd := userhandlerv1.NewUserFinderHandler(cf)
 	v1 := router.Group("/v1")
 	{
-		v1.GET("/user/forgot-password/profile/:token", hnd.GetUserByForgotPasswordToken)
+		// v1.GET("/user/forgot-password/profile/:token", hnd.GetUserByForgotPasswordToken)
 	}
 
 	v1.Use(middleware.Auth(cfg))
@@ -222,8 +222,8 @@ func UserUpdaterHTTPHandler(cfg config.Config, router *gin.Engine, uu userservic
 	v1.Use(middleware.Auth(cfg))
 
 	{
-		v1.PUT("/user/forgot-password/request", hnd.ForgotPasswordRequest)
-		v1.PUT("/user/forgot-password", hnd.ForgotPassword)
+		// v1.PUT("/user/forgot-password/request", hnd.ForgotPasswordRequest)
+		// v1.PUT("/user/forgot-password", hnd.ForgotPassword)
 	}
 
 	v1.Use(middleware.Auth(cfg))

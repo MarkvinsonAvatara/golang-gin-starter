@@ -2,12 +2,14 @@ package handler
 
 import (
 	"gin-starter/common/errors"
+	"gin-starter/middleware"
 	// "gin-starter/middleware"
 	"gin-starter/modules/pinjaman/v1/service"
 	"gin-starter/resource"
 	"gin-starter/response"
-	"github.com/google/uuid"
 	"net/http"
+
+	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 )
@@ -85,6 +87,19 @@ func (uf *PinjamanFinderHandler) GetPinjamanByID(c *gin.Context) {
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewPinjamanResponse(pinjaman)))
 }
 
+func (uf *PinjamanFinderHandler) GetPinjamanByUserID(c *gin.Context) {
+	userID := middleware.UserID
+	userIDString := userID.String()
+
+	pinjaman, err := uf.pinjamanFinder.GetPinjamanByUserID(c, userIDString)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorAPIResponse(http.StatusBadRequest, err.Error()))
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", resource.NewPinjamanResponse(pinjaman)))
+}
+
 func (uf *PinjamanFinderHandler) GetAllList(c *gin.Context) {
 	totalAvalaible, totalNotAvalaible, totalUser, totalUserPinjaman, err := uf.pinjamanFinder.GetAllList(c)
 	if err != nil {
@@ -93,7 +108,7 @@ func (uf *PinjamanFinderHandler) GetAllList(c *gin.Context) {
 		return
 	}
 
-	meta:= &resource.DashboardMeta{
+	meta := &resource.DashboardMeta{
 		Total_Buku_Tersedia: totalAvalaible,
 		Total_Buku_Dipinjam: totalNotAvalaible,
 		Total_User:          totalUser,

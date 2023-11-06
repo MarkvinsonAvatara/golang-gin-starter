@@ -14,11 +14,11 @@ const (
 // Pinjaman define for table pinjaman
 
 type Pinjaman struct {
-	ID                uuid.UUID    `json:"id"`
-	UserID            string       `gorm:"foreignKey:id" json:"userid"`
-	BukuID            string       `gorm:"foreignKey:id" json:"bukuid"`
-	Tglpinjam         sql.NullTime `json:"tglpinjam"`
-	Tglkembali        sql.NullTime `json:"tglkembali"`
+	ID         uuid.UUID    `json:"id"`
+	UserID     string       `gorm:"foreignKey:id" json:"userid"`
+	BukuID     string       `gorm:"foreignKey:id" json:"bukuid"`
+	Tglpinjam  sql.NullTime `json:"tglpinjam"`
+	Tglkembali sql.NullTime `json:"tglkembali"`
 	AuditablePinjaman
 	Status int64 `json:"status"`
 }

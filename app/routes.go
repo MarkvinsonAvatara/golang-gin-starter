@@ -359,6 +359,11 @@ func PinjamanFinderHTTPHandler(cfg config.Config, router *gin.Engine, pinjamanFi
 
 	v1.Use(middleware.Auth(cfg))
 	{
+		v1.GET("/user/pinjaman/profile", hnd.GetPinjamanByUserID)
+	}
+
+	v1.Use(middleware.Admin(cfg))
+	{
 		v1.GET("/cms/pinjaman/list", hnd.GetPinjamanList)
 		v1.GET("/cms/pinjaman/detail/:id", hnd.GetPinjamanByID)
 	}

@@ -168,9 +168,16 @@ func (uf *UserFinderHandler) GetAdminUsers(c *gin.Context) {
 		res = append(res, resource.NewUserAdmin(u))
 	}
 
+	meta := &resource.Meta{
+		Total_Data:   total,
+		Per_Page:     request.Limit,
+		Current_Page: request.Page,
+		Total_Page:    total / int64(request.Limit),
+	}
+
 	c.JSON(http.StatusOK, response.SuccessAPIResponseList(http.StatusOK, "success", &resource.GetAdminUsersResponse{
 		List:  res,
-		Total: total,
+		Meta: meta,
 	}))
 }
 

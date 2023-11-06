@@ -50,7 +50,7 @@ type GetUsersResponse struct {
 
 type GetAdminUsersResponse struct {
 	List  []*UserAdmin `json:"list"`
-	Total int64        `json:"total"`
+	Meta *Meta            `json:"total"`
 }
 
 type DeactivateUserRequest struct {

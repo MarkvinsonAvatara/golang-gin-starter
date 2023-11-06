@@ -21,6 +21,7 @@ type FinderPinjamanRepositoryUseCase interface {
 	GetPinjamanList(ctx context.Context, search, filter, sort, order string, limit, page int) ([]*entity.PinjamanDetail, int64, error)
 	GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.PinjamanDetail, error)
 	GetAllList(ctx context.Context) (int64, int64, int64, int64,error) 
+	GetPinjamanByUserID(ctx context.Context, userID string) (*entity.PinjamanDetail, error)
 }
 
 // NewBookRepository creates a new Book repository
@@ -102,17 +103,15 @@ func (pinjamanRepository *FinderPinjamanRepository) GetPinjamanByID(ctx context.
 	return pinjaman, nil
 }
 
-func (pinjamanRepository *FinderPinjamanRepository) GetPinjamanByUserID(ctx context.Context, userID string) (int, error) {
-	models := make([]*entity.Pinjaman, 0)
+func (pinjamanRepository *FinderPinjamanRepository) GetPinjamanByUserID(ctx context.Context, userID string) (*entity.PinjamanDetail, error) {
+	pinjaman := new(entity.PinjamanDetail)
 	if err := pinjamanRepository.db.
 		WithContext(ctx).
-		Model(&entity.Book{}).
-		Where("REPLACE(lower(user_id), ' ', '') = ?", strings.ToLower(userID)).
-		Find(&models).
+		Where("user_id = ?", userID).
 		Error; err != nil {
-		return 0, errors.Wrap(err, "[PinjamanRepository-GetPinjamanByUserID]")
+		return nil, errors.Wrap(err, "[PinjamanRepository-GetPinjamanByUserID]")
 	}
-	return len(models), nil
+	return pinjaman, nil
 }
 
 func (pinjamanRepository *FinderPinjamanRepository) GetPinjamanByBukuID(ctx context.Context, bookID string) (int, error) {
@@ -166,3 +165,16 @@ func (pinjamanRepository *FinderPinjamanRepository) GetAllList(ctx context.Conte
 
 	return totalAvalaible, totalNotAvalaible, totalUser, totalUserPinjaman, nil
 }
+
+// func (pinjamanRepository *FinderPinjamanRepository) GetPinjamanByUserID(ctx context.Context, userID string) (int, error) {
+// 	models := make([]*entity.Pinjaman, 0)
+// 	if err := pinjamanRepository.db.
+// 		WithContext(ctx).
+// 		Model(&entity.Book{}).
+// 		Where("REPLACE(lower(user_id), ' ', '') = ?", strings.ToLower(userID)).
+// 		Find(&models).
+// 		Error; err != nil {
+// 		return 0, errors.Wrap(err, "[PinjamanRepository-GetPinjamanByUserID]")
+// 	}
+// 	return len(models), nil
+// }

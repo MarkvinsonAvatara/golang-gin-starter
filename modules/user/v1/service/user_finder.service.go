@@ -27,7 +27,7 @@ type UserFinderUseCase interface {
 	// GetUserByID gets a user by ID
 	GetUserByID(ctx context.Context, id uuid.UUID) (*entity.User, error)
 	// GetAdminUsers gets all admin users
-	GetAdminUsers(ctx context.Context, search, order, sort string, limit, offset int) ([]*entity.User, int64, error)
+	GetAdminUsers(ctx context.Context, search, order, sort string, limit, page int) ([]*entity.User, int64, error)
 	// GetAdminUserByID gets a admin user by ID
 	GetAdminUserByID(ctx context.Context, id uuid.UUID) (*entity.User, error)
 	// GetUserByEmail gets user by email
@@ -79,8 +79,8 @@ func (uf *UserFinder) GetUsers(ctx context.Context, search, filter, sort, order 
 }
 
 // GetAdminUsers gets all admin users
-func (uf *UserFinder) GetAdminUsers(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.User, int64, error) {
-	users, total, err := uf.userRepo.GetAdminUsers(ctx, search, sort, order, limit, offset)
+func (uf *UserFinder) GetAdminUsers(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.User, int64, error) {
+	users, total, err := uf.userRepo.GetAdminUsers(ctx, search, sort, order, limit, page)
 
 	if err != nil {
 		return nil, 0, errors.ErrInternalServerError.Error()

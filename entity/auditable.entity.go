@@ -16,7 +16,7 @@ type Auditable struct {
 	DeletedBy sql.NullString `json:"deleted_by"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `json:"deleted_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 }
 
 type AuditablePinjaman struct {
@@ -77,7 +77,6 @@ func NewUserUpdateAuditable(updatedBy string) Auditable {
 		UpdatedBy: utils.StringToNullString(updatedBy),
 	}
 }
-
 
 func NewAuditableUserRole(createdBy string) Auditable {
 	return Auditable{

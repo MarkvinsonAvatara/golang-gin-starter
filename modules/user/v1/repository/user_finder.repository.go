@@ -29,7 +29,6 @@ type FinderUserRepositoryUseCase interface {
 	GetUsers(ctx context.Context, search, filter, sort, order string, limit, page int) ([]*entity.User, int64, error)
 	// GetAdminUsers is a function to get admin users
 	GetAdminUsers(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.User, int64, error)
-
 }
 
 // NewUserRepository creates a new UserRepository
@@ -110,19 +109,19 @@ func (ur *FinderUserRepository) GetUsers(ctx context.Context, search, filter, so
 }
 
 // GetAdminUsers is a function to get all admin users
-func (ur *FinderUserRepository) GetAdminUsers(ctx context.Context, search, sort, order string, limit, offset int) ([]*entity.User, int64, error) {
+func (ur *FinderUserRepository) GetAdminUsers(ctx context.Context, search, sort, order string, limit, page int) ([]*entity.User, int64, error) {
 	var user []*entity.User
 	var total int64
+	offsetUser := ((page - 1) * limit)
 	var gormDB = ur.db.
 		WithContext(ctx).
 		Model(&entity.User{}).
+		Where("public.user.deleted_at is NULL").
 		Joins("inner join public.role on public.user.roleid=public.role.id").
-		Where("public.role.name = 'Admin'")
-
-	gormDB.Count(&total)
-
-	gormDB = gormDB.Limit(limit).
-		Offset(offset)
+		Where("public.role.name = 'Admin'").
+		Count(&total).
+		Limit(limit).
+		Offset(offsetUser)
 
 	if search != "" {
 		gormDB = gormDB.
@@ -150,4 +149,3 @@ func (ur *FinderUserRepository) GetAdminUsers(ctx context.Context, search, sort,
 
 	return user, total, nil
 }
-

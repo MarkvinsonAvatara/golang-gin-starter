@@ -23,6 +23,7 @@ type FinderPinjamanFinderUseCase interface {
 	// GetPinjamanByID gets a pinjaman by ID
 	GetPinjamanByID(ctx context.Context, id uuid.UUID) (*entity.PinjamanDetail, error)
 	GetAllList(ctx context.Context) (int64, int64, int64, int64,error)
+	GetPinjamanByUserID(ctx context.Context, userID string) (*entity.PinjamanDetail, error)
 }
 
 // NewUserFinder creates a new UserFinder
@@ -67,6 +68,15 @@ func (uf *PinjamanFinder) GetAllList(ctx context.Context) (int64, int64, int64, 
 		return 0, 0, 0, 0, errors.ErrInternalServerError.Error()
 	}
 	return totalAvalaible, totalNotAvalaible, totalUser, totalUserPinjaman, nil
+
+}
+
+func (uf *PinjamanFinder) GetPinjamanByUserID(ctx context.Context, userID string) (*entity.PinjamanDetail, error) {
+	pinjaman, err := uf.pinjamanRepo.GetPinjamanByUserID(ctx, userID)
+	if err != nil {
+		return nil, errors.ErrInternalServerError.Error()
+	}
+	return pinjaman, nil
 
 }
 
